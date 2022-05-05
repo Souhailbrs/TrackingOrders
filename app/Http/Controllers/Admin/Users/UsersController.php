@@ -1,0 +1,318 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Users;
+
+use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Country;
+use App\Models\Delivery;
+use App\Models\Order;
+use App\Models\Packaging;
+use App\Models\SalesChannels;
+use App\Models\Seller;
+use App\Models\Supporter;
+use App\Models\Zone;
+use App\WorkDay;
+use App\WorkDayOrder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class UsersController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $sellers = Seller::get();
+        $admins = Admin::get();
+        $supporters = Supporter::get();
+        $deliveries = Delivery::get();
+
+        return view('admin.users.index', compact('sellers', 'admins', 'supporters', 'deliveries'));
+    }
+    public function getStatistics(){
+
+        return view('admin.users.statistics');
+    }
+    public function getUsers($type)
+    {
+        switch ($type) {
+            case 'sellers':
+                $records = Seller::get();
+                break;
+            case 'admins':
+                $records = Admin::get();
+                break;
+            case 'supporters':
+                $records = Supporter::get();
+                break;
+            case 'deliveries':
+                $records = Delivery::get();
+                break;
+            case 'packagings':
+                $records = Packaging::get();
+                break;
+        }
+
+        return view('admin.users.index', compact('records','type'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $countries = Country::get();
+        return view('admin.users.create',compact('countries'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+       /* $fileName = $request->image->getClientOriginalName();
+        $file_to_store = time() . '_' . $fileName ;
+        $request->image->move(public_path('assets/admin/users'), $file_to_store);*/
+    $file_to_store ='';
+        $userType = $request->userType;
+        $name = $request->name;
+        $email = $request->email;
+        $password = $request->password;
+        $phone = $request->phone;
+
+        switch($userType){
+            case 'seller':
+                $this->validate($request, [
+                    'email' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'phone' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                ]);
+                Seller::create([
+                    'name'=>$name,
+                    'email'=>$email,
+                    'password'=>Hash::make($request->password),
+                    'phone'=>$phone,
+                    'image'=>$file_to_store
+                ]);
+                break;
+            case 'admin':
+                $this->validate($request, [
+                    'email' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'phone' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                ]);
+                Admin::create([
+                    'name'=>$name,
+                    'email'=>$email,
+                    'password'=>Hash::make($request->password),
+                    'phone'=>$phone,
+                    'image'=>$file_to_store
+                ]);
+                break;
+            case 'delivery':
+                $this->validate($request, [
+                    'email' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'phone' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'zone_id'=>'required'
+                ]);
+                Delivery::create([
+                    'name'=>$name,
+                    'email'=>$email,
+                    'password'=>Hash::make($request->password),
+                    'phone'=>$phone,
+                    'image'=>$file_to_store,
+                    'zone_id'=>$request->zone_id
+                ]);
+                break;
+            case 'supporter':
+                $this->validate($request, [
+                    'email' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'phone' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                ]);
+                Supporter::create([
+                    'name'=>$name,
+                    'email'=>$email,
+                    'password'=>Hash::make($request->password),
+                    'phone'=>$phone,
+                    'image'=>$file_to_store
+                ]);
+                break;
+            case 'packaging':
+                $this->validate($request, [
+                    'email' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                    'phone' => 'required|unique:sellers|unique:admins|unique:deliveries|unique:supporters|unique:packagings',
+                ]);
+                Packaging::create([
+                    'name'=>$name,
+                    'email'=>$email,
+                    'password'=>Hash::make($request->password),
+                    'phone'=>$phone,
+                    'image'=>$file_to_store
+                ]);
+                break;
+        }
+        return redirect()->back()->with('success','User Added Successfully !');
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id,$type)
+    {
+        $types = $type;
+        $type =substr_replace($type, '', -1);
+        $zones = Zone::get();
+         if($type == 'deliverie'){
+             $type ='delivery';
+         }
+        switch($type){
+            case  'admin':
+                $user = Admin::find($id);
+             break;
+            case 'seller':
+                $user = Seller::find($id);
+                break;
+            case 'supporter':
+                $user = Supporter::find($id);
+                break;
+            case 'packaging':
+                $user = Packaging::find($id);
+                break;
+            case 'delivery':
+                $user = Delivery::find($id);
+                break;
+        }
+        return view('admin.users.edit',compact('id','type','types','user','zones'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+         if($request->status){
+             $status  =  1;
+         }else{
+             $status  =  0;
+         }
+
+        $type = $request->type;
+        switch($type){
+            case  'admin':
+                $user = Admin::find($id);
+                break;
+            case 'seller':
+                $user = Seller::find($id);
+                break;
+            case 'supporter':
+                $user = Supporter::find($id);
+                break;
+            case 'packaging':
+                $user = Packaging::find($id);
+                break;
+            case 'delivery':
+                $user = Delivery::find($id);
+                $user->update([
+                    'zone_id' =>$request->zone_id
+                ]);
+                break;
+        }
+
+     if($request->new_pas) {
+         $user->update([
+             'password' => Hash::make($request->new_pas)
+         ]);
+     }
+
+
+
+        $user->update([
+           'email'=>$request->email,
+           'phone'=>$request->phone,
+           'name'=>$request->name,
+            'status'=>$status
+        ]);
+        return redirect()->back()->with('success','User Updated Successfully !');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id,$type)
+    {
+
+        switch($type){
+            case  'admins':
+                $user = Admin::find($id);
+                break;
+            case 'sellers':
+                $user = Seller::find($id);
+                $SalesChannels =  SalesChannels::where('owner_email',$user->email)->count();
+                if($SalesChannels > 0){
+                    return redirect()->back()->with('error','User in use !');
+                }
+
+                break;
+            case 'supporters':
+                $WorkDay =  WorkDay::where('user_type','supporter')->where('user_id',$id)->count();
+                $WorkDayOrder =  WorkDayOrder::get('userType','supporter')->where('userID',$id)->count();
+                $user = Supporter::find($id);
+                if($WorkDay > 0 || $WorkDayOrder > 0){
+                    return redirect()->back()->with('error','User in use !');
+                }
+                break;
+            case 'packagings':
+                $WorkDay =  WorkDay::where('user_type','packaging')->where('user_id',$id)->count();
+                $WorkDayOrder =  WorkDayOrder::get('userType','packaging')->where('userID',$id)->count();
+                $user = Packaging::find($id);
+                if($WorkDay > 0 || $WorkDayOrder > 0){
+                    return redirect()->back()->with('error','User in use !');
+                }
+                break;
+            case 'deliveries':
+                $WorkDay =  WorkDay::where('user_type','delivery')->where('user_id',$id)->count();
+                $WorkDayOrder =  WorkDayOrder::get('userType','delivery')->where('userID',$id)->count();
+                if($WorkDay > 0 || $WorkDayOrder > 0){
+                    return redirect()->back()->with('error','User in use !');
+
+                }
+                $user = Delivery::find($id);
+                break;
+        }
+        $user->delete();
+        return redirect()->back()->with('success','User Deleted Successfully !');
+
+    }
+}
