@@ -119,7 +119,6 @@
         </div> <!-- end col -->
     </div> <!-- end row -->
 
-@endsection
 <script>
       function updateList() {
         var input = document.getElementById('customFileLangHTML1');
@@ -127,3 +126,4 @@
         output.value ='Select file is : ' + input.files.item(0).name;
     }
 </script>
+@endsection

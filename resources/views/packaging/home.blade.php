@@ -77,7 +77,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <a class="btn btn-dark col-sm-12 d-block"  target="_blank" href="{{route('supporter.getAllOrders',['state'=>$record->id])}}">
+                                                    <a class="btn btn-dark col-sm-12 d-block"  target="_blank" href="{{route('supporter.orders.viewWorkDayOrders',['day'=>$record->id])}}">
                                                         View
                                                     </a>
                                                 </td>

@@ -1,6 +1,6 @@
 @extends("layouts.seller")
 @section("pageTitle", "Tracking Order")
-@section("style")
+@section("content")
     <style>
         .padding {
             padding: 3rem !important
@@ -112,11 +112,9 @@
             margin-top: 15px
         }
     </style>
-@endsection
-@section("content")
 
 
-    <div class="card user-activity-card">
+    <div class="card user-activity-card" style="min-height:700px">
         <div class="card-header">
             <h4>Tracking Order Number #{{$id}}</h4>
         </div>
@@ -349,7 +347,7 @@
                 </div>
             @elseif($record->last_status == 13)
                 <div class="card-block h5">
-                    <div class="row m-b-25">
+                <div class="row m-b-25">
                         <div class="col-auto p-r-0">
                             <div class="u-img">  <span class="btn btn-danger"  style="width:200px">Customer Did not deliver</span>  </div>
                         </div>
@@ -360,11 +358,11 @@
                             </p>
                         </div>
                     </div>
-                    <hr>
-                    @endif
-                    @endforeach
+                <hr>
+            @endif
+        @endforeach
 
-                </div>
+    </div>
 
 
 @endsection

@@ -8,17 +8,18 @@
             <div class="card">
                 <div class="card-body table-responsive ">
                     @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                             <strong>{{ $message }}</strong>
                         </div>
                     @endif
                     @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                             <strong>{{ $message }}</strong>
                         </div>
                     @endif
+
 
                     <div class="row">
                         <div class="col-12">
@@ -68,18 +69,18 @@
 
                                                 </td>
                                                 @if($record->status == 1)
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td><span class="badge bg-success">Active</span></td>
                                                 @else
-                                                    <td><span class="badge badge-danger">De-Activated</span></td>
+                                                    <td><span class="badge bg-danger">De-Activated</span></td>
                                                 @endif
                                                 <td>
-                                                    <a href="{{route('seller.products.edit',['product'=>$record->id])}}" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    <a href="{{route('seller.products.edit',['product'=>$record->id])}}" class="mr-3 text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
 
                                                     <form id="del_product{{$record->id}}" method="post" style="display:inline-block" >
                                                         <input type="hidden" id="del_product{{$record->id}}" value="{{$record->id}}">
                                                         @method('DELETE')
                                                         @csrf
-                                                        <span type="submit" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" onclick="OnDelete()"> <i class="mdi mdi-close font-size-18"></i> </span>
+                                                        <span type="submit" class="mr-3 text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete" onclick="OnDelete()"> <i class="mdi mdi-close font-size-18"></i> </span>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -105,7 +106,6 @@
 
 
 
-@endsection
 @foreach($records as $record)
     <!-- Details -->
     <div class="modal fade" id="details{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -114,7 +114,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -180,5 +180,6 @@
 
 
 
+@endsection
 
 

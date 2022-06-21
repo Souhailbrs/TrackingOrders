@@ -7,20 +7,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive " >
-                    @if ($message = Session::get('success'))
-                    <div class="alert alert-success alert-block">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>{{ $message }}</strong>
-                    </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                    <div class="alert alert-danger alert-block">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>{{ $message }}</strong>
-                    </div>
-                    @endif
 
-                        <div class="container-fluid">
+
+
+                    <div class="container-fluid">
 
 
 
@@ -29,7 +19,9 @@
 
                                     <div class="card">
                                         <div class="card-body">
-                                            <table id="datatable" class="table table-striped dt-responsive nowrap table-vertical" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <div class="table-responsive">
+                                                <table id="example2" class="table table-striped table-bordered pt-3">
+
                                                 <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -51,7 +43,7 @@
                                                         <form action="{{route('countries.destroy',['country'=>$record->id])}}" method="post" style="display:inline-block">
                                                             @method('DELETE')
                                                             @csrf
-                                                            <span type="submit" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" onclick="$(this).closest('form').submit();"> <i class="mdi mdi-close font-size-18"></i> </span>
+                                                            <span type="submit" class="mr-3 text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete" onclick="$(this).closest('form').submit();"> <i class="mdi mdi-close font-size-18"></i> </span>
 
                                                         </form>
                                                     </td>
@@ -60,7 +52,7 @@
 
                                                 </tbody>
                                             </table>
-
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +83,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">  {{__('admin/category.Image')}}  </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>

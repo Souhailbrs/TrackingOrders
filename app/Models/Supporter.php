@@ -14,6 +14,10 @@ class Supporter extends Authenticatable
         'password',
         'phone',
         'image',
-        'status'
+        'status',
+        'country_id'
     ];
+    public function country(){
+        return $this->belongsTo(Country::class,'country_id');
+    }
 }

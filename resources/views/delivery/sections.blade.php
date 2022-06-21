@@ -1,56 +1,59 @@
- <div id="sidebar-menu">
-    <!-- Left Menu Start -->
-    <ul class=" list-unstyled" id="side-menu">
+
+
         <li>
             <a href="{{route('delivery.home',['filter'=>'today'])}}">
-                <i class="fas fa-home"></i>
-                <span> {{__('delivery Dashboard')}} </span>
+                <div class="parent-icon">
+                    <ion-icon name="home-sharp"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('orders.Delivery_Dashboard')}} </div>
+
             </a>
         </li>
 
 
         <li>
             <a href="{{route('delivery.home',['filter'=>'today'])}}" >
-                <i class=" fas fa-layer-group"></i>
-                <span>Today Orders</span>
+                <div class="parent-icon">
+                    <ion-icon name="hourglass-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('orders.today_orders')}} </div>
+
             </a>
+
         </li>
+
 
         <li>
             <a href="{{route('delivery.home',['filter'=>'finishedToday'])}}" >
-                <i class=" fas fa-layer-group"></i>
-                <span>Finished Today</span>
+                <div class="parent-icon">
+                    <ion-icon name="checkmark-done-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('orders.finished_orders')}} </div>
+
             </a>
+
         </li>
+
         <li>
             <a href="{{route('delivery.home',['filter'=>'yesterday'])}}" >
-                <i class=" fas fa-layer-group"></i>
-                <span>Yesterday Orders</span>
+                <div class="parent-icon">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('orders.yesterday_orders')}} </div>
+
             </a>
+
         </li>
 
         <li>
             <a href="{{route('delivery.home',['filter'=>'old'])}}" >
-                <i class=" fas fa-layer-group"></i>
-                <span>Old Orders</span>
-            </a>
-        </li>
+                <div class="parent-icon">
+                    <ion-icon name="folder-open-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('orders.old_orders')}} </div>
 
-
-
-        <li>
-            <a href="{{ LaravelLocalization::getLocalizedURL('ar') }}">
-                <i class="fas fa-language"></i>
-                <span> Arabic </span>
             </a>
 
         </li>
-        <li>
-            <a href="{{ LaravelLocalization::getLocalizedURL('en') }}">
-                <i class="fas fa-language"></i>
-                <span> English </span>
-            </a>
 
-        </li>
-    </ul>
-</div>
+

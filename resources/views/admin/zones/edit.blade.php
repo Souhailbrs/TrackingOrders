@@ -6,18 +6,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
 
                     <form method="post" action="{{route('zones.update',['zone'=>$record->id])}}" enctype="multipart/form-data">
                         @csrf
@@ -35,6 +24,7 @@
                                 <input class="form-control" type="text" id="example-text-input" name="title_ar" value="{{$record->title_ar}}">
                             </div>
                         </div>
+                        @if(Auth::guard('admin')->user()->is_super_admin)
                         <div class="form-group row">
                             <label for="example-text-input" class="col-sm-2 col-form-label">Country</label>
                             <div class="col-sm-10">
@@ -49,6 +39,7 @@
                                 </select>
                             </div>
                         </div>
+                        @endif
 
                         <div class="form-group row">
                             <label for="example-text-input" class="col-sm-2 col-form-label">City</label>

@@ -15,6 +15,8 @@ class OrderContact extends Model
         'userType',
         'created_at',
         'updated_at',
-
     ];
+    public function  order(){
+        return $this->belongsTo(Order::class,'sale_channele_order_id');
+    }
 }

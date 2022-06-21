@@ -7,18 +7,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive ">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
 
                     <div class="container-fluid">
                         <div class="card">
@@ -92,7 +81,7 @@
                                             <td>
                                                 20
                                             </td>
-                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td><span class="badge bg-success">Active</span></td>
                                             <td>
                                                 <a href="javascript:void(0);" class="mr-3 text-muted"
                                                    data-toggle="tooltip" data-placement="top" title=""
@@ -130,7 +119,6 @@
 
     </div>
 
-@endsection
 <!-- Name -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
      aria-hidden="true">
@@ -242,3 +230,4 @@
         </div>
     </div>
 </div>
+@endsection

@@ -173,47 +173,50 @@ class OrdersController extends Controller
         $customer_address = $request->customer_address;
         $delivery_date = $request->delivery_date;
         //Sale Channel Order
-
-        //Order Products
-        $products_number  = count($request->products_id) - 1;
-        if($products_number == 0){
-            return redirect()->back()->with('error', 'Your order must have at least one product');
-        }
-        $order = Order::create([
-            'sales_channel'=>$sales_channel_id,
-            'customer_name'=>$customer_name,
-            'customer_phone1'=>$customer_phone1,
-            'customer_phone2'=>$customer_phone2,
-            'customer_notes'=>$customer_notes,
-            'country_id'=>$country_id,
-            'city_id'=>$city_id,
-            'zone_id'=>$zone_id,
-            'address'=>$customer_address,
-            'status'=>0,
-            'delivery_date'=>$delivery_date,
-            'url'=>$request->url
-        ]);
-        for($i=0;$i<$products_number;$i++){
-            OrderProduct::create([
-                'sales_channele_order'=>$order->id,
-                'product_id'=>$request->products_id[$i],
-                'amount'=>$request->products_amount[$i],
-                'price'=>$request->products_price[$i]
-
+        if($request->products_id) {
+            //Order Products
+            $products_number = count($request->products_id) - 1;
+            if ($products_number == 0) {
+                return redirect()->back()->with('error', 'Your order must have at least one product');
+            }
+            $order = Order::create([
+                'sales_channel' => $sales_channel_id,
+                'customer_name' => $customer_name,
+                'customer_phone1' => $customer_phone1,
+                'customer_phone2' => $customer_phone2,
+                'customer_notes' => $customer_notes,
+                'country_id' => $country_id,
+                'city_id' => $city_id,
+                'zone_id' => $zone_id,
+                'address' => $customer_address,
+                'status' => 0,
+                'delivery_date' => $delivery_date,
+                'url' => $request->url
             ]);
+            for ($i = 0; $i < $products_number; $i++) {
+                OrderProduct::create([
+                    'sales_channele_order' => $order->id,
+                    'product_id' => $request->products_id[$i],
+                    'amount' => $request->products_amount[$i],
+                    'price' => $request->products_price[$i]
+
+                ]);
+
+            }
+            //Order Track
+            OrderTrack::create([
+                'sales_channele_order' => $order->id,
+                'old_status' => 0,
+                'last_status' => 0,
+                'changes' => ''
+            ]);
+            $user_id = Auth::guard('seller')->user()->id;
+            $this->ordeLog($user_id, $order->id, 0);
+            return redirect()->back()->with('success', $this->page . 'Added Successfully');
+        }else{
+            return redirect()->back()->with('error', $this->page . 'Your Order Must Have One Product At least');
 
         }
-        //Order Track
-        OrderTrack::create([
-            'sales_channele_order'=>$order->id,
-            'old_status'=>0,
-            'last_status'=>0,
-            'changes'=>''
-        ]);
-
-        $user_id =  Auth::guard('seller')->user()->id;
-        $this->ordeLog($user_id, $order->id ,0);
-        return redirect()->back()->with('success', $this->page . 'Added Successfully');
         //dd($data);
     }
 

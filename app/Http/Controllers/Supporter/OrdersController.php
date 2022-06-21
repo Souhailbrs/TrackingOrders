@@ -273,8 +273,22 @@ class OrdersController extends Controller
     }
 
 
+    public function IsCallCenterOrders($orders_ids,$supporter_id){
+        $res = [];
+        foreach($orders_ids as $order_id){
+            $exist = OrderContact::where('sale_channele_order_id',$order_id)->where('userType','supporter')->where('user_id',$supporter_id)->first();
+            if($exist){
+                $res [] = $exist->order->id;
+            }
+        }
+        return $res;
+    }
 
     public  function getNextOrder(){
+        // New Orders
+        $New_Orders = $this->New_Orders();
+        // Confirm Order at deliver day
+        $Confirm_Order_at_deliver_day = $this->Confirm_Order_at_deliver_day();
         // No Answer Delivery.
         $No_Answer_Delivery = $this->No_Answer_Delivery_Orders();
         // Customer Cancelled Delivery
@@ -282,15 +296,12 @@ class OrdersController extends Controller
         $Customer_Cancelled_callCenter =[];
         // Customer Cancelled Delivery
         $customer_cancelled_delivery = $this->Customer_Cancelled_Delivery();
-        // Confirm Order at deliver day
-        $Confirm_Order_at_deliver_day = $this->Confirm_Order_at_deliver_day();
-        // New Orders
-        $New_Orders = $this->New_Orders();
         // No Answer Call Center
         $No_Answer_Call_Center = $this->No_Answer_Call_Center();
         // Not Confirmed
         $Not_Confirmed = $this->Not_Confirmed();
         $res = array_merge($No_Answer_Delivery,$Customer_Cancelled_callCenter,$customer_cancelled_delivery,$Confirm_Order_at_deliver_day,$New_Orders,$No_Answer_Call_Center,$Not_Confirmed);
+        $res =array_unique($res);
         if(count($res) > 0){
             return Order::find($res[0]);
         }else{
@@ -300,15 +311,15 @@ class OrdersController extends Controller
     // No Answer Delivery Orders.
     public  function  No_Answer_Delivery_Orders(){
         $user_id =  Auth::guard('supporter')->user()->id;
-        $orders_no_answer_delivery = Order::where('status',12)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',12)->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
-            $exist = OrderContact::where('status',12)->where('sale_channele_order_id',$record->id)->where('created_at', '>=', date('Y-m-d').' 00:00:00')->where('userType','supporter')->where('user_id',$user_id)->get();
+            $exist = OrderContact::where('status',12)->where('sale_channele_order_id',$record->id)->where('created_at', '>=', date('Y-m-d').' 00:00:00')->get();
             if (count($exist) < 2) {
                 if (count($exist) < 1) {
                     $orders_no_answer_delivery_new [] = $record->id;
                 } else {
-                    if (date('Y-m-d-H:i:s', strtotime($exist[0]->updated_at)) < date('Y-m-d H:i:s', strtotime('-4 hours'))) {
+                    if (date('Y-m-d-H:i:s', strtotime($exist[0]->updated_at)) < date('Y-m-d H:i:s', strtotime('-4 Hours'))) {
                         $orders_no_answer_delivery_new [] = $record->id;
                     }
                 }
@@ -316,13 +327,14 @@ class OrdersController extends Controller
 
 
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
         return $orders_no_answer_delivery_new;
     }
     // Customer Cancelled Delivery.
     public function  Customer_Cancelled_callCenter(){
         $user_id =  Auth::guard('supporter')->user()->id;
 
-        $orders_no_answer_delivery = Order::where('status',6)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',6)->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
             $exist = OrderContact::where('status',6)->where('sale_channele_order_id',$record->id)->where('userType','supporter')->where('user_id',$user_id)->get();
@@ -330,52 +342,86 @@ class OrdersController extends Controller
                 $orders_no_answer_delivery_new [] = $record->id;
             }
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
+
         return $orders_no_answer_delivery_new;
     }
     // Customer Cancelled Delivery.
     public function  Customer_Cancelled_Delivery(){
         $user_id =  Auth::guard('supporter')->user()->id;
 
-        $orders_no_answer_delivery = Order::where('status',11)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',11)->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
-            $exist = OrderContact::where('status',11)->where('sale_channele_order_id',$record->id)->where('userType','supporter')->where('user_id',$user_id)->get();
+            $exist = OrderContact::where('status',11)->where('sale_channele_order_id',$record->id)->get();
             if(count($exist) <=  0){
                 $orders_no_answer_delivery_new [] = $record->id;
             }
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
+
         return $orders_no_answer_delivery_new;
     }
+
     // Confirm Order at deliver day
     public function  Confirm_Order_at_deliver_day(){
         $user_id =  Auth::guard('supporter')->user()->id;
         //Delivery date
         //Confirmed date
-        $orders_no_answer_delivery = Order::where('status',4)->where('delivery_date','=', Carbon::today())->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',7)->where('delivery_date','=', Carbon::today())->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
             $exist = OrderContact::where('status',4)->where('sale_channele_order_id',$record->id)->where('userType','supporter')->where('user_id',$user_id)->get();
-            if(count($exist) > 0) {
 
-                if (date('Y-m-d-H:i:s', strtotime($exist[0]->updated_at)) > date('Y-m-d H:i:s', strtotime('+36 hours'))) {
+            //If creation date is equal to delivery date or less than one
+            //ignore
+            //Otherwise
+            //Call Him.
+            foreach($exist as $ex){
+                $contact_before = date('Y-m-d', strtotime($ex->created_at));
+                $delivery_date = $record->delivery_date;
+                $limit = date('Y-m-d', strtotime($contact_before. ' + 2 day'));
+                //12
+                //13
+                //14
+                //15
+                $res = [
+                    'limit'=>$limit,
+                    'delivery_date'=>$delivery_date,
+                    'contact_before'=>$contact_before
+                ];
+                // dd($res);
+                if($limit  > $delivery_date){
+                    //Ignore
+                    continue;
+                }elseif($limit <= $delivery_date){
+                    //Contact 12
+                    //Deliver 12 or 13 //ignore
+                    //otherwise
+                    //takeId
                     $orders_no_answer_delivery_new [] = $record->id;
+                }else{
+                    //Ignore Same Day
+                    continue;
                 }
+
+                $orders_no_answer_delivery_new [] = $record->id;
+
+
             }
-            /*
-              if(count($exist) < 1 ) {
-                  $orders_no_answer_delivery_new [] = $record->id;
-              }else{
-                  if (date('Y-m-d-H:i:s',strtotime($exist[0]->updated_at)) < date('Y-m-d H:i:s', strtotime('-4 hours')) ){
-                      $orders_no_answer_delivery_new [] = $record->id;
-                  }
-              }*/
+
+
+            $orders_no_answer_delivery_new = array_unique($orders_no_answer_delivery_new);
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
+
         return $orders_no_answer_delivery_new;
     }
+
     // New Orders.
     public function New_Orders(){
 
-        $orders_no_answer_delivery = Order::where('status',0)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',0)->where('deleted',0)->get();
         $ids = [];
         foreach($orders_no_answer_delivery as $record){
             $ids [] = $record->id;
@@ -385,7 +431,7 @@ class OrdersController extends Controller
     // No Answer Call Center
     public  function  No_Answer_Call_Center(){
         $user_id =  Auth::guard('supporter')->user()->id;
-        $orders_no_answer_delivery = Order::where('status',2)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',2)->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
             $exist = OrderContact::where('status',2)->where('sale_channele_order_id',$record->id)->where('created_at', '>=', date('Y-m-d').' 00:00:00')->where('userType','supporter')->where('user_id',$user_id)->get();
@@ -393,32 +439,36 @@ class OrdersController extends Controller
                 if(count($exist) < 1 ) {
                     $orders_no_answer_delivery_new [] = $record->id;
                 }else{
-                    if (date('Y-m-d-H:i:s',strtotime($exist[0]->updated_at)) < date('Y-m-d H:i:s', strtotime('-1 minute')) ){
+
+                    if (date('Y-m-d h:i:sa',strtotime($exist[0]->updated_at)) < date('Y-m-d h:i:sa', strtotime('-1 Hours')) ){
+
                         $orders_no_answer_delivery_new [] = $record->id;
                     }
+
                 }
             }
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
         return $orders_no_answer_delivery_new;
     }
     // Not Confirmed
     public  function  Not_Confirmed(){
         $user_id =  Auth::guard('supporter')->user()->id;
-        $orders_no_answer_delivery = Order::where('status',5)->where('deleted',0)->get();
+        $orders_no_answer_delivery = Order::where('id','>=',1000)->where('status',5)->where('deleted',0)->get();
         $orders_no_answer_delivery_new = [];
         foreach($orders_no_answer_delivery as $record){
-            $exist = OrderContact::where('status',5)->where('sale_channele_order_id',$record->id)->where('userType','supporter')->where('user_id',$user_id)->get();
+            $exist = OrderContact::where('status',5)->where('sale_channele_order_id',$record->id)->get();
             if(count($exist) < 1 ) {
-                if (date('Y-m-d-H:i:s',strtotime($record->created_at)) < date('Y-m-d H:i:s', strtotime('-3 days')) ){
+                if (date('Y-m-d-H:i:s',strtotime($record->created_at)) < date('Y-m-d H:i:s', strtotime('-3 Days')) ){
                     $orders_no_answer_delivery_new [] = $record->id;
                 }
             }
 
         }
+        $orders_no_answer_delivery_new = $this->IsCallCenterOrders($orders_no_answer_delivery_new,$user_id);
+
         return $orders_no_answer_delivery_new;
     }
-
-
 
     //If User Have Order Now "Available or not "
     public function IsUserHasOrder(){

@@ -10,19 +10,14 @@ $type_users =  Auth::guard('seller')->user()->id;
 @else
     @section("pageTitle", "Home")
 @endif
-@section('styleChart')
-    <link href="{{asset("assets/admin/libs/c3/c3.min.css")}}" id="bootstrap-style" rel="stylesheet" type="text/css"/>
-@endsection
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
 @section("content")
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="container">
-                <form class="row" action="{{route('seller.filter.statistics',['type_users'=>$type_users])}}" method="POST">
+                <form class="row text-center" action="{{route('seller.filter.statistics',['type_users'=>$type_users])}}" method="POST">
                     @csrf
                     <div class="col-sm-1"></div>
-
                     <div class="col-sm-2 h6 ">
                         <label for="filter">Filter</label> :
                         <select class="form-control" id="filter" name="date">
@@ -40,7 +35,6 @@ $type_users =  Auth::guard('seller')->user()->id;
                     <div class="col-sm-2 h6 ">
                         <label for="from">Country</label> :
                         <select class="form-control"  name="country" id="country_id">
-
                             @foreach($res['countries'] as $country)
                                 <option value="{{$country['id']}}">{{$country['title_' . App::getLocale()]}}</option>
                             @endforeach
@@ -56,148 +50,143 @@ $type_users =  Auth::guard('seller')->user()->id;
 
                 </form>
             </div>
+        </div>
+        <hr>
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-xxl-4">
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="person-add-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Total Sales</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{$res['total_earnings']}} Dollars</h5>
+                            </div>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="heart-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0"> New Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{$res['new_orders']}} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="chatbox-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Confirmed Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{$res['new_orders']}} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="mail-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Delivered Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{$res['delivered_orders']}} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--end row-->
+        <div class="row">
+            <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                <div class="card radius-10 w-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <h6 class="mb-0">Statistics</h6>
+                            <div class="ms-auto">
+                                <div class="d-flex align-items-center font-13 gap-2">
+                      <span class="border px-1 rounded cursor-pointer"><i
+                              class="bx bxs-circle me-1 text-primary"></i>Downloads</span>
+                                    <span class="border px-1 rounded cursor-pointer"><i
+                                            class="bx bxs-circle me-1 text-primary opacity-50"></i>Earnings</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container1">
+                            <canvas id="chart5"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-6 col-xl-3">
+            <div class="col-xl-6 mx-auto">
+                <h6 class="mb-0 text-uppercase">Confirmation Percentage</h6>
+                <hr />
                 <div class="card">
                     <div class="card-body">
-                        <div class="mini-stat clearfix">
-                            <span class="mini-stat-icon bg-purple mr-0 float-right"><i
-                                    class="mdi mdi-basket"></i></span>
-                            <div class="mini-stat-info">
-                                <span class="counter text-purple">{{$res['total_earnings']}}</span>
-                                Total Sales
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mini-stat clearfix">
-                            <span class="mini-stat-icon bg-blue-grey mr-0 float-right"><i
-                                    class="mdi mdi-black-mesa"></i></span>
-                            <div class="mini-stat-info">
-                                <span class="counter text-blue-grey">{{$res['new_orders']}}</span>
-                                New Orders
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mini-stat clearfix">
-                            <span class="mini-stat-icon bg-brown mr-0 float-right"><i class="mdi mdi-buffer"></i></span>
-                            <div class="mini-stat-info">
-                                <span class="counter text-brown">{{$res['confirmed_orders']}}</span>
-                                Confirmed Orders
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mini-stat clearfix">
-                            <span class="mini-stat-icon bg-teal mr-0 float-right"><i class="mdi mdi-coffee"></i></span>
-                            <div class="mini-stat-info">
-                                <span class="counter text-teal">{{$res['delivered_orders']}}</span>
-                                Delivered Orders
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xl-12" style="display:block">
-
-                <div class="row">
-                    <div class="col-md-12 monthly-earning-wid">
-                        <div class="card" style="height: 480px;">
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    Total Sales
-                                </h4>
-
-
-
-
-                                <canvas id="myChart" style="width:100%;height:100%"></canvas>
-
-                            </div>
-                        </div>
+                        <div id="chart12"></div>
                     </div>
                 </div>
 
             </div>
-
-
-        </div>
-
-
-        <div class="row">
-            <div class="col-xl-3">
+            <div class="col-xl-6 mx-auto">
+                <h6 class="mb-0 text-uppercase">Delivered Percentage</h6>
+                <hr />
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Confirmation Percentage</h4>
-
-                        <div class="text-center" dir="ltr">
-                            <input class="knob" data-width="150" data-height="150" data-linecap=round
-                                   data-fgColor="#ffbb44" value="{{$res['confirmed_percentage']}}" data-skin="tron"
-                                   data-angleOffset="180"
-                                   data-readOnly=true data-thickness=".1"/>
-
-                            <div class="clearfix"></div>
-                            <ul class="list-inline row mt-5 clearfix mb-0">
-<!--                                <li class="col-6">
-                                    <p class="mb-1 font-size-18 font-weight-bold">{{$res['all_orders']}}</p>
-                                    <p class="text-muted mb-0">Total Orders</p>
-                                </li>-->
-                                <li class="col-12">
-                                    <p class="mb-1 font-size-18 font-weight-bold">{{$res['confirmed_orders']}}</p>
-                                    <p class="text-muted mb-0">Confirmed</p>
-                                </li>
-                            </ul>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Delivered Percentage</h4>
-
-                        <div class="text-center" dir="ltr">
-                            <input class="knob" data-width="150" data-height="150" data-linecap=round
-                                   data-fgColor="#ffbb44" value="{{$res['delivered_percentage']}}" data-skin="tron"
-                                   data-angleOffset="180"
-                                   data-readOnly=true data-thickness=".1"/>
-
-                            <div class="clearfix"></div>
-                            <ul class="list-inline row mt-5 clearfix mb-0">
-<!--                                <li class="col-6">
-                                    <p class="mb-1 font-size-18 font-weight-bold">{{$res['all_orders']}}</p>
-                                    <p class="text-muted mb-0">Total Orders</p>
-                                </li>-->
-                                <li class="col-12">
-                                    <p class="mb-1 font-size-18 font-weight-bold">{{$res['delivered_orders']}}</p>
-                                    <p class="text-muted mb-0">Delivered</p>
-                                </li>
-                            </ul>
-
-                        </div>
+                        <div id="chart12"></div>
                     </div>
                 </div>
             </div>
@@ -205,19 +194,14 @@ $type_users =  Auth::guard('seller')->user()->id;
         </div>
 
 
-        <!-- end row -->
+
 
         <!-- end row -->
 
 
     </div>
 @endsection
-<script
-    src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-    crossorigin="anonymous">
-</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 @section("script")
 
 
@@ -278,15 +262,7 @@ $type_users =  Auth::guard('seller')->user()->id;
             }
         });
     </script>
-    <script src="{{asset("assets/admin/libs/d3/d3.min.js")}}"></script>
-    <script src="{{asset("assets/admin/libs/c3/c3.min.js")}}"></script>
-    <script src="{{asset("assets/admin/js/app.js")}}"></script>
 
-    <script src="{{asset('assets/admin/libs/peity/jquery.peity.min.js')}}"></script>
-
-    <script src="{{asset('assets/admin/libs/jquery-knob/jquery.knob.min.js')}}"></script>
-    <script src="{{asset('assets/admin/js/pages/widget.init.js')}}"></script>
-    <script src="{{asset("assets/admin/js/pages/c3-chart.init.js")}}"></script>
     <script>
         var yarab = [];
         var ii = 0;
@@ -429,3 +405,5 @@ $type_users =  Auth::guard('seller')->user()->id;
     </script>
 
 @endsection
+
+

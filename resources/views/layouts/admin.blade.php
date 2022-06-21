@@ -1,327 +1,519 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="rtl" class="light">
 
 <head>
-    <meta charset="utf-8"/>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- loader-->
     @if(LaravelLocalization::getCurrentLocale() == 'ar')
-        <title>تتبع الطلبات</title>
+        <?php $lang = 'rtl'?>
+            <style>
+                *{
+                    direction:rtl;
+                    text-align: right;
+                }
+            </style>
     @else
-        <title>Tracking Orders</title>
-        <meta name="_token" content="{{csrf_token()}}" />
-
+        <?php $lang = 'ltr'?>
+            <style>
+                *{
+                    direction:ltr;
+                    text-align: left;
+                }
+            </style>
     @endif
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @yield('styleChart')
-<!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset("assets/admin/images/logo.png")}}">
-    <!-- Bootstrap Css -->
-    <link href="{{asset("assets/admin/css/bootstrap.min.css")}}" id="bootstrap-style" rel="stylesheet" type="text/css"/>
-    <!-- Icons Css -->
-    <link href="{{asset("assets/admin/css/icons.min.css")}}" rel="stylesheet" type="text/css"/>
-    <!-- App Css-->
-    @yield("style")
-    <link href="{{asset("assets/admin/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css")}}" rel="stylesheet" type="text/css"/>
-    <link href="{{asset("assets/admin/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css")}}" rel="stylesheet" type="text/css"/>
-    <link href="{{asset("assets/admin/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css")}}" rel="stylesheet" type="text/css"/>
 
-@if(LaravelLocalization::getCurrentLocale() == 'ar')
 
-        <link href="{{asset("assets/admin/css/app-rtl.css")}}" rel="stylesheet" type="text/css"/>
-    @else
-        <link href="{{asset("assets/admin/css/app.css")}}" rel="stylesheet" type="text/css"/>
-        <link href="{{asset('assets/admin/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" type="text/css" />
-        <link href="{{asset('assets/admin/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/admin/'. $lang . '/css/pace.min.css')}}" rel="stylesheet" />
+    <script src="{{asset('assets/admin/'. $lang . '/js/pace.min.js')}}"></script>
+    <!--plugins-->
+    <link href="{{asset("assets/admin/old/css/icons.min.css")}}" rel="stylesheet" type="text/css"/>
 
-    @endif
-    <link href="{{asset('assets/admin/libs/chartist/chartist.min.css')}}" rel="stylesheet">
+
+
+
+    <!--plugins-->
+    <link href="{{asset('assets/admin/'. $lang . '/plugins/simplebar/css/simplebar.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/admin/'. $lang . '/plugins/perfect-scrollbar/css/perfect-scrollbar.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/admin/'. $lang . '/plugins/metismenu/css/metisMenu.min.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/admin/'. $lang . '/plugins/datatable/css/dataTables.bootstrap5.min.css')}}" rel="stylesheet" />
+
+
+
+    <!-- CSS Files -->
+    <link href="{{asset('assets/admin/'. $lang . '/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/admin/'. $lang . '/css/bootstrap-extended.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/admin/'. $lang . '/css/style.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/admin/'. $lang . '/css/icons.css')}}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <!--Theme Styles-->
+    <link href="{{asset('assets/admin/'. $lang . '/css/dark-theme.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/admin/'. $lang . '/css/semi-dark.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/admin/'. $lang . '/css/header-colors.css')}}" rel="stylesheet" />
+
+    <style>
+        .form-group{
+            margin:10px;
+        }
+    </style>
+    <title>COD AFRICA NETWORK | شريك النجاح في التجاة الإلكترونية داخل إفريقيا</title>
 
 </head>
 
-<body data-sidebar="dark">
+<body>
 
-<!-- Loader -->
-<div id="preloader">
-    <div id="status">
-        <div class="spinner"></div>
-    </div>
-</div>
 
-<!-- Begin page -->
-<div id="layout-wrapper">
-    <header id="page-topbar">
-        <div class="navbar-header">
-            <div class="d-flex">
-                <!-- LOGO -->
-                <div class="navbar-brand-box">
-                    <a href="{{route('admin.home',['type_users'=>'all'])}}" class="logo logo-light">
-                        <span class="logo-sm">
-                            <img src="{{asset("assets/admin/images/1.png")}}" alt="" height="22">
-                        </span>
-                        <span class="logo-lg">
-                            <img src="{{asset("assets/admin/images/1.png")}}" alt="" height="36">
-                        </span>
-                    </a>
-                </div>
+<!--start wrapper-->
+<div class="wrapper">
 
-                <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                    <i class="mdi mdi-menu"></i>
-                </button>
-
-                <div class="d-none d-sm-block ml-2">
-                    <h4 class="page-title">@yield('pageTitle')</h4>
-                </div>
+    <!--start sidebar -->
+    <aside class="sidebar-wrapper" data-simplebar="true">
+        <div class="sidebar-header">
+            <div>
+                <a href="{{route('site.home')}}" target="_blank">
+                    <img src="{{asset('assets/admin/'. $lang . '/images/logo-icon-2.png')}}" class="logo-icon" alt="logo icon">
+                </a>
+            </div>
+            <div>
+                <a href="{{route('site.home')}}" target="_blank">
+                    <h4 class="logo-text">COD AFRICA</h4>
+                </a>
+            </div>
+            <div class="toggle-icon ms-auto">
+                <ion-icon name="menu-sharp"></ion-icon>
             </div>
 
-            <!-- Search input -->
-            <div class="search-wrap" id="search-wrap">
-                <div class="search-bar">
-                    <form method="post" action="" enctype="multipart/form-data">
-                        @csrf
-                        <input class="search-input form-control" name="name" placeholder="Search" />
-                    </form>
-                    <a href="#" class="close-search toggle-search" data-target="#search-wrap">
-                        <i class="mdi mdi-close-circle"></i>
-                    </a>
-                </div>
+        </div>
+        <!--navigation-->
+
+        <ul class="metismenu" id="menu">
+
+            @include('admin.sections')
+
+        </ul>
+
+        <!--end navigation-->
+    </aside>
+    <!--end sidebar -->
+
+
+    <header class="top-header">
+        <nav class="navbar navbar-expand gap-3">
+            <div class="mobile-menu-button">
+                <ion-icon name="menu-sharp"></ion-icon>
             </div>
-
-            <div class="d-flex">
-
-                <div class="dropdown d-none d-lg-inline-block mr-2">
-                    <button type="button" class="btn header-item toggle-search noti-icon waves-effect" data-target="#search-wrap">
-                        <i class="mdi mdi-magnify"></i>
-                    </button>
+            <form class="searchbar">
+                <div class="position-absolute top-50 translate-middle-y search-icon ms-3">
+                    <ion-icon name="search-sharp"></ion-icon>
                 </div>
-
-                <div class="dropdown d-none d-lg-inline-block mr-3">
-                    <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
-                        <i class="mdi mdi-fullscreen"></i>
-                    </button>
+                <input class="form-control" type="text" placeholder="Search for anything">
+                <div class="position-absolute top-50 translate-middle-y search-close-icon">
+                    <ion-icon name="close-sharp"></ion-icon>
                 </div>
-                <div class="dropdown d-inline-block mr-3">
-                    <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ion ion-md-notifications"></i>
-                        <?php  $newNoti = [] ?>
-                        <span class="badge badge-danger badge-pill">{{count($newNoti)}}</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0" aria-labelledby="page-header-notifications-dropdown">
-                        <div class="p-3">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h5 class="m-0 font-size-14"> {{__('admin/section.Notifications')}} {{count($newNoti)}} </h5>
+            </form>
+            <div class="top-navbar-right ms-auto">
+
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item mobile-search-button">
+                        <a class="nav-link" href="javascript:;">
+                            <div class="">
+                                <ion-icon name="search-sharp"></ion-icon>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link dark-mode-icon" href="javascript:;">
+                            <div class="mode-icon">
+                                <ion-icon name="moon-sharp"></ion-icon>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown dropdown-large dropdown-apps">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+                            <div class="">
+                                <ion-icon name="apps-sharp"></ion-icon>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                            <div class="row row-cols-3 g-3 p-3">
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-purple text-white">
+                                        <ion-icon name="cart-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Orders</div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-info text-white">
+                                        <ion-icon name="people-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Teams</div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-success text-white">
+                                        <ion-icon name="shield-checkmark-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Tasks</div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-danger text-white">
+                                        <ion-icon name="videocam-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Media</div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-warning text-white">
+                                        <ion-icon name="file-tray-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Files</div>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="app-box mx-auto bg-gradient-branding text-white">
+                                        <ion-icon name="notifications-sharp"></ion-icon>
+                                    </div>
+                                    <div class="app-title">Alerts</div>
                                 </div>
                             </div>
                         </div>
-                        <div data-simplebar style="max-height: 230px;">
-                            @foreach($newNoti as $notify)
-                                <a href="" class="text-reset notification-item">
-                                    <div class="media">
-                                        <div class="avatar-xs mr-3">
-                                        <span class="avatar-title bg-success rounded-circle font-size-16">
-                                            <i class="mdi mdi-cart-outline"></i>
-                                        </span>
+                    </li>
+                    <li class="nav-item dropdown dropdown-large">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+                            <div class="position-relative">
+                                <span class="notify-badge">8</span>
+                                <ion-icon name="notifications-sharp"></ion-icon>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a href="javascript:;">
+                                <div class="msg-header">
+                                    <p class="msg-header-title">Notifications</p>
+                                    <p class="msg-header-clear ms-auto">Marks all as read</p>
+                                </div>
+                            </a>
+                            <div class="header-notifications-list">
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-primary">
+                                            <ion-icon name="cart-outline"></ion-icon>
                                         </div>
-                                        <div class="media-body">
-                                            <h6 class="mt-0 font-size-15 mb-1">{{$notify->category->name}}</h6>
-                                            <a href="{{route('notifications.update.notify.get',['notification'=>$notify->id])}}">
-                                                <div class="font-size-12 text-muted">
-                                                    <p class="mb-1">{{__('home.warning_product')}} {{$notify->curent_number}}</p>
-                                                </div>
-                                            </a>
-
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">New Orders <span class="msg-time float-end">2 min
+                            ago</span></h6>
+                                            <p class="msg-info">You have recived new orders</p>
                                         </div>
                                     </div>
                                 </a>
-                            @endforeach
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-danger">
+                                            <ion-icon name="person-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">New Customers<span class="msg-time float-end">14 Sec
+                            ago</span></h6>
+                                            <p class="msg-info">5 new user registered</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-success">
+                                            <ion-icon name="document-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">24 PDF File<span class="msg-time float-end">19 min
+                            ago</span></h6>
+                                            <p class="msg-info">The pdf files generated</p>
+                                        </div>
+                                    </div>
+                                </a>
 
-                        </div>
-                        <div class="p-2 border-top">
-                            <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="">
-                                View all
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-info">
+                                            <ion-icon name="checkmark-done-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">New Product Approved <span class="msg-time float-end">2 hrs ago</span></h6>
+                                            <p class="msg-info">Your new product has approved</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-warning">
+                                            <ion-icon name="send-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">Time Response <span class="msg-time float-end">28 min
+                            ago</span></h6>
+                                            <p class="msg-info">5.1 min avarage time response</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-danger">
+                                            <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">New Comments <span class="msg-time float-end">4 hrs
+                            ago</span></h6>
+                                            <p class="msg-info">New customer comments recived</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-primary">
+                                            <ion-icon name="albums-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
+                            ago</span></h6>
+                                            <p class="msg-info">24 new authors joined last week</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-success">
+                                            <ion-icon name="shield-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">Your item is shipped <span class="msg-time float-end">5 hrs
+                            ago</span></h6>
+                                            <p class="msg-info">Successfully shipped your item</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="notify text-warning">
+                                            <ion-icon name="cafe-outline"></ion-icon>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="msg-name">Defense Alerts <span class="msg-time float-end">2 weeks
+                            ago</span></h6>
+                                            <p class="msg-info">45% less alerts last 4 weeks</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <a href="javascript:;">
+                                <div class="text-center msg-footer">View All Notifications</div>
                             </a>
                         </div>
-                    </div>
-                </div>
-
-
-                @if(LaravelLocalization::getCurrentLocale() == 'ar')
-                    <div class="dropdown d-none d-md-block mr-2">
-                        <button type="button" class="btn header-item waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="font-size-16"> العربية </span> <img class="ml-2" src="{{asset('assets/admin/images/ar_flag.png')}}" alt="Header Language" height="16">
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-
-                            <a href="{{ LaravelLocalization::getLocalizedURL('en') }}" class="dropdown-item notify-item">
-                                <img src="{{asset('assets/admin/images/us_flag.jpg')}}" alt="user-image" height="12"> <span class="align-middle"> English </span>
-                            </a>
-
-                        </div>
-                    </div>
-                @else
-                    <div class="dropdown d-none d-md-block mr-2">
-                        <button type="button" class="btn header-item waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="font-size-16"> English </span> <img class="ml-2" src="{{asset('assets/admin/images/us_flag.jpg')}}" alt="Header Language" height="16">
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-
-                            <a href="{{ LaravelLocalization::getLocalizedURL('ar') }}" class="dropdown-item notify-item">
-                                <img src="{{asset('assets/admin/images/ar_flag.png')}}" alt="user-image" height="12"> <span class="align-middle"> العربية </span>
-                            </a>
-
-                        </div>
-                    </div>
-                @endif
-
-                <div class="dropdown d-none d-md-block mr-2">
-                    <button type="button" class="btn header-item waves-effect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="font-size-16"> {{Session::get('currency')}}  </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-
-
-
-                        <a href="" class="dropdown-item notify-item">
-                            <span class="align-middle"> EGP </span>
+                    </li>
+                    <li class="nav-item dropdown dropdown-user-setting">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+                            <div class="user-setting">
+                                <img src="{{asset('assets/admin/'. $lang .'/images/avatars/06.png')}}" class="user-img" alt="">
+                            </div>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex flex-row align-items-center gap-2">
+                                        <img src="{{asset('assets/admin/'. $lang .'/images/avatars/06.png')}}" alt="" class="rounded-circle" width="54" height="54">
+                                        <div class="">
+                                            <h6 class="mb-0 dropdown-user-name">Jhon Deo</h6>
+                                            <small class="mb-0 dropdown-user-designation text-secondary">UI Developer</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="">
+                                            <ion-icon name="person-outline"></ion-icon>
+                                        </div>
+                                        <div class="ms-3"><span>Profile</span></div>
+                                    </div>
+                                </a>
+                            </li>
 
 
 
-                    </div>
-                </div>
-                <div class="dropdown d-inline-block">
-                    <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="rounded-circle header-profile-user" src="{{asset('assets/admin/images/logo.png')}}" alt="Header Avatar">
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <!-- item-->
-                        <a class="dropdown-item" href=""><i class="bx bx-user font-size-16 align-middle mr-1"></i> {{__('layout.profile')}}</a>
-                        <a class="dropdown-item d-block" href=""><i class="bx bx-wrench font-size-16 align-middle mr-1"></i> {{__('layout.transactions')}}</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item text-danger" href="#">
-                            {{-- <i class="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i> --}}
-                            <form action="{{route('logout')}}" method="post">
-                                @csrf
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form class="dropdown-item" form action="{{route('logout')}}" method="post">
+                                    <div class="d-flex align-items-center">
 
-                                <input type="submit" value="{{__('layout.logout')}}" class="dropdown-item text-danger">
-                            </form>
-                        </a>
-                    </div>
-                </div>
+                                        <input class="btn btn-danger" type="submit" value="{{__('layout.logout')}}" >
+                                    </div>
+                                    @csrf
+                                </form>
+
+
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
 
             </div>
-        </div>
+        </nav>
     </header>
 
-    <!-- ========== Left Sidebar Start ========== -->
-    <div class="vertical-menu">
-
-        <div data-simplebar class="h-100">
-            {{-- @if(LaravelLocalization::getCurrentLocale() == 'ar')
-                @include('vendor.sections.sections_ar')
-            @else --}}
-            @include('admin.sections')
-            {{-- @endif --}}
-
-        </div>
-    </div>
-    <!-- Left Sidebar End -->
-
-    <!-- ============================================================== -->
-    <!-- Start right Content here -->
-    <!-- ============================================================== -->
-
-    @if($errors->any())
-        <center><div class="col-sm-12 btn btn-success">{{ implode('', $errors->all()) }}</div></center>
-    @endif
-
-    <div class="main-content">
-
+    <div class="page-content-wrapper">
         <div class="page-content">
-            <div class="container-fluid">
-                @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+            @if($errors->any())
+                <center>
+                    <div class="alert alert-danger alert-block">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
+                        <strong>{{ implode('', $errors->all()) }}</strong>
                     </div>
-                @endif
-                @yield("content")
-
-            </div> <!-- container-fluid -->
-        </div>
-        <!-- End Page-content -->
-
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-
+                </center>
+            @endif
+            @if ($message = Session::get('success'))
+                <div class="alert alert-success alert-block">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
+                    <strong>{{ $message }}</strong>
                 </div>
+            @endif
+
+            @yield("content")
+
+
+        </div>
+    </div>
+    <!--end page content wrapper-->
+    <!--start switcher-->
+    <div class="switcher-body">
+        <button  class="btn btn-primary btn-switcher shadow-sm" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+            <ion-icon name="color-palette-sharp" class="me-0"></ion-icon>
+        </button >
+        <div class="offcanvas offcanvas-end shadow border-start-0 p-2" data-bs-scroll="true" data-bs-backdrop="false"
+             tabindex="-1" id="offcanvasScrolling">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Theme Customizer</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
             </div>
-        </footer>
+            <div class="offcanvas-body">
+                <h6 class="mb-0">Theme Variation</h6>
+                <hr>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="DarkTheme" value="option2">
+                    <label class="form-check-label" for="DarkTheme">Dark</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="SemiDark" value="option3"
+                           checked>
+                    <label class="form-check-label" for="SemiDark">Semi Dark</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="LightTheme" value="option1">
+                    <label class="form-check-label" for="LightTheme">Light</label>
+                </div>
+                <hr />
+                <h6 class="mb-0">Header Colors</h6>
+                <hr />
+                <div class="header-colors-indigators">
+                    <div class="row row-cols-auto g-3">
+                        <div class="col">
+                            <div class="indigator headercolor1" id="headercolor1"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor2" id="headercolor2"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor3" id="headercolor3"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor4" id="headercolor4"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor5" id="headercolor5"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor6" id="headercolor6"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor7" id="headercolor7"></div>
+                        </div>
+                        <div class="col">
+                            <div class="indigator headercolor8" id="headercolor8"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <!-- end main content-->
+
+
+    <!--start footer-->
+<!--    <footer class="footer">
+        <div class="footer-text">
+            Copyright © 2021. All right reserved.
+        </div>
+    </footer>-->
+    <!--end footer-->
+
+
+    <!--Start Back To Top Button-->
+    <a href="javaScript:;" class="back-to-top">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+    </a>
+    <!--End Back To Top Button-->
+
+
+
+    <!--start overlay-->
+    <div class="overlay nav-toggle-icon"></div>
+    <!--end overlay-->
 
 </div>
-<!-- END layout-wrapper -->
+<!--end wrapper-->
 
 
-<script src="{{asset("assets/admin/libs/jquery/jquery.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/bootstrap/js/bootstrap.bundle.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/metismenu/metisMenu.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/simplebar/simplebar.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/node-waves/waves.min.js")}}"></script>
-<!-- Plugin Js-->
-<script src="{{asset('assets/admin/libs/chartist/chartist.min.js')}}"></script>
-<script src="{{asset('assets/admin/libs/chartist-plugin-tooltips/chartist-plugin-tooltip.min.js')}}"></script>
-<!-- demo js-->
-<script src="{{asset('assets/admin/js/pages/chartist.init.js')}}"></script>
+<!-- JS Files-->
+<script src="{{asset('assets/admin/'. $lang . '/js/jquery.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/plugins/simplebar/js/simplebar.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/plugins/metismenu/js/metisMenu.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/js/bootstrap.bundle.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/plugins/apexcharts-bundle/js/apexcharts.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/plugins/chartjs/chart.min.js')}}"></script>
+<script src="{{asset('assets/admin/'. $lang . '/js/index.js')}}"></script>
+<!-- Main JS-->
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<!--plugins-->
+<script src="{{asset('assets/admin/'. $lang . '/plugins/perfect-scrollbar/js/perfect-scrollbar.js')}}"></script>
+<script src="{{asset('assets/admin/' . $lang . '/plugins/datatable/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/admin/' . $lang . '/plugins/datatable/js/dataTables.bootstrap5.min.js')}} "></script>
+<script src="{{asset('assets/admin/' . $lang . '/js/table-datatable.js')}}"></script>
 
 
 
+<!--plugins-->
+<script src="{{asset('assets/admin/' . $lang . '/plugins/apexcharts-bundle/js/apexcharts.min.js')}}"></script>
+<script src="{{asset('assets/admin/' . $lang . '/plugins/apexcharts-bundle/js/apex-custom.js')}}"></script>
 
-<script src="{{asset('assets/admin/libs/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('assets/admin/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-<script src="{{asset('assets/admin/libs/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
-<script src="{{asset('assets/admin/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js')}}"></script>
 
-<!-- Ecommerce init js -->
-<script src="{{asset('assets/js/pages/ecommerce.init.js')}}"></script>
-
-<script src="{{asset('assets/js/app.js')}}"></script>
-@yield("script")
+<!-- Main JS-->
+<script src="{{asset('assets/admin/'. $lang . '/js/main.js')}}"></script>
 <script>
-        $(document).ready(function() {
-            $('#datatable').DataTable( {
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
-            } );
-        } );
-    </script>
 
-<script src="{{asset("assets/admin/libs/datatables.net/js/jquery.dataTables.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-buttons/js/dataTables.buttons.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/jszip/jszip.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/pdfmake/build/pdfmake.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/pdfmake/build/vfs_fonts.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-buttons/js/buttons.html5.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-buttons/js/buttons.print.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-buttons/js/buttons.colVis.min.j")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-responsive/js/dataTables.responsive.min.js")}}"></script>
-<script src="{{asset("assets/admin/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js")}}"></script>
-<script src="{{asset("assets/admin/js/pages/datatables.init.js")}}"></script>
-<script src="{{asset("assets/admin/js/app.js")}}"></script>
 
+    $( document ).ready(function() {
+        //$("html").attr("class", "light-theme")
+    });
+
+
+</script>
 
 </body>
+
 </html>
-    <script src="{{asset("assets/admin/libs/d3/d3.min.js")}}"></script>
-    <script src="{{asset("assets/admin/libs/c3/c3.min.js")}}"></script>
-    {{-- <script src="{{asset("assets/admin/js/pages/c3-chart.init.js")}}"></script> --}}

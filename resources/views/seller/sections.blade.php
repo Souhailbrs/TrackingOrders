@@ -1,67 +1,152 @@
- <div id="sidebar-menu">
-    <!-- Left Menu Start -->
-    <ul class=" list-unstyled" id="side-menu">
+<?php
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+
+$type_users =  Auth::guard('seller')->user()->id;
+?>
         <li>
+
             <a href="{{route('seller.home',['type_users'=>$type_users])}}">
-                <i class="fas fa-home"></i>
-                <span> {{__('Seller Dashboard')}} </span>
+                <div class="parent-icon">
+                    <ion-icon name="home-sharp"></ion-icon>
+                </div>
+                <div class="menu-title">{{__('Seller Dashboard')}} </div>
+
             </a>
         </li>
 
         <li>
-            <a href="javascript: void(0);" class="has-arrow">
-                <i class="fas fa-hospital"></i>
-                <span>Sells Channels</span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
+            <a href="javascript: void(0);" >
+                <div class="parent-icon">
+                    <ion-icon name="storefront-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__(' Sells Channels')}} </div>
 
-                <li><a href="{{route('seller.sellChannels.index')}}">{{__('View All')}}</a></li>
-                <li><a href="{{route('seller.sellChannels.create')}}">{{__('Add New Channel')}}</a></li>
+            </a>
+            <ul>
+
+                <li>
+                    <a href="{{route('seller.sellChannels.index')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' View All')}}</div>
+
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('seller.sellChannels.create')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' Add New')}}</div>
+
+                    </a>
+                </li>
             </ul>
         </li>
 
         <li>
-            <a href="javascript: void(0);" class="has-arrow">
-                <i class=" fas fa-school"></i>
-                <span>Inventory</span>
+            <a href="javascript: void(0);" >
+                <div class="parent-icon">
+                    <ion-icon name="wallet-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__(' Inventory')}} </div>
+
             </a>
-            <ul class="sub-menu" aria-expanded="false">
+            <ul>
+
+                <li>
+                    <a href="{{route('seller.inventory.requests')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="arrow-redo-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' My Requests')}}</div>
+
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('seller.inventories.index')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="receipt-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' View All')}}</div>
+
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('seller.inventories.create')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' Add To Inventory')}}</div>
+
+                    </a>
+                </li>
+            </ul>
+        </li>
 
 
-                <li><a href="{{route('seller.inventory.requests')}}">{{__('My Requests')}}</a></li>
-                <li><a href="{{route('seller.inventories.index')}}">{{__('View All')}}</a></li>
-                <li><a href="{{route('seller.inventories.create')}}">{{__('Add To Inventory')}}</a></li>
+        <li>
+            <a href="javascript: void(0);" >
+                <div class="parent-icon">
+                    <ion-icon name="cube-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__(' Products')}} </div>
 
+            </a>
+            <ul>
 
+                <li>
+                    <a href="{{route('seller.products.index')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' My Products')}}</div>
+
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{route('seller.products.create')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' Add New Product')}}</div>
+
+                    </a>
+                </li>
             </ul>
         </li>
         <li>
-            <a href="javascript: void(0);" class="has-arrow">
-                <i class=" fas fa-home"></i>
-                <span>Products</span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('seller.products.index')}}">{{__('My Products')}}</a></li>
-                <li><a href="{{route('seller.products.create')}}">{{__('Add New Product')}}</a></li>
+            <a href="javascript: void(0);" >
+                <div class="parent-icon">
+                    <ion-icon name="earth-outline"></ion-icon>
+                </div>
+                <div class="menu-title">{{__(' Orders')}} </div>
 
+            </a>
+            <ul>
+
+                <li>
+                    <a href="{{route('seller.orders.index')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' View All')}}</div>
+
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{route('seller.orders.create')}}" >
+                        <div class="parent-icon">
+                            <ion-icon name="add-outline"></ion-icon>
+                        </div>
+                        <div class="menu-title">{{__(' Add New Order')}}</div>
+
+                    </a>
+                </li>
             </ul>
         </li>
 
-        <li>
-            <a href="javascript: void(0);" class="has-arrow">
-                <i class=" fas fa-layer-group"></i>
-                <span>Orders</span>
-            </a>
-            <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{route('seller.orders.index')}}">{{__('View All')}}</a></li>
-                <li><a href="{{route('seller.orders.create')}}">{{__('Add New Order')}}</a></li>
-            </ul>
-        </li>
-
-
-
-
-
-
-    </ul>
-</div>

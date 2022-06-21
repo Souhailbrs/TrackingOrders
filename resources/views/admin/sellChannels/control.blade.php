@@ -5,7 +5,6 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @include('admin.includes.messages')
                     <form class="row text-center">
                         <div class="col-sm-6 h5">
                             <lable>{{__('admin/fields.import_from_excel')}}</lable>

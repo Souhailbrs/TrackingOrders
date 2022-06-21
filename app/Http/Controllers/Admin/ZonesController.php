@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Seller;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ZonesController extends Controller
 {
@@ -21,7 +22,19 @@ class ZonesController extends Controller
      */
     public function index()
     {
-        $records = Zone::orderBy('id', 'ASC')->get();
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $records = Zone::orderBy('id', 'ASC')->get();
+        }else{
+           $cities =  Auth::guard('admin')->user()->country->cities;
+           $records = [];
+           foreach($cities as $city){
+               $city_zones = $city->zones;
+               foreach($city_zones as $zone){
+                   $records[] = $zone;
+               }
+           }
+
+        }
         return view('admin.zones.index',compact('records'));
     }
 
@@ -34,7 +47,12 @@ class ZonesController extends Controller
     {
         $records = City::get();
         $countries  = Country::get();
-        return view('admin.zones.create',compact('records','countries'));
+        if(Auth::guard('admin')->user()->is_super_admin){
+            $cities = City::get();
+        }else{
+            $cities = City::where('country_id',Auth::guard('admin')->user()->country_id)->get();
+        }
+        return view('admin.zones.create',compact('records','countries','cities'));
     }
 
     /**
@@ -148,8 +166,11 @@ class ZonesController extends Controller
     {
         $record = Zone::find($id);
         $countries = Country::get();
-        $cities = City::get();
-
+        if(Auth::guard('admin')->user()->is_super_admin){
+            $cities = City::get();
+        }else{
+            $cities = City::where('country_id',Auth::guard('admin')->user()->country_id)->get();
+        }
         return view('admin.zones.edit',compact('record','countries','cities'));
     }
 

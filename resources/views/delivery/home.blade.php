@@ -8,10 +8,13 @@
     <link href="{{asset("assets/admin/libs/c3/c3.min.css")}}" id="bootstrap-style" rel="stylesheet" type="text/css"/>
 @endsection
 @section("content")
+    <div class="container">
+
+
     {{-- {{ Money::USD(500)}} --}}
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card" style="min-height:800px">
                 <div class="card-body table-responsive ">
                     @if ($message = Session::get('success'))
                         <div class="alert alert-success alert-block">
@@ -28,7 +31,7 @@
 
                     <div class="row">
                         <div class="col-sm-12 text-center h2" >
-                            {{__($filter)}} Orders
+                            {{__('orders.'.$filter)}}
                             <hr>
                         </div>
                         @if(count($orders) > 0)
@@ -36,52 +39,53 @@
 
                         <div class="col-md-4 col-sm-12 card text-center" style="padding:20px">
                             @if( $record->status == 0)
-                                <span class="btn btn-warning" >Order # {{$record->id}} is New Order</span>
+                                <span class="btn btn-warning" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.new_order')}}</span>
                             @elseif( $record->status == 1)
-                                <span class="btn btn-info" >Order  # {{$record->id}} is Call Center Received</span>
+                                <span class="btn btn-info" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.call_center_received')}}</span>
                             @elseif( $record->status == 2 )
-                                <span class="btn btn-danger" >Order  # {{$record->id}} is No Answer Call Center</span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.no_answer_call_center')}}</span>
                             @elseif ($record->status == 3)
-                                <span class="btn btn-danger" >Order  # {{$record->id}} is Wrong Answer</span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.wrong_answer')}}</span>
                             @elseif($record->status == 4)
-                                <span class="btn btn-success" >Order  # {{$record->id}} is Confirm Order</span>
+                                <span class="btn btn-success" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.confirm_order')}}</span>
                             @elseif( $record->status == 5)
-                                <span class="btn btn-secondary" >Order # {{$record->id}} is Not Confirm Order</span>
+                                <span class="btn btn-secondary" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.not_confirm_order')}}</span>
                             @elseif($record->status == 6)
-                                <span class="btn btn-danger" >Order  # {{$record->id}} is Cancelled Order</span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.canceled_order')}}</span>
                             @elseif($record->status == 7)
-                                <span class="btn btn-success" >Order  # {{$record->id}} is Ready to be Delivered</span>
+                                <span class="btn btn-success" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.ready_to_be_delivered')}}</span>
                             @elseif($record->status == 8)
-                                <span class="btn btn-success" >Order  # {{$record->id}} is Received by Delivery</span>
+                                <span class="btn btn-success" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.received_by_delivery')}}</span>
                             @elseif($record->status == 9)
-                                <span class="btn btn-danger" >Order  # {{$record->id}} is Delivery Refused Order</span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.delivery_refused_order')}}</span>
                             @elseif($record->status == 10)
-                                <span class="btn btn-primary" >Order  # {{$record->id}} is Customer Received</span>
+                                <span class="btn btn-primary" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.customer_received')}}</span>
                             @elseif($record->status == 11)
-                                <span class="btn btn-danger" >Order  # {{$record->id}} is Customer Cancelled </span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.canceled_order')}}</span>
                             @elseif($record->status == 12)
-                                <span class="btn btn-danger">Order  # {{$record->id}} is No Answer Delivery Boy</span>
+                                <span class="btn btn-danger">{{__('orders.order')}} # {{$record->id}}  {{__('orders.no_answer_delivery_boy')}}</span>
                             @elseif($record->status == 13)
-                                <span class="btn btn-danger" >Order is : # {{$record->id}} is Customer Didn't deliver</span>
+                                <span class="btn btn-danger" >{{__('orders.order')}} # {{$record->id}}  {{__('orders.customer_didnot_deliver')}}</span>
                             @endif
 
 
 
-                            <div class="card-body">
-                                <center>
-                                    <h3>
+                            <div class="card-body text-center">
+
+                                    <h3 class="text-center">
                                         Mr , {{$record->customer_name}}
                                     </h3>
                                     <table class="table table-bordered">
                                         <tr>
                                             <th>
-                                                Product Name
+                                                {{__('orders.product')}}
                                             </th>
                                             <th>
-                                                Price
+                                                {{__('orders.price')}}
+
                                             </th>
                                             <th>
-                                                Amount
+                                                {{__('orders.quantity')}}
                                             </th>
                                         </tr>
                                         <?php $total = 0; ?>
@@ -101,7 +105,8 @@
                                         @endforeach
                                         <tr>
                                             <th>
-                                                Total Price
+                                                {{__('orders.total_price')}}
+
                                             </th>
                                             <th colspan="2" class="text-center">
                                                 {{$total}}
@@ -109,12 +114,11 @@
                                         </tr>
 
                                     </table>
-                                </center>
 
 
 
-                                <a href="tel:+{{$record->customer_phone1}}" class="btn btn-dark">Call Customer</a>
-                                <a data-toggle="modal" data-target="#exampleModalCenter{{$record->id}}" class="btn btn-dark">Change State</a>
+                                <a href="tel:+{{$record->customer_phone1}}" class="btn btn-dark">{{__('orders.Call_Customer')}}</a>
+                                <a data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{$record->id}}" class="btn btn-dark">{{__('orders.Change_state')}}</a>
 
                             </div>
                             <div class="card-footer text-muted">
@@ -124,7 +128,7 @@
                         @endforeach
                         @else
                             <div class="col-sm-12 card text-center h5" style="border: 5px double black;padding:20px">
-                                There is no orders yet!
+                               {{__('orders.There_is_no_orders_yet!')}}
                             </div>
                             @endif
                     </div>
@@ -141,7 +145,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h6>Order # {{$record->id}}</h6>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -151,13 +155,13 @@
                         <table class="table">
                             <tr>
                                 <th>
-                                    State
+                                    {{__('orders.State')}}
                                 </th>
                                 <th>
                                     <select name="state" class="btn btn-dark form-control">
-                                        <option value="12">Don't reply</option>
-                                        <option value="11">Cancelled</option>
-                                        <option value="10">Received</option>
+                                        <option value="12">{{__('orders.Dont_Reply')}}</option>
+                                        <option value="11">{{__('orders.Cancelled')}}</option>
+                                        <option value="10">{{__('orders.Received')}}</option>
                                     </select>
                                     <input type="hidden" name="order_id" value="{{$record->id}}">
                                 </th>
@@ -169,7 +173,7 @@
                             </tr>
                             <tr>
                                 <th colspan="2" class="text-center">
-                                    <button type="submit" class="btn btn-dark">Save changes</button>
+                                    <button type="submit" class="btn btn-dark">{{__('orders.Save_changes')}}</button>
 
                                 </th>
                             </tr>
@@ -183,5 +187,6 @@
     </div>
     @endforeach
     <!-- end row -->
+    </div>
 @endsection
 

@@ -5,7 +5,6 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @include('admin.includes.messages')
 
                     @if($action == 'store')
                         <form method="post" action="{{route($pages .'.'.$action)}}" id="myForm">

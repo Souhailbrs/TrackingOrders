@@ -9,6 +9,8 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 class DistrictsController extends Controller
 {
     /**
@@ -18,7 +20,22 @@ class DistrictsController extends Controller
      */
     public function index()
     {
-        $records = District::get();
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $records = District::get();
+        }else{
+            $cities =  Auth::guard('admin')->user()->country->cities;
+            $records = [];
+            foreach($cities as $city){
+                $city_zones = $city->zones;
+                foreach($city_zones as $zone){
+                    $zone_districts = $zone->districts;
+                    foreach ($zone_districts as $district){
+                        $records [] = $district;
+                    }
+                }
+            }
+
+        }
         return view('admin.districts.index',compact('records'));
     }
 
@@ -31,8 +48,11 @@ class DistrictsController extends Controller
     {
         $records = Zone::get();
         $countries = Country::get();
-        $cities = City::get();
-
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $cities = City::get();
+        }else{
+            $cities  = City::where('country_id', Auth::guard('admin')->user()->country_id)->get();
+        }
         return view('admin.districts.create',compact('records','countries','cities'));
     }
 
@@ -74,8 +94,20 @@ class DistrictsController extends Controller
     {
         $record = District::find($id);
         $countries = Country::get();
-        $cities = City::get();
-        $zones = Zone::get();
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $cities = City::get();
+        }else{
+            $cities = City::where('country_id',Auth::guard('admin')->user()->country_id)->get();
+        }
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $zones = Zone::get();
+        }else{
+            $cities_ids = [];
+            foreach($cities as $city){
+                $cities_ids [] = $city->id;
+            }
+            $zones = Zone::whereIn('city_id',$cities_ids)->get();
+        }
         return view('admin.districts.edit',compact('record','countries','cities','zones'));
     }
 

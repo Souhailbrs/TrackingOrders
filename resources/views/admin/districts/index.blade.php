@@ -7,18 +7,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive " >
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
+
 
                     <div class="container-fluid">
 
@@ -29,7 +19,8 @@
 
                                 <div class="card">
                                     <div class="card-body">
-                                        <table id="datatable" class="table table-striped dt-responsive nowrap table-vertical" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <div class="table-responsive">
+                                            <table id="example2" class="table table-striped table-bordered pt-3">
                                             <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -63,7 +54,7 @@
 
                                             </tbody>
                                         </table>
-
+                                        </div>
                                     </div>
                                 </div>
                             </div>

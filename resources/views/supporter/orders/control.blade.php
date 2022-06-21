@@ -2,12 +2,10 @@
 
 @section("pageTitle", $action . " "  . $page)
 @section("content")
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
+            <div class="card col-sm-12">
                 <div class="card-body">
                     @include('admin.includes.messages')
-                    <hr>
+                    <br>
                     @if($action == 'store')
                         <form method="post" action="{{route('supporter.'.$pages .'.'.$action)}}" id="myForm">
                             @else
@@ -18,53 +16,13 @@
                                     @endif
                                     @csrf
                                     <div class="row">
-                                            <a style="display:block;color:white" target="_blank"
-                                               href="{{route('supporter.site.trackOrder',['id'=>$data->id])}}"
-                                               class="col-sm-2 btn btn-dark h6 pt-3">
-                                                Track Order
-                                            </a>
+                                        <a style="display:block;color:white" target="_blank"
+                                           href="{{route('supporter.site.trackOrder',['id'=>$data->id])}}"
+                                           class="col-sm-2 btn btn-dark h6 pt-2">
+                                            Track Order
+                                        </a>
 
-
-<!--
-                                        <div class="col-sm-4 btn btn-ss text-center ">
-
-                                            <h6 class="col-sm-12 col-form-label">
-                                                Current Status:
-                                                @if( $data->status == 0)
-                                                    <span class="btn btn-warning" style="width:350px"> # {{$data->id}} is New Order</span>
-                                                @elseif( $data->status == 1)
-                                                    <span class="btn btn-info" style="width:350px"># {{$data->id}} is Call Center Received</span>
-                                                @elseif( $data->status == 2 )
-                                                    <span class="btn btn-danger" style="width:350px"> # {{$data->id}} is No Answer Call Center</span>
-                                                @elseif ($data->status == 3)
-                                                    <span class="btn btn-danger" style="width:350px"> # {{$data->id}} is Wrong Answer</span>
-                                                @elseif($data->status == 4)
-                                                    <span class="btn btn-success" style="width:350px"> # {{$data->id}} is Confirm Order</span>
-                                                @elseif( $data->status == 5)
-                                                    <span class="btn btn-secondary" style="width:350px"> # {{$data->id}} is Not Confirm Order</span>
-                                                @elseif($data->status == 6)
-                                                    <span class="btn btn-danger" style="width:350px"># {{$data->id}} Cancelled Order</span>
-                                                @elseif($data->status == 7)
-                                                    <span class="btn btn-success" style="width:350px"> # {{$data->id}} is Ready to be Delivered</span>
-                                                @elseif($data->status == 8)
-                                                    <span class="btn btn-success" style="width:350px"> # {{$data->id}} is Received by Delivery</span>
-                                                @elseif($data->status == 9)
-                                                    <span class="btn btn-danger" style="width:350px"># {{$data->id}} is Delivery Refused Order</span>
-                                                @elseif($data->status == 10)
-                                                    <span class="btn btn-primary" style="width:350px"> # {{$data->id}} is Customer Received</span>
-                                                @elseif($data->status == 11)
-                                                    <span class="btn btn-danger" style="width:350px"># {{$data->id}} is Customer Refused</span>
-                                                @elseif($data->status == 12)
-                                                    <span class="btn btn-danger" style="width:350px"># {{$data->id}} is No Answer Delivery Boy</span>
-                                                @elseif($data->status == 13)
-                                                    <span class="btn btn-danger" style="width:350px"> # {{$data->id}} is Customer Didn't deliver</span>
-                                                @endif
-                                            </h6>
-
-
-                                        </div>
--->
-                                        <div class="col-sm-8 btn btn-ss text-center ">
+                                        <div class="col-sm-8" >
                                         <?php $last_status = \App\Models\OrderTrack::where('sales_channele_order',$data->id)->get();
                                         if(count($last_status)-2 < 0){
                                             $index = 0;
@@ -77,52 +35,55 @@
                                         $last_status = $last_status[$index];
 
                                             ?>
-                                            <h6 class="col-sm-12 col-form-label">
-                                                @if( $last_status->last_status == 0)
-                                                    <span class="btn btn-warning" style="width:500px"> # {{$data->id}} is New Order</span>
-                                                @elseif( $last_status->last_status == 1)
-                                                    <span class="btn btn-info" style="width:500px"># {{$data->id}} is Call Center Received</span>
-                                                @elseif( $last_status->last_status == 2 )
-                                                    <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is No Answer Call Center</span>
-                                                @elseif ($last_status->last_status == 3)
-                                                    <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is Wrong Answer</span>
-                                                @elseif($last_status->last_status == 4)
-                                                    <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Confirm Order</span>
-                                                @elseif( $last_status->last_status == 5)
-                                                    <span class="btn btn-secondary" style="width:500px"> # {{$data->id}} is Not Confirm Order</span>
-                                                @elseif($last_status->last_status == 6)
-                                                    <span class="btn btn-danger" style="width:500px"># {{$data->id}} Cancelled Order</span>
-                                                @elseif($last_status->last_status == 7)
-                                                    <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Ready to be Delivered</span>
-                                                @elseif($last_status->last_status == 8)
-                                                    <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Received by Delivery</span>
-                                                @elseif($last_status->last_status == 9)
-                                                    <span class="btn btn-danger" style="width:500px"># {{$data->id}} is Delivery Refused Order</span>
-                                                @elseif($last_status->last_status == 10)
-                                                    <span class="btn btn-primary" style="width:500px"> # {{$data->id}} is Customer Received</span>
-                                                @elseif($last_status->last_status == 11)
-                                                    <span class="btn btn-danger" style="width:500px"># {{$data->id}} is Customer Refused</span>
-                                                @elseif($last_status->last_status == 12)
-                                                    <span class="btn btn-danger" style="width:500px"># {{$data->id}} is No Answer Delivery Boy</span>
-                                                @elseif($last_status->last_status == 13)
-                                                    <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is Customer Didn't deliver</span>
-                                                @endif
-                                            </h6>
+
+                                                <div class="col-sm-12 h6 text-center">
+                                                    @if( $last_status->last_status == 0)
+                                                        <span class="btn btn-warning" style="width:500px"> # {{$data->id}} is New Order</span>
+                                                    @elseif( $last_status->last_status == 1)
+                                                        <span class="btn btn-info" style="width:500px"># {{$data->id}} is Call Center Received</span>
+                                                    @elseif( $last_status->last_status == 2 )
+                                                        <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is No Answer Call Center</span>
+                                                    @elseif ($last_status->last_status == 3)
+                                                        <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is Wrong Answer</span>
+                                                    @elseif($last_status->last_status == 4)
+                                                        <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Confirm Order</span>
+                                                    @elseif( $last_status->last_status == 5)
+                                                        <span class="btn btn-secondary" style="width:500px"> # {{$data->id}} is Not Confirm Order</span>
+                                                    @elseif($last_status->last_status == 6)
+                                                        <span class="btn btn-danger" style="width:500px"># {{$data->id}} Cancelled Order</span>
+                                                    @elseif($last_status->last_status == 7)
+                                                        <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Ready to be Delivered</span>
+                                                    @elseif($last_status->last_status == 8)
+                                                        <span class="btn btn-success" style="width:500px"> # {{$data->id}} is Received by Delivery</span>
+                                                    @elseif($last_status->last_status == 9)
+                                                        <span class="btn btn-danger" style="width:500px"># {{$data->id}} is Delivery Refused Order</span>
+                                                    @elseif($last_status->last_status == 10)
+                                                        <span class="btn btn-primary" style="width:500px"> # {{$data->id}} is Customer Received</span>
+                                                    @elseif($last_status->last_status == 11)
+                                                        <span class="btn btn-danger" style="width:500px"># {{$data->id}} is Customer Refused</span>
+                                                    @elseif($last_status->last_status == 12)
+                                                        <span class="btn btn-danger" style="width:500px"># {{$data->id}} is No Answer Delivery Boy</span>
+                                                    @elseif($last_status->last_status == 13)
+                                                        <span class="btn btn-danger" style="width:500px"> # {{$data->id}} is Customer Didn't deliver</span>
+                                                    @endif
+                                                </div>
+
+
 
 
                                         </div>
 
                                         <a style="display:block;color:white"
                                                href="{{route('supporter.end.order_state',['order'=>$data->id,'old'=>$data->status,'new'=>7])}}"
-                                               class="col-sm-2 btn btn-danger h6 pt-3">
+                                               class="col-sm-2 btn btn-danger h6 pt-2">
                                                 Next Order
                                             </a>
 
                                     </div>
 
 
-                                    <hr>
-                                    <div class="form-group row">
+                                    <br>
+                                    <div class="form-control text-center" style="border: 0 solid black">
                                         <div class="col-sm-1 mr-1">
                                         </div>
                                         <a class="col-sm-2 mr-1 btn btn-dark h6"
@@ -138,23 +99,25 @@
                                             Wrong Number
                                         </a>
 
-                                            <a data-toggle="modal" data-target="#exampleModalCenterConfirmed" class="col-sm-2 mr-1 btn btn-dark h6"
-                                               style="color:white" href="">
-                                                Confirmed
-                                            </a>
+                                        <a data-bs-toggle="modal" data-bs-target="#exampleModalCenterConfirmed"  class="col-sm-2 mr-1 btn btn-dark h6"
+                                           style="color:white" href="">
+                                            Confirmed
+                                        </a>
 
                                         <a class="col-sm-2 mr-1 btn btn-dark h6"
                                            href="{{route('supporter.change.order_state',['order'=>$data->id,'old'=>$data->status,'new'=>5])}}"
                                            style="color:white">
                                             Not Confirmed
                                         </a>
-                                        <a data-toggle="modal" data-target="#exampleModalCenterNotConfirmed" class="col-sm-2 mr-1 btn btn-dark h6"
+                                        <a data-bs-toggle="modal" data-bs-target="#exampleModalCenterNotConfirmed" class="col-sm-2 mr-1 btn btn-dark h6"
                                            style="color:white" href="">
                                             Cancelled
                                         </a>
                                     </div>
-                                    <hr>
-                                    <center>
+                                    <br>
+                                   <div class="form-control text-center" style="border: 0 solid black">
+
+
 
                                         <a style="display:inline-block;margin-right: 30px" href="{{$data->url}}"  target="_blank" class=" ">
                                             <img src="{{asset('assets/site/images/url.jpg')}}" height="40" width="40" alt="...">
@@ -170,7 +133,7 @@
                                         $whats .= ' رابط المنج' .$data->url;
                                         ?>
 
-                                        <a style="display:inline-block;margin-right: 30px" href="https://wa.me/{{'+212'. $data->customer_phone1 }}?text={{$whats}}" data-action="share/whatsapp/share" target="_blank" class=" ">
+                                        <a style="display:inline-block;margin-right: 30px" href="https://wa.me/{{'00222'. $data->customer_phone1 }}?text={{$whats}}" data-action="share/whatsapp/share" target="_blank" class=" ">
                                             <img src="{{asset('assets/site/images/Flat-logo-WhatsApp-PNG.png')}}" height="40" width="40" alt="...">
                                         </a>
 
@@ -183,19 +146,19 @@
 
 
 
-                                    </center>
+                                   </div>
 
 
 
                                     <hr>
                                     <div class="row">
 
-                                        <div class="col-sm-12">
-                                            <center>
-                                                <input class="form-control btn-dark" type="button"
+                                        <div class="col-sm-12 text-center">
+
+                                                <input class="form-control btn-dark text-center" type="button"
                                                        id="example-text-input"
                                                        value="Add More" onClick="clone()">
-                                            </center>
+
                                         </div>
 
                                     </div>
@@ -210,7 +173,7 @@
                                                 <div id="product_id1">
                                                     <div class="row mt-2">
                                                         <div class="col-sm-2">
-                                                            <button data-toggle="modal" data-target="#exampleModalCenterProduct{{$pro->one_product->id}}" class="btn btn-dark col-sm-12" style="color:black" type="button">View image</button>
+                                                            <button data-toggle="modal" data-target="#exampleModalCenterProduct{{$pro->one_product->id}}" class="btn btn-primary col-sm-12"  type="button">View image</button>
                                                         </div>
                                                         <div class="col-sm-3 ">
                                                             <select class="form-control products_id product_id_view"
@@ -251,7 +214,7 @@
                                         @if(count($data->product) > 0)
                                         <div class="row mt-2">
                                             <div class="col-sm-2">
-                                                <button data-toggle="modal" data-target="#exampleModalCenterProduct{{$pro->one_product->id}}" class="btn btn-dark col-sm-12" style="color:black" type="button">View image</button>
+                                                <button data-toggle="modal" data-target="#exampleModalCenterProduct{{$pro->one_product->id}}" class="btn btn-primary col-sm-12" style="color:black" type="button">View image</button>
                                             </div>
                                             <div class="col-sm-3 ">
                                                 <select class="form-control products_id product_id_view"
@@ -316,8 +279,7 @@
                                     </div>
 
 
-
-
+                                    <br>
                                     <div class="form-group row">
                                         <div class="col-12 text-center">
                                             @if($action == 'store')
@@ -329,13 +291,13 @@
                                             @endif
                                         </div>
                                     </div>
+                                    <br>
 
                                 </form>
                         </form>
                 </div>
             </div>
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenterConfirmed" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -343,9 +305,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Confirmed Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
                 </div>
                 <div class="modal-body">
                     <form method="post"
@@ -462,9 +424,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Cancelled Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
                 <div class="modal-body">
                     <form method="post"
@@ -509,9 +470,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Product Image</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
                 <div class="modal-body">
                     <img src="{{asset('assets/admin/products/' . $pro->one_product->image )}}" alt="" style="height: 500px;width:100%">

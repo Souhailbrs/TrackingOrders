@@ -24,6 +24,7 @@ Route::group(['prefix'=>'user','namespace'=>'Users'],function(){
     Route::get('users/delete/{id}/{type}','UsersController@destroy')->name('users.destroy');
 
 });
+    Route::get('/UpdateSomeOrders', 'AdvancedController@updateOrdersToBeNewToday');
 
 Route::resource('sellChannels','SellChannelsController');
 Route::get('sellChannels/Change/status/{id}','SellChannelsController@ChangeStatus')->name('changeSaleId');
@@ -68,6 +69,8 @@ Route::get('actionAlternative/{zone_id}/{delivery}/{action}','ZonesController@ac
 Route::post('actionAlternativePost','ZonesController@actionAlternativePost')->name('actionAlternativePost');
 
 Route::resource('districts','DistrictsController');
+Route::get('/earnings', 'AdvancedController@earnings')->name('earnings');
+Route::get('/earnings/reports/{seller}', 'AdvancedController@reports')->name('earnings.reports');
 
 
 Route::post('/sadstore', 'SalesChannels\SalesChannelsController@store')->name('sad.post');

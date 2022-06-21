@@ -6,18 +6,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
+
 
                     <form method="post" action="{{route('districts.update',['district'=>$record->id])}}" enctype="multipart/form-data">
                         @csrf
@@ -35,6 +25,7 @@
                                 <input class="form-control" type="text" id="example-text-input" name="title_ar" value="{{$record->title_ar}}">
                             </div>
                         </div>
+                        @if(Auth::guard('admin')->user()->is_super_admin)
                         <div class="form-group row">
                             <label for="example-text-input" class="col-sm-2 col-form-label">Country</label>
                             <div class="col-sm-10">
@@ -49,6 +40,7 @@
                                 </select>
                             </div>
                         </div>
+                        @endif
 
                         <div class="form-group row">
                             <label for="example-text-input" class="col-sm-2 col-form-label">City</label>
@@ -90,7 +82,6 @@
     </div> <!-- end row -->
 
 
-@endsection
 <script
     src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
@@ -130,7 +121,7 @@
                 success: function (data) {
                     console.log(data);
                     var cities = document.getElementById('city_id');
-                    cities.innerHTML = "<option>Select City</option>";
+                    cities.innerHTML = "<option value='0'>Select City</option>";
                     data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_ar'] + "</option>");
                     //console.log(typeof data);
 
@@ -152,7 +143,7 @@
                 success: function (data) {
                     console.log(data);
                     var zones = document.getElementById('zone_id');
-                    zones.innerHTML = "<option>Select Zone</option>";
+                    zones.innerHTML = "<option value='0'>Select Zone</option>";
                     data.forEach(zone => zones.innerHTML += "<option value=" + zone.id + ">" + zone['title_ar'] + "</option>");
                     //console.log(typeof data);
 
@@ -174,7 +165,7 @@
                 success: function (data) {
                     console.log(data);
                     var districts = document.getElementById('district_id');
-                    districts.innerHTML = "<option>Select District</option>";
+                    districts.innerHTML = "<option value='0'>Select District</option>";
                     data.forEach(district => districts.innerHTML += "<option value=" + district.id + ">" + district['title_ar'] + "</option>");
                     //console.log(typeof data);
 
@@ -187,3 +178,4 @@
     });
 
 </script>
+@endsection

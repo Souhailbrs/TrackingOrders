@@ -8,14 +8,14 @@
             <div class="card">
                 <div class="card-body table-responsive ">
                     @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                             <strong>{{ $message }}</strong>
                         </div>
                     @endif
                     @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                             <strong>{{ $message }}</strong>
                         </div>
                     @endif
@@ -52,7 +52,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#details{{$record->id}}">
+                                                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#details{{$record->id}}">
                                                         View
                                                     </button>
 
@@ -66,11 +66,11 @@
 
                                                 </td>
                                                 @if($record->status == 0)
-                                                    <td><span class="badge badge-warning">Pending</span></td>
+                                                    <td><span class="badge bg-warning">Pending</span></td>
                                                 @elseif($record->status == 1)
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td><span class="badge bg-success">Active</span></td>
                                                 @else
-                                                    <td><span class="badge badge-danger">Refused</span></td>
+                                                    <td><span class="badge bg-danger">Refused</span></td>
                                                 @endif
                                             </tr>
                                         @endforeach
@@ -100,7 +100,6 @@
 
     </div>
 
-@endsection
 @foreach($records as $record)
     <!-- Details -->
     <div class="modal fade" id="details{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -109,7 +108,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -165,10 +164,10 @@
                         </tr>
                     </table>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+
             </div>
         </div>
     </div>
 @endforeach
+
+@endsection

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class MainController extends Controller
 {
     public function home($filter){
+        $user =Auth::guard('delivery')->user();
         $user_id =  Auth::guard('delivery')->user()->id;
         $work_days = WorkDay::where('user_type','delivery')->where('user_id',$user_id)->get()->reverse();
         $records = $work_days;
@@ -35,21 +36,29 @@ class MainController extends Controller
 
              if($filter == 'today'){
                  if( $one_day->order->status == 8){
-                     $orders [] =   $one_day->order;
+                     if( $one_day->order->zone->id == $user->zone_id) {
+                         $orders [] = $one_day->order;
+                     }
                  }
              }elseif($filter == 'finishedToday'){
 
                  if( $one_day->order->status != 8 && date('Y-m-d',strtotime ($one_day->order->delivery_date))  == date('Y-m-d')){
-                     $orders [] =   $one_day->order;
+                     if( $one_day->order->zone->id == $user->zone_id) {
+                         $orders [] = $one_day->order;
+                     }
                  }
              }elseif($filter == 'yesterday') {
 
                  if( date('Y-m-d',strtotime ($one_day->order->delivery_date))  == date('Y-m-d',strtotime(' - 1 days'))){
-                     $orders [] =   $one_day->order;
+                     if( $one_day->order->zone->id == $user->zone_id) {
+                         $orders [] = $one_day->order;
+                     }
                  }
              }else{
                  if( $one_day->order->status != 8 && $one_day->order->delivery_date != Carbon::today()){
-                     $orders [] =   $one_day->order;
+                     if( $one_day->order->zone->id == $user->zone_id) {
+                         $orders [] = $one_day->order;
+                     }
                  }
              }
          }

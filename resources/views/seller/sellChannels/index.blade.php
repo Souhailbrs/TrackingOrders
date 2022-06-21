@@ -49,9 +49,9 @@
                                                     </td>
 
                                                     @if($record->status == 1)
-                                                            <td><span class="badge badge-success">Active</span></td>
+                                                            <td><span class="badge bg-success">Active</span></td>
                                                     @else
-                                                            <td><span class="badge badge-danger">Deactivate</span></td>
+                                                            <td><span class="badge bg-danger">Deactivate</span></td>
                                                     @endif
                                                     <td>
                                                         <a href="{{route('seller.sellChannels.edit',['sellChannel'=>$record->id])}}" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
@@ -91,7 +91,7 @@
 
     </div>
 
-@endsection
+
 <!-- Name -->
 @foreach($data as $record)
 <div class="modal fade" id="exampleModalCenterOwner{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -205,3 +205,4 @@
 </div>
 @endforeach
 
+@endsection

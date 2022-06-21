@@ -23,6 +23,8 @@ Route::group(
 
     Route::get('work/{state}', 'MainController@workState')->name('workState');
     Route::get('get/order', 'SupporterController@getOrder')->name('getOrder');
+    Route::get('get/work/days', 'SupporterController@workDays')->name('workDays');
+
     Route::get('get/worker/available', 'SupporterController@IsUserHasOrder');
     Route::get('get/order/current', 'SupporterController@getCurrentOrder')->name('currentOrder');
     Route::get('get/orders/{state}', 'SupporterController@getAllOrders')->name('getAllOrders');

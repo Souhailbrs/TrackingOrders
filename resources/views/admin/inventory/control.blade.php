@@ -5,17 +5,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @include('admin.includes.messages')
-                   {{-- <form class="row text-center">
-                        <div class="col-sm-6 h5">
-                            <lable>{{__('admin/fields.import_from_excel')}}</lable>
-                        </div>
-                        <div class="col-sm-2">
-                            <input type="file">
-                        </div>
-                    </form>
 
-                    <hr>--}}
                     @if($action == 'store')
                         <form method="post" action="{{route($pages .'.'.$action)}}" id="myForm">
                             @else

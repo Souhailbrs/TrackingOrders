@@ -66,11 +66,9 @@ class WrappingController extends Controller
             $work_day_id =0;
         }
         if($day == 'today') {
-
             $records = Order::WhereIn('status', $filtered)->whereDate('delivery_date', Carbon::today())->get();
         }else{
             $records = Order::WhereIn('status', $filtered)->get();
-
         }
 
         //state
@@ -202,6 +200,9 @@ class WrappingController extends Controller
         foreach($orders as $order) {
             $zone_id = $order->zone->id;
             $delivery = $this->getNearestDelivery($zone_id);
+           if(!$delivery){
+               return redirect()->back()->with('error','There is no deliveries in this zone number ' . $zone_id);
+           }
             $workDays = WorkDay::where('user_type', 'delivery')->where('user_id', $delivery->id)->get();
             if (count($workDays) == 0) {
                 $work_day = WorkDay::create([

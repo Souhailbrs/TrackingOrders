@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CitiesController extends Controller
 {
@@ -18,7 +19,13 @@ class CitiesController extends Controller
      */
     public function index()
     {
-        $records = City::get();
+        if(Auth::guard('admin')->user()->is_super_admin){
+            $records = City::get();
+
+        }else{
+            $records = City::where('country_id',Auth::guard('admin')->user()->country_id)->get();
+        }
+
         return view('admin.cities.index',compact('records'));
     }
 

@@ -29,7 +29,7 @@
                         <div class="col-sm-3">
 
                         <input class="btn btn-dark mr-2" type="submit" value="Import" >
-                        <a type="submit"  download href="{{asset('assets/admin/orders/temp.xlsx')}}">Download Template</a>
+                        <a type="submit"  download href="{{asset('assets/admin/old/orders/temp.xlsx')}}">Download Template</a>
 
                         </div>
                     </form>
@@ -59,15 +59,15 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <div class="row">
+                                    <div class="row text-center">
 
 
-                                        <div class="col-sm-12">
-                                            <center>
-                                                <input class="form-control btn-dark" type="button"
+                                        <div class="col-sm-12 ">
+
+                                                <input class="form-control btn-dark text-center" type="button"
                                                        id="example-text-input-mokaaa"
                                                        value="Add More" onClick="clone()">
-                                            </center>
+
                                         </div>
 
                                     </div>
@@ -86,12 +86,12 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-3">
-                                                <input class="form-control" type="text" id="example-text-input"
+                                                <input class="form-control" type="number" step="0.01" id="example-text-input"
                                                        name="products_price[]" placeholder="Price" >
                                             </div>
                                             <div class="col-sm-3">
                                                 <input class="form-control" type="text" id="example-text-input"
-                                                       name="products_amount[]" placeholder="Amount" >
+                                                       name="products_amount[]" placeholder="Quantity" >
                                             </div>
                                             <div id="i" type="button" class="col-sm-3 btn btn-danger"
                                                  onclick="removeClone(this)">remove
@@ -320,7 +320,7 @@
                         success: function (data) {
                             console.log(data);
                             var cities = document.getElementById('city_id');
-                            cities.innerHTML = "<option>Select City</option>";
+                            cities.innerHTML = "";
                             data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_en'] + "</option>");
                             //console.log(typeof data);
 

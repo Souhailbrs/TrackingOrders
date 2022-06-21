@@ -17,7 +17,7 @@
                                     @method('PUT')
                                     @endif
                                     @csrf
-                                    <div class="row">
+                                    <div class="row ">
                                             <a style="display:block;color:white" target="_blank"
                                                href="{{route('packaging.trackOrder',['id'=>$data->id])}}"
                                                class="col-sm-2 btn btn-dark h6 pt-3">
@@ -27,7 +27,7 @@
 
                                         <div class="col-sm-8 btn btn-ss text-center ">
 
-                                            <h6 class="col-sm-12 col-form-label">
+                                            <h6 class="col-sm-12 col-form-label text-center ">
 
                                                 @if( $data->status == 0)
                                                     <span class="btn btn-warning" style="width:500px">Order # {{$data->id}} is New Order</span>
@@ -69,31 +69,34 @@
 
                                     <hr>
                                     <div class="form-group row">
-                                        <div class="col-sm-1 mr-1">
+                                        <div class="col-sm-2 mr-1">
                                         </div>
-                                        <a class="col-sm-3 mr-1 btn btn-dark h6"
-                                           href="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>12])}}"
-                                           style="color:white">
-                                           Don't Reply
+                                        <a class="col-sm-2 mr-1 btn btn-dark h6"
+                                           href="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>2])}}"
+                                           style="color:white;margin-right: 10px">
+                                            {{__('orders.no_answer_call_center')}}
                                         </a>
 
-                                        <a class="col-sm-3 mr-1 btn btn-dark h6"
+                                        <a class="col-sm-2 mr-1 btn btn-dark h6"
                                            href="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>6])}}"
-                                           style="color:white">
-
-                                            Cancelled
+                                           style="color:white;margin-right: 10px;margin-left: 10px">
+                                            {{__('orders.canceled_order')}}
                                         </a>
-                                        <a class="col-sm-3 mr-1 btn btn-dark h6"
+                                        <a class="col-sm-2 mr-1 btn btn-dark h6"
                                            href="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>10])}}"
-                                           style="color:white">
-                                            Received
+                                           style="color:white;margin-right: 10px;margin-left: 10px">
+                                            {{__('orders.customer_received')}}
+                                        </a>
+                                        <a data-bs-toggle="modal" data-bs-target="#exampleModalCenterConfirmed"  class="col-sm-2 mr-1 btn btn-dark h6"
+                                           style="color:white" href="">
+                                            {{__('orders.confirm_order')}}
                                         </a>
 
                                         <div class="col-sm-1 mr-1">
                                         </div>
                                     </div>
                                     <hr>
-                                    <center>
+                                    <div class="text-center">
 
                                         <a style="display:inline-block;margin-right: 30px" href="{{$data->url}}"  target="_blank" class=" ">
                                             <img src="{{asset('assets/site/images/url.jpg')}}" height="40" width="40" alt="...">
@@ -113,7 +116,7 @@
                                         $whats .= ' رابط المنتج : ' .$url;
                                         ?>
 
-                                        <a style="display:inline-block;margin-right: 30px" href="https://wa.me/{{'+212'. $data->customer_phone1 }}?text={{$whats}}" data-action="share/whatsapp/share" target="_blank" class=" ">
+                                        <a style="display:inline-block" href="https://wa.me/{{'+212'. $data->customer_phone1 }}?text={{$whats}}" data-action="share/whatsapp/share" target="_blank" class=" ">
                                             <img src="{{asset('assets/site/images/Flat-logo-WhatsApp-PNG.png')}}" height="40" width="40" alt="...">
                                         </a>
 
@@ -124,19 +127,17 @@
                                             {{-- <a href="tel:+900300400">Phone: 900 300 400</a> --}}
                                         </div>
 
-                                    </center>
+                                    </div>
 
 
 
                                     <hr>
                                     <div class="row">
 
-                                        <div class="col-sm-12">
-                                            <center>
-                                                <input class="form-control btn-dark" type="button"
+                                        <div class="col-sm-12 text-center">
+                                                <input class="form-control btn-dark text-center" type="button"
                                                        id="example-text-input"
                                                        value="Add More" onClick="clone()">
-                                            </center>
                                         </div>
 
                                     </div>
@@ -244,7 +245,7 @@
                                     </div>
 
 
-
+                                    <hr>
 
                                     <div class="form-group row">
                                         <div class="col-12 text-center">
@@ -271,13 +272,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Confirmed Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
                 </div>
                 <div class="modal-body">
                     <form method="post"
-                          action="{{route('supporter.'.$pages . '.' . $action , ['order' =>$data->id])}}"
+                          action="{{route('packaging.'.$pages . '.' . $action , ['order' =>$data->id])}}"
                           id="myForm">
                         @method('PUT')
                         @csrf
@@ -286,13 +287,16 @@
                                    class="col-sm-3 col-form-label">{{__('admin/fields.country')}}</label>
                             <div class="col-sm-9">
                                 {{$data->country['title_'. App::getLocale()]}}
-
                             </div>
                         </div>
+
                         <?php
-                        $cities = \App\Models\City::where('country_id',$data->country->id)->get();
-                        $zones = \App\Models\Zone::where('city_id',$data->zone->id)->get();
-                        $districts = \App\Admin\District::where('zone_id',$data->zone->id)->get();
+
+                        $cities = \App\Models\City::where('country_id',$data->shop->country->id)->get();
+                        $zones = \App\Models\Zone::get();
+                        $districts = \App\Admin\District::get();
+
+
 
                         ?>
                         <div class="form-group row">
@@ -300,15 +304,13 @@
                                    class="col-sm-3 col-form-label">{{__('admin/fields.city')}}</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="city_id" id="city_id" required>
-                                    @if($data->city->id)
-                                        <option value="{{$data->city->id}}">{{$data->city['title_'. App::getLocale()]}}</option>
-                                    @else
-                                        <option value="">Select City</option>
-                                    @endif
-                                 @foreach($cities as $city)
-                                     @if($city->id != $data->city->id)
+
+                                    <option value="">Select City</option>
+
+                                    @foreach($cities as $city)
+
                                         <option value="{{$city['id']}}">{{$city['title_'. App::getLocale()]}}</option>
-                                            @endif
+
                                     @endforeach
                                 </select>
                             </div>
@@ -318,16 +320,10 @@
                                    class="col-sm-3 col-form-label">{{__('admin/fields.zone')}}</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="zone_id" id="zone_id" required>
-                                    @if($data->zone->id)
-                                        <option value="{{$data->zone->id}}">{{$data->zone['title_'. App::getLocale()]}}</option>
-                                    @else
-                                        <option value="">Select City</option>
+                                    @if($data->zone)
+                                        <option value="{{$data->zone['id']}}">{{$data->zone['title_'. App::getLocale()]}}</option>
                                     @endif
-                                    @foreach($zones as $zone)
-                                        @if($zone->id != $data->zone->id)
-                                            <option value="{{$zone['id']}}">{{$zone['title_'. App::getLocale()]}}</option>
-                                        @endif
-                                    @endforeach
+
                                 </select>
                             </div>
                         </div>
@@ -336,15 +332,9 @@
                                    class="col-sm-3 col-form-label">{{__('admin/fields.district')}}</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="district_id" id="district_id" required>
-                                    @if($data->district->id)
-                                        <option value="{{$data->district->id}}">{{$data->district['title_'. App::getLocale()]}}</option>
-                                 @endif
-
-                                    @foreach($districts as $district)
-                                        @if($district->id != $data->district->id)
-                                            <option value="{{$district['id']}}">{{$district['title_'. App::getLocale()]}}</option>
-                                        @endif
-                                    @endforeach
+                                    @if($data->district)
+                                        <option value="{{$data->district['id']}}">{{$data->district['title_'. App::getLocale()]}}</option>
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -361,8 +351,8 @@
                                    class="col-sm-3 col-form-label">{{__('Delivery Date')}}</label>
                             <div class="col-sm-9">
 
-                                <input class="form-control" value="{{ $data->date_time }}"
-                                       type="datetime-local" id="example-text-input" required
+                                <input class="form-control" value="{{ date('YYYY-MM-DD',strtotime($data["delivery_date"]))  }}"
+                                       type="date" id="example-text-input" required
                                        name="delivery_date">
                             </div>
                         </div>
@@ -374,6 +364,7 @@
                                                       name="notes">@if($action == 'update'){{$data->notes}}@endif</textarea>
                             </div>
                         </div>
+
                         <input type="hidden"  name="change" value="1">
 
                         <input type="hidden"  name="state" value="4">
@@ -394,6 +385,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="exampleModalCenterNotConfirmed" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

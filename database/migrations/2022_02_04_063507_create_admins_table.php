@@ -22,6 +22,10 @@ class CreateAdminsTable extends Migration
             $table->string('phone')->unique();
             $table->text('image');
             $table->integer('status')->default('1');
+            $table->tinyInteger('is_super_admin')->default(0);
+
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreign('country_id')->references('id')->on('countries');
             $table->rememberToken();
             $table->timestamps();
         });

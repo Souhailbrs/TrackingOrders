@@ -7,9 +7,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive " >
-                    @include('admin.includes.messages')
 
-                    <div class="container-fluid">
 
 
 
@@ -44,7 +42,7 @@
                                                         {{$record->shopType['title_' . App::getLocale()]}}
                                                     </td>
                                                     <td>
-                                                        {{$record->shop_url}}
+                                                        <a class="btn btn-outline-primary" href="{{$record->shop_url}}" target="blank">Visit</a>
                                                     </td>
                                                     <td>
                                                         {{$record->country['title_' . App::getLocale()]}}
@@ -56,9 +54,9 @@
                                                         </button>
                                                     </td>
                                                     @if($record->status == 1)
-                                                            <td><span class="badge badge-success">Active</span></td>
+                                                            <td><span class="badge bg-success">Active</span></td>
                                                     @else
-                                                            <td><span class="badge badge-danger">Deactivate</span></td>
+                                                            <td><span class="badge bg-danger">Deactivate</span></td>
                                                     @endif
                                                         <td>
                                                             <a type="button" class="btn btn-dark" href="{{route('changeSaleId',['id'=>$record->id])}}">
@@ -102,7 +100,6 @@
 
     </div>
 
-@endsection
 <!-- Name -->
 @foreach($data as $record)
 <div class="modal fade" id="exampleModalCenterOwner{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -216,3 +213,4 @@
 </div>
 @endforeach
 
+@endsection

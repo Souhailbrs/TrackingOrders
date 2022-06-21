@@ -6,6 +6,7 @@ use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isDelivery;
 use App\Http\Middleware\isPackaging;
 use App\Http\Middleware\isSeller;
+use App\Http\Middleware\isSuperAdmin;
 use App\Http\Middleware\isSupporter;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -74,9 +75,11 @@ class Kernel extends HttpKernel
         'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
         'isAdmin'=>isAdmin::class,
+        'isSuperAdmin'=>isSuperAdmin::class,
         'isSeller'=>isSeller::class,
         'isSupporter'=>isSupporter::class,
         'isDelivery'=>isDelivery::class,
         'isPackaging'=>isPackaging::class,
+
     ];
 }

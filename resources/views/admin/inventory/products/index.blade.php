@@ -3,22 +3,13 @@
 @section("style")
 @endsection
 @section("content")
+
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card" style>
                 <div class="card-body table-responsive ">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
+
                     <div class="row">
                         @if($back == 1)
                         <div class="col-sm-6">
@@ -89,9 +80,9 @@
 
                                                 </td>
                                                 @if($record->status == 1)
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td><span class="badge bg-success">Active</span></td>
                                                 @else
-                                                    <td><span class="badge badge-danger">De-Activated</span></td>
+                                                    <td><span class="badge bg-danger">De-Activated</span></td>
                                                 @endif
                                                 <input type="hidden" id="product_id" value="{{$record->id}}">
                                                 <td>
@@ -120,7 +111,6 @@
 
 
 
-@endsection
 @foreach($records as $record)
     <!-- Details -->
     <div class="modal fade" id="details{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -196,4 +186,5 @@
 
 
 
+@endsection
 

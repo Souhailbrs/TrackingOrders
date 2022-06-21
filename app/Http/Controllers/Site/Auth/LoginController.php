@@ -36,6 +36,7 @@ class LoginController extends Controller
             'email'   => 'required|email',
             'password' => 'required|min:6'
         ]);
+
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
             config()->set('auth.defaults.guard', 'admin');
             $status = auth()->user()->status;

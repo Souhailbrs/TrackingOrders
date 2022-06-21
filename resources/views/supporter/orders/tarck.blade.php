@@ -1,6 +1,7 @@
 @extends("layouts.supporter")
 @section("pageTitle", "Tracking Order")
-@section("style")
+
+@section("content")
     <style>
         .padding {
             padding: 3rem !important
@@ -112,9 +113,6 @@
             margin-top: 15px
         }
     </style>
-@endsection
-@section("content")
-
 
         <div class="card user-activity-card">
                         <div class="card-header">

@@ -10,6 +10,7 @@ use App\Models\ProductSeller;
 use App\Models\SalesChannels;
 use App\Models\SalesChannelsType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InventoryController extends Controller
 {
@@ -25,8 +26,18 @@ class InventoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showRequests(){
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $records =  Inventory::where('status',0)->orderBy('id','DESC')->get();
+        }else{
+            $records = [];
+            $inventories =  Inventory::where('status',0)->orderBy('id','DESC')->get();
+            foreach($inventories as $inv){
+                if($inv->shop->country_id == Auth::guard('admin')->user()->country_id){
+                    $records [] = $inv;
+                }
+            }
 
-        $records = Inventory::where('status',0)->orderBy('id','DESC')->get();
+        }
         return view('admin.inventory.requests',compact('records'));
     }
     public function index()

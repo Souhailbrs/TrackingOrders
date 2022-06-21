@@ -14,6 +14,11 @@ class Admin extends Authenticatable
         'password',
         'phone',
         'image',
-        'status'
+        'status',
+        'is_super_admin',
+        'country_id'
     ];
+    public function country(){
+        return $this->belongsTo(Country::class,'country_id');
+    }
 }

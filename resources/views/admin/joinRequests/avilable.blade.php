@@ -3,22 +3,9 @@
 @section("style")
 @endsection
 @section("content")
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
+
+            <div class="card" style="min-height: 900px">
                 <div class="card-body table-responsive ">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
 
                     <div class="row">
                         <div class="col-12">
@@ -33,8 +20,7 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile</th>
-                                            <th>Subject</th>
-                                            <th>Message</th>
+                                            <th>Contacted Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -55,41 +41,39 @@
                                             <td>
                                                 {{$record->mobile}}
                                             </td>
+
                                             <td>
-                                                {{$record->subject}}
+                                                {{date_format( $record->created_at,"Y/m/d")}}
                                             </td>
-                                            <td>
-                                                {{$record->message}}
-                                            </td>
-                                            @if($record->state == 0)
-                                                <td><span class="btn badge-warning" style="width:100%">Pending</span></td>
-                                            @elseif($record->state == 1)
-                                                <td><span class="btn badge-dark" style="width:100%">Accepted</span></td>
-                                            @elseif($record->state == 2)
-                                                <td><span class="btn  badge-primary" style="width:100%">Call Again</span></td>
-                                            @elseif($record->state == 3)
-                                                <td><span class="btn badge-danger" style="width:100%">Ignore</span></td>
-                                            @else
-{{--
-                                                <td><span class="btn badge-warning" style="width:100%">Pending Accept</span></td>
---}}
-                                            @endif
+                                            <div class="text-center">
+                                                @if($record->state == 0)
+                                                    <td><span class="badge bg-warning p-2" style="width:100%">Pending</span></td>
+                                                @elseif($record->state == 1)
+                                                    <td><span class="btn btn-success p-2" style="width:100%">Accepted</span></td>
+                                                @elseif($record->state == 2)
+                                                    <td><span class="badge  bg-primary p-2" style="width:100%;">Call Again</span></td>
+                                                @elseif($record->state == 3)
+                                                    <td><span class="badge bg-danger p-2" style="width:100%">Ignore</span></td>
+                                                @endif
+
+                                            </div>
+
                                             <td>
                                                 <center>
 
-                                                        <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                Controll
-                                                            </button>
-                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                                <a class="btn btn-dark col-sm-12 d-block"  href="{{route('change.requests.state',['requestId'=>$record->id,'state'=>2])}}">Call Again</a>
-                                                                <a class="btn btn-dark col-sm-12 d-block"  href="{{route('change.requests.state',['requestId'=>$record->id,'state'=>3])}}">Ignore</a>
+                                                    <div class="btn-group" role="group">
+                                                        <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Controll
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                            <a class="dropdown-item col-sm-12 d-block"  href="{{route('change.requests.state',['requestId'=>$record->id,'state'=>2])}}">Call Again</a>
+                                                            <a class="dropdown-item  col-sm-12 d-block"  href="{{route('change.requests.state',['requestId'=>$record->id,'state'=>3])}}">Ignore</a>
 
-                                                                <a class="btn btn-dark col-sm-12 d-block"  href="{{route('change.requests.accept',['requestId'=>$record->id])}}">Accept & Create Account</a>
-                                                                <a class="btn btn-dark col-sm-12 d-block"  data-toggle="modal" data-target="#exampleModalCenter{{$record->id}}">Notes</a>
+                                                            <a class="dropdown-item col-sm-12 d-block"  href="{{route('change.requests.accept',['requestId'=>$record->id])}}">Accept</a>
+                                                            <a class="dropdown-item   col-sm-12 d-block"  data-toggle="modal" data-target="#exampleModalCenter{{$record->id}}">Notes</a>
 
-                                                            </div>
                                                         </div>
+                                                    </div>
 
                                                 </center>
                                             </td>
@@ -122,17 +106,9 @@
                                     {{ $data->links() }}
                 --}}
             </div>
-        </div>
-    </div> <!-- end col -->
-    </div>
-    <div id="modelImagee">
 
-    </div>
-    <div id="modelAdd">
 
-    </div>
 
-@endsection
 <!-- Notes -->
 @foreach($records as $record)
 <div class="modal fade" id="exampleModalCenter{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -212,3 +188,4 @@
 </div>
 
 @endforeach
+@endsection

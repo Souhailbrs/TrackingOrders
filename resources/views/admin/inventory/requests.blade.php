@@ -7,18 +7,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive ">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
+
 
                     <div class="row">
                         <div class="col-12">
@@ -52,7 +42,7 @@
                                                     {{$record->product->name}}
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#details{{$record->id}}">
+                                                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#details{{$record->id}}">
                                                         View
                                                     </button>
 
@@ -63,20 +53,19 @@
                                                 </td>
                                                 <td>
                                                     {{$record->Actual_time}}
-
                                                 </td>
                                                 @if($record->status == 0)
-                                                    <td><span class="badge badge-warning">Pending</span></td>
+                                                    <td><span class="badge bg-warning">Pending</span></td>
                                                 @elseif($record->status == 1)
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td><span class="badge bg-success">Active</span></td>
                                                 @else
-                                                    <td><span class="badge badge-danger">Refused</span></td>
+                                                    <td><span class="badge bg-danger">Refused</span></td>
                                                 @endif
                                                 <td>
                                                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
 
                                                         <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <button id="btnGroupDrop1" type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-bs-haspopup="true" aria-expanded="false">
                                                                 Control
                                                             </button>
                                                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
@@ -117,7 +106,6 @@
 
     </div>
 
-@endsection
 @foreach($records as $record)
     <!-- Details -->
     <div class="modal fade" id="details{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -126,7 +114,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -208,10 +196,9 @@
                     </table>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+
             </div>
         </div>
     </div>
 @endforeach
+@endsection

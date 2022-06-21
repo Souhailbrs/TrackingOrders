@@ -8,6 +8,7 @@ use App\Models\ProductSeller;
 use App\Models\SalesChannels;
 use App\Models\Seller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
@@ -18,7 +19,18 @@ class ProductsController extends Controller
      */
     public function getProducts(){
         $back =0;
-       $records =  ProductSeller::orderBy('id','DESC')->get();
+        if(Auth::guard('admin')->user()->is_super_admin){
+            $records = ProductSeller::orderBy('id', 'DESC')->get();
+        }else {
+            $records = [];
+            $products =  ProductSeller::orderBy('id','DESC')->get();
+            $countries = [];
+            foreach($products as $pro ){
+                if(Auth::guard('admin')->user()->country_id == $pro->shop->country_id){
+                    $records [] = $pro;
+                }
+            }
+        }
        return view('admin.inventory.products.index', compact('records','back'));
     }
     public function getProductsSeller($id){
@@ -28,7 +40,18 @@ class ProductsController extends Controller
     }
     public function getShipments(){
         $back =1;
-        $records =  Inventory::orderBy('id','DESC')->get();
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $records =  Inventory::orderBy('id','DESC')->get();
+        }else{
+            $records = [];
+            $inventories =  Inventory::orderBy('id','DESC')->get();
+            foreach($inventories as $inv){
+                if($inv->shop->country_id == Auth::guard('admin')->user()->country_id){
+                    $records [] = $inv;
+                }
+            }
+
+        }
         return view('admin.inventory.shipments.index', compact('records','back'));
     }
     public function getShipmentsSeller($id){
@@ -40,7 +63,18 @@ class ProductsController extends Controller
             $ids [ ] = $sale->id;
         }
         $back =1;
-        $records =  Inventory::whereIn('sales_channel_id',$ids)->get();
+        if(Auth::guard('admin')->user()->is_super_admin) {
+            $records =  Inventory::whereIn('sales_channel_id',$ids)->orderBy('id','DESC')->get();
+        }else{
+            $records = [];
+            $inventories =  Inventory::whereIn('sales_channel_id',$ids)->orderBy('id','DESC')->get();
+            foreach($inventories as $inv){
+                if($inv->shop->country_id == Auth::guard('admin')->user()->country_id){
+                    $records [] = $inv;
+                }
+            }
+
+        }
         return view('admin.inventory.shipments.index', compact('records','back'));
     }
     function getSeller($sales_channel_type_id){

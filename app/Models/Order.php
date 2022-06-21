@@ -9,6 +9,7 @@ class Order extends Model
 {
     protected $table = 'sales_channele_orders';
     protected $fillable = [
+        'id',
        'sales_channel',
         'customer_name',
         'customer_phone1',
@@ -44,7 +45,9 @@ class Order extends Model
     public function product(){
         return $this->hasMany(OrderProduct::class,'sales_channele_order');
     }
-
+    public function track(){
+        return $this->hasMany(OrderTrack::class,'sales_channele_order');
+    }
     public function getDateTimeAttribute() {
         return date('Y-m-d\TH:i', strtotime($this->delivery_date));
     }

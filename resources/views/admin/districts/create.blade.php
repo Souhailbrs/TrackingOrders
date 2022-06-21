@@ -6,18 +6,8 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
+
 
                     <form method="post" action="{{route('districts.store')}}" enctype="multipart/form-data">
                         @csrf
@@ -33,7 +23,7 @@
                                 <input class="form-control" type="text" id="example-text-input" name="title_ar" required>
                             </div>
                         </div>
-
+                        @if(Auth::guard('admin')->user()->is_super_admin)
                         <div class="form-group row">
                             <label for="example-text-input"
                                    class="col-sm-2 col-form-label">{{__('admin/fields.country')}}</label>
@@ -41,7 +31,7 @@
                                 <select class="form-control" name="country_id" required
                                         id="country_id">
 
-                                    <option value="">
+                                    <option value="0">
                                         Select Country
                                     </option>
                                     @foreach($countries as $shop)
@@ -52,16 +42,29 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="form-group row">
                             <label for="example-text-input"
                                    class="col-sm-2 col-form-label">{{__('admin/fields.city')}}</label>
                             <div class="col-sm-10">
                                 <select class="form-control" name="city_id"  required id="city_id">
-                                    <option value="">Select City First</option>
+                                    <option value="0">Select City First</option>
                                 </select>
                             </div>
                         </div>
-
+                        @else
+                            <div class="form-group row">
+                                <label for="example-text-input"
+                                       class="col-sm-2 col-form-label">{{__('admin/fields.city')}}</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="city_id"  required id="city_id">
+                                        @foreach($cities  as $city)
+                                        <option value="{{$city->id}}">{{$city['title_' . App::getLocale()]}}</option>
+                                            @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
                         <div class="form-group row">
                             <label for="example-text-input" class="col-sm-2 col-form-label">Zone</label>
                             <div class="col-sm-10">
@@ -125,7 +128,7 @@
                 success: function (data) {
                     console.log(data);
                     var cities = document.getElementById('city_id');
-                    cities.innerHTML = "<option>Select City</option>";
+                    cities.innerHTML = "<option value='0'>Select City</option>";
                     data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_en'] + "</option>");
                     //console.log(typeof data);
 
@@ -147,7 +150,7 @@
                 success: function (data) {
                     console.log(data);
                     var zones = document.getElementById('zone_id');
-                    zones.innerHTML = "<option>Select Zone</option>";
+                    zones.innerHTML = "<option value='0'>Select Zone</option>";
                     data.forEach(zone => zones.innerHTML += "<option value=" + zone.id + ">" + zone['title_en'] + "</option>");
                     //console.log(typeof data);
 
@@ -169,7 +172,7 @@
                 success: function (data) {
                     console.log(data);
                     var districts = document.getElementById('district_id');
-                    districts.innerHTML = "<option>Select District</option>";
+                    districts.innerHTML = "<option value='0'>Select District</option>";
                     data.forEach(district => districts.innerHTML += "<option value=" + district.id + ">" + district['title_en'] + "</option>");
                     //console.log(typeof data);
 

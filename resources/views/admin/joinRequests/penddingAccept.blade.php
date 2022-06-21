@@ -7,18 +7,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive ">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
 
                     <div class="row">
                         <div class="col-12">
@@ -33,8 +22,7 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile</th>
-                                            <th>Subject</th>
-                                            <th>Message</th>
+
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -55,12 +43,7 @@
                                                     <td>
                                                         {{$record->mobile}}
                                                     </td>
-                                                    <td>
-                                                        {{$record->subject}}
-                                                    </td>
-                                                    <td>
-                                                        {{$record->message}}
-                                                    </td>
+
 
                                                     @if($record->state == 0)
                                                         <td><span class="btn badge-warning" style="width:100%">Pending</span></td>
@@ -130,7 +113,6 @@
 
     </div>
 
-@endsection
 <!-- Notes -->
 @foreach($records as $record)
     <div class="modal fade" id="exampleModalCenter{{$record->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -215,3 +197,4 @@
     </div>
 
 @endforeach
+@endsection

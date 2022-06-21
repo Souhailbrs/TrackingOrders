@@ -6,18 +6,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger alert-block">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>{{ $message }}</strong>
-                        </div>
-                    @endif
+
 
                     <form method="post" action="{{route('zones.store')}}" enctype="multipart/form-data">
                         @csrf
@@ -35,6 +24,7 @@
                                 <input class="form-control" type="text" id="example-text-input" name="title_ar" required>
                             </div>
                         </div>
+                        @if(Auth::guard('admin')->user()->is_super_admin)
                         <div class="form-group row">
                             <label for="example-text-input"
                                    class="col-sm-2 col-form-label">{{__('admin/fields.country')}}</label>
@@ -42,7 +32,7 @@
                                 <select class="form-control" name="country_id" required
                                         id="country_id">
 
-                                    <option value="">
+                                    <option value="0">
                                         Select Country
                                     </option>
                                     @foreach($countries as $shop)
@@ -53,15 +43,30 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="form-group row">
                             <label for="example-text-input"
                                    class="col-sm-2 col-form-label">{{__('admin/fields.city')}}</label>
                             <div class="col-sm-10">
                                 <select class="form-control" name="city_id"  required id="city_id">
-                                    <option value="">Select City First</option>
+                                    <option value="0">Select City First</option>
                                 </select>
                             </div>
                         </div>
+                        @else
+                            <div class="form-group row">
+                                <label for="example-text-input"
+                                       class="col-sm-2 col-form-label">{{__('admin/fields.city')}}</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="city_id"  required id="city_id">
+                                        @foreach($cities  as $city)
+                                            <option value="{{$city->id}}">{{$city['title_' . App::getLocale()]}}</option>
+
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            @endif
 
 
 

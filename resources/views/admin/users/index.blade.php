@@ -9,13 +9,13 @@
                 <div class="card-body table-responsive " >
                     @if ($message = Session::get('success'))
                     <div class="alert alert-success alert-block">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                         <strong>{{ $message }}</strong>
                     </div>
                     @endif
                     @if ($message = Session::get('error'))
                     <div class="alert alert-danger alert-block">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert">×</button>
                         <strong>{{ $message }}</strong>
                     </div>
                     @endif
@@ -25,7 +25,7 @@
 
 
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-12 text-center">
                                     <center>
                                         <h3>{{$type}}</h3>
                                     </center>
@@ -36,28 +36,28 @@
                                             </a>
 
                                             <a class=" col-sm-2 p-3" href="{{route('users.get.type',['type'=>'admins'])}}">
-                                                <div class="col-sm-12 btn btn-dark">
+                                                <div class="col-sm-12 btn btn-outline-primary">
                                                     Admins
                                                 </div>
 
                                             </a>
                                             <a class=" col-sm-2 p-3" href="{{route('users.get.type',['type'=>'sellers'])}}">
-                                                <div class="col-sm-12 btn btn-dark">
+                                                <div class="col-sm-12 btn btn-outline-primary">
                                                      Sellers
                                                 </div>
                                             </a>
                                             <a class=" col-sm-2 p-3" href="{{route('users.get.type',['type'=>'deliveries'])}}">
-                                                <div class="col-sm-12 btn btn-dark">
+                                                <div class="col-sm-12 btn btn-outline-primary">
                                                     Deliveries
                                                 </div>
                                             </a>
                                             <a class="col-sm-2 p-3" href="{{route('users.get.type',['type'=>'supporters'])}}">
-                                                <div class="col-sm-12 btn btn-dark">
+                                                <div class="col-sm-12 btn btn-outline-primary">
                                                        Supporters
                                                 </div>
                                             </a>
                                             <a class="col-sm-2 p-3" href="{{route('users.get.type',['type'=>'packagings'])}}">
-                                                <div class="col-sm-12 btn btn-dark">
+                                                <div class="col-sm-12 btn btn-outline-primary">
                                                     Packagings
                                                 </div>
                                             </a>
@@ -76,8 +76,11 @@
                                                     <th>Name </th>
                                                     <th>Email </th>
                                                     <th>Number</th>
+                                                    @if($type == 'admins')
+                                                        <th>Super</th>
+                                                    @endif
                                                     @if($type == 'supporters')
-                                                        <td>{{'Statistics'}}</td>
+                                                        <th>{{'Statistics'}}</th>
                                                     @endif
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -87,7 +90,7 @@
                                                 @foreach ($records as $record)
                                                   <tr>
                                                       <td>
-                                                          <img src="" alt="" style="width:80%;height:70px">
+                                                          <img src="{{asset('assets/admin/users/' . $record->image)}}" alt="" style="width:50px;height:50px">
                                                       </td>
                                                     <td>
                                                         <a href="#" class="font-weight-bold text-muted">#{{$record->id}}</a>
@@ -102,10 +105,19 @@
                                                               <a class="btn btn-dark" target="_blank" href="{{route('users.get.statistics',['id'=>$record->id,'type'=>$type])}}"> View</a>
                                                           </td>
                                                       @endif
-                                                    @if($record->status == 1)
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                      @if($type == 'admins')
+                                                        <td>
+                                                            @if($record->is_super_admin)
+                                                                {{'Yes'}}
+                                                            @else
+                                                                {{'No'}}
+                                                            @endif
+                                                        </td>
+                                                      @endif
+                                                      @if($record->status == 1)
+                                                    <td><span class="badge bg-success">Active</span></td>
                                                       @else
-                                                          <td><span class="badge badge-danger">Deactivate</span></td>
+                                                          <td><span class="badge bg-danger">Deactivate</span></td>
                                                       @endif
                                                       <td>
                                                           <a href="{{route('users.edit',['id'=>$record->id,'type'=>$type])}}" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
@@ -150,7 +162,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">  {{__('admin/category.Image')}}  </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -175,7 +187,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"> {{__('admin/category.Image')}} </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>

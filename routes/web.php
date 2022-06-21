@@ -38,6 +38,9 @@ Route::group(
 
     Route::post('send/join/request', 'MainController@JoinRequest')->name('send.join.request');
 
+    Route::get('/tessssssssssssssssst', function(){
+        return view('layouts.admin2');
+    });
 
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/clear-cache', function () {
@@ -53,31 +56,39 @@ Route::group(
     Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/DeleteAllSellerOrders', function(){
-       $orders = \App\Models\Order::where('sales_channel',33)->get();
-       foreach ($orders as $ord){
-           $products =$ord->product;
-           foreach($products as $pro){
-               $pro->delete();
-           }
-           $contacts = \App\Models\OrderContact::where('sale_channele_order_id',$ord->id)->get();
-           foreach($contacts as $pro){
-               $pro->delete();
-           }
-           $log= \App\Models\OrderLog::where('order_id',$ord->id)->get();
-           foreach($log as $pro){
-               $pro->delete();
-           }
-           $tracks = \App\Models\OrderTrack::where('sales_channele_order',$ord->id)->get();
-           foreach($tracks as $pro){
-               $pro->delete();
-           }
-           $workday = \App\WorkDayOrder::where('user_sales_channele_orders',$ord->id)->get();
-           foreach($workday as $pro){
-               $pro->delete();
-           }
-           $ord->delete();
-       }
-    });
 
+    Route::get('/DeleteAllSellerOrders', function(){
+        $sales = \App\Models\SalesChannels::where('id',6)->get();
+        foreach($sales  as $sale) {
+            $orders = \App\Models\Order::where('sales_channel', $sale->id)->get();
+            foreach ($orders as $ord) {
+                $products = $ord->product;
+                foreach ($products as $pro) {
+                    $pro->delete();
+                }
+                $contacts = \App\Models\OrderContact::where('sale_channele_order_id', $ord->id)->get();
+                foreach ($contacts as $pro) {
+                    $pro->delete();
+                }
+                $log = \App\Models\OrderLog::where('order_id', $ord->id)->get();
+                foreach ($log as $pro) {
+                    $pro->delete();
+                }
+                $tracks = \App\Models\OrderTrack::where('sales_channele_order', $ord->id)->get();
+                foreach ($tracks as $pro) {
+                    $pro->delete();
+                }
+                $workday = \App\WorkDayOrder::where('user_sales_channele_orders', $ord->id)->get();
+                foreach ($workday as $pro) {
+                    $pro->delete();
+                }
+                $ord->delete();
+            }
+        }
+    });
+    Route::resource('customOrders', 'CustomOrdersController');
+
+});
+Route::get('hash/{pass}',function($pass){
+    return Hash::make($pass);
 });

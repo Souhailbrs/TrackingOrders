@@ -23,6 +23,8 @@ class CreateSupportersTable extends Migration
             $table->text('image');
             $table->integer('status')->default('1');
 
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreign('country_id')->references('id')->on('countries');
             $table->rememberToken();
             $table->timestamps();
         });
