@@ -1,0 +1,5 @@
+[18-Sep-2022 01:41:15 UTC] PHP Notice:  Undefined variable: factory in /home/codafric/public_html/database/factories/UserFactory.php on line 20
+[18-Sep-2022 01:41:15 UTC] PHP Fatal error:  Uncaught Error: Call to a member function define() on null in /home/codafric/public_html/database/factories/UserFactory.php:20
+Stack trace:
+#0 {main}
+  thrown in /home/codafric/public_html/database/factories/UserFactory.php on line 20

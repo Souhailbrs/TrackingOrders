@@ -1,4 +1,14 @@
-@extends("layouts.admin")
+<?php
+$res = '';
+if (Auth::guard('seller')->check()) {
+    $res = 'seller';
+} elseif (Auth::guard('admin')->check()) {
+    $res = 'admin';
+} elseif (Auth::guard('supporter')->check()) {
+    $res = 'supporter';
+}
+?>
+@extends("layouts." . $res)
 @section("pageTitle", "Add Products To Store")
 @section("content")
 
@@ -16,7 +26,7 @@
 
             <div class="ms-auto">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary">Back</button>
+                    <a href="{{route('admin.orders.index',['state'=>'custom','from'=>1,'to'=>1])}}" class="btn btn-outline-primary">Back</a>
 
                 </div>
             </div>
@@ -26,10 +36,11 @@
 
         <!--start shop cart-->
         <section class="shop-page">
-            <form class="shop-container">
+            <form class="shop-container" action="{{route('customOrders.update',['customOrder'=>$order->id])}}" method="post">
+                @csrf
+                @method('put')
                 <div class="card text-center">
-                    <button type="button" class="btn btn-outline-primary">update</button>
-
+                    <button type="submit" class="btn btn-outline-primary">update</button>
                 </div>
 
                 <div class="card shadow-sm border-0">
@@ -115,26 +126,23 @@
                                                                 </div>
                                                                 <div class="cart-detail text-center text-lg-start">
                                                                     <h6 class="mb-2">{{$product->one_product->name}}</h6>
-                                                                    <input type="number" class="btn" value="2" min="1" style="width:70px" disabled>
+                                                                   Amount : <input type="number" id="amount{{$product->id}}" value="{{$product->amount}}"  min="1" style="width:90px" onchange="updateOrderProduct('{{$product->id}}')">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-12 col-lg-2">
                                                             <div class="cart-action text-center">
-                                                                <h5 class="mb-0">${{$product->price}}</h5>
+                                                                <input class="mb-0" id="price{{$product->id}}" value="{{$product->price}}" style="display:block;width:90px" onchange="updateOrderProduct('{{$product->id}}')">
                                                                 <?php $total += doubleval($product->price); ?>
                                                             </div>
                                                         </div>
+                                                        <input type="hidden" class="shop_order_product_id" value="{{$product->id}}">
                                                         <div class="col-12 col-lg-2">
-                                                            <div class="cart-action text-center">
-                                                                <h5 class="mb-0">
-                                                                    <div class="parent-icon">
-                                                                        <ion-icon name="remove-outline"></ion-icon>
-                                                                    </div>
-                                                                </h5>
-
-                                                            </div>
+                                                           <a class="btn btn-danger shop_order_button_reomve" href="{{route('removeProductOrder',['id'=>$product->id])}}" >
+                                                               Remove
+                                                           </a>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -144,19 +152,27 @@
                                                 <div class="row align-items-center g-2 text-center">
                                                     <div class="col-12 col-lg-3">
                                                         Product:
-                                                        <select class="btn btn-outline-primary col-sm-12" name="" id=""></select>
+                                                        <select class="btn btn-outline-primary col-sm-12" name="product_seller_new" id="product_seller_new">
+                                                            @foreach($product_seller as $pro)
+                                                                <option value="{{$pro->id}}">{{$pro->name}}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
+                                                    <input  class="btn btn-outline-primary col-sm-12"  type="hidden" value="{{$order->shop->id}}" name="product_seller_sale_channel" id="product_seller_sale_channel">
+
                                                     <div class="col-12 col-lg-3">
                                                         Amount:
-                                                        <input  class="btn btn-outline-primary col-sm-12"  name="" id="">
+                                                        <input  class="btn btn-outline-primary col-sm-12"  name="product_seller_amount" id="product_seller_amount">
                                                     </div>
                                                     <div class="col-12 col-lg-3">
                                                         Price:
-                                                        <input  class="btn btn-outline-primary col-sm-12"  name="" id="">
+                                                        <input  class="btn btn-outline-primary col-sm-12"  name="product_seller_price" id="product_seller_price">
                                                     </div>
                                                     <div class="col-12 col-lg-3">
                                                         &#160;
-                                                        <input  type="button" class="btn btn-outline-primary col-sm-12"  name="" id="" value="Add">
+                                                        <input  type="hidden" class="btn btn-primary col-sm-12 "  name="" id="shop_order_id" value="{{$order->id}}">
+
+                                                        <input  type="button" class="btn btn-primary col-sm-12 "  name="" id="shop_order_button" value="Add">
                                                     </div>
                                                 </div>
                                             </div>
@@ -420,7 +436,7 @@
                                                             @endif
                                                             @endforeach
 
-                                                        </div>
+                                                </div>
 
 
 
@@ -465,6 +481,31 @@
                                                                 <span class="btn btn-danger col-sm-12">  {{__('orders.customer_didnot_deliver')}}</span>
                                                             @endif
                                                         </div>
+                                                        <hr>
+                                                        <p class="fs-5 text-center">Change Order Status</p>
+
+                                                        <select name="status_id" id="status_id" class="btn btn-primary col-sm-12" >
+                                                            <option value="99999999">Chnage Status</option>
+
+                                                            <option value="0">{{__('orders.new_order')}}</option>
+                                                            <option value="1">{{__('orders.call_center_received')}}</option>
+                                                            <option value="2">{{__('orders.no_answer_call_center')}}</option>
+                                                            <option value="3">{{__('orders.wrong_answer')}}</option>
+                                                            <option value="4">{{__('orders.confirm_order')}}</option>
+                                                            <option value="5">{{__('orders.not_confirm_order')}}</option>
+                                                            <option value="6">{{__('orders.canceled_order')}}</option>
+                                                            <option value="7">{{__('orders.ready_to_be_delivered')}}</option>
+                                                            <option value="8">{{__('orders.received_by_delivery')}}</option>
+                                                            <option value="9">{{__('orders.delivery_refused_order')}}</option>
+                                                            <option value="10">{{__('orders.customer_received')}}</option>
+                                                            <option value="11">{{__('orders.canceled_order')}}</option>
+                                                            <option value="12">{{__('orders.no_answer_delivery_boy')}}</option>
+                                                            <option value="13">{{__('orders.customer_didnot_deliver')}}</option>
+
+                                                        </select>
+                                                        <input type="hidden" id="old_status" value="{{$order->status}}">
+                                                        <input type="hidden" id="order_id" value="{{$order->id}}">
+
                                                     </div>
                                                 </div>
                                                 <div class="card">
@@ -479,7 +520,7 @@
                                                                 @endif
                                                                 @foreach($countries as $country)
                                                                     @if($order->country->id != $country->id)
-                                                                        <option value="{{$country->id}}" selected>{{$country['title_' . App::getLocale()]}}</option>
+                                                                        <option value="{{$country->id}}">{{$country['title_' . App::getLocale()]}}</option>
                                                                     @endif
                                                                 @endforeach
                                                             </select>
@@ -495,10 +536,10 @@
                                                                     @foreach($cities as $city)
                                                                     @if($order->city)
                                                                             @if($order->city->id != $city->id)
-                                                                                <option value="{{$order->city->id}}" selected>{{$order->city['title_' . App::getLocale()]}}</option>
+                                                                                <option value="{{$order->city->id}}">{{$order->city['title_' . App::getLocale()]}}</option>
                                                                             @endif
                                                                     @else
-                                                                    <option value="{{$city->id}}" selected>{{$city['title_' . App::getLocale()]}}</option>
+                                                                    <option value="{{$city->id}}" >{{$city['title_' . App::getLocale()]}}</option>
                                                                     @endif
                                                                 @endforeach
                                                                     @else
@@ -517,7 +558,7 @@
                                                                     @foreach($zones as $zone)
                                                                     @if($order->zone)
                                                                         @if($order->zone->id != $zone->id)
-                                                                            <option value="{{$order->zone->id}}" selected>{{$order->zone['title_' . App::getLocale()]}}</option>
+                                                                            <option value="{{$order->zone->id}}" >{{$order->zone['title_' . App::getLocale()]}}</option>
                                                                         @endif
                                                                     @else
                                                                         <option value="{{$zone->id}}" selected>{{$zone['title_' . App::getLocale()]}}</option>
@@ -562,15 +603,19 @@
                                                         <hr>
                                                         <div class="mb-3">
                                                             <label class="form-label">Name</label>
-                                                            <input class="form-control" value="{{$order->shop->title_ar}}" name="shop_title_ar">
+                                                            <input class="form-control" value="{{$order->shop->title_ar}}" name="shop_title_ar" readonly>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Phone</label>
-                                                            <input class="form-control" value="{{$order->shop->owner_phone}}" name="owner_phone">
+                                                            <input class="form-control" value="{{$order->shop->owner_phone}}" name="owner_phone" readonly>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Email</label>
-                                                            <input class="form-control" value="{{$order->shop->owner_email}}"  name="owner_email">
+                                                            <input class="form-control" value="{{$order->shop->owner_email}}"  name="owner_email" readonly>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Shop Url</label>
+                                                            <input class="form-control" value="{{$order->shop->shop_url}}"  name="shop_url" readonly>
                                                         </div>
                                                         <div class="mb-3 text-center">
                                                             <a href="{{$order->shop->shop_url}}" class="btn btn-outline-primary text-center"  target="_blank">
@@ -623,6 +668,213 @@
                 document.getElementById("demo").innerHTML = "EXPIRED";
             }
         }, 1000);
+    </script>
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+        crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        function clone() {
+            var original = document.getElementById("product_id");
+            original.style.display = 'block';
+            var clone = original.cloneNode(true);
+            clone.removeAttribute("id");
+            document.getElementById("product_id_original").appendChild(clone);
+            original.style.display = 'none';
+
+        }
+
+        function removeClone(el) {
+            var element = el;
+            $(el).parent().remove();
+        }
+
+
+        $(document).ready(function () {
+            $('#country_id').on('change', function () {
+                var id = $(this).val();
+                //alert(id);
+                $.ajax({
+                    url: '{{route('site.getCities')}}',
+                    method: "get",
+                    data: {country_id: id},
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var cities = document.getElementById('city_id');
+
+                        cities.innerHTML = "<option>Select City</option>";
+
+                        data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_en'] + "</option>");
+                        //console.log(typeof data);
+
+                        // console.log(data);
+                    }
+                });
+
+            });
+            $('#city_id').on('change', function () {
+                var id = $(this).val();
+                $.ajax({
+                    url: '{{route('site.getZones')}}',
+                    method: "get",
+                    data: {city_id: id},
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var zones = document.getElementById('zone_id');
+                        zones.innerHTML = "<option>Select Zone</option>";
+
+
+                        data.forEach(zone => zones.innerHTML += "<option value=" + zone.id + ">" + zone['title_en'] + "</option>");
+                        //console.log(typeof data);
+
+                        // console.log(data);
+                    }
+                });
+
+            });
+            $('#zone_id').on('change', function () {
+                var id = $(this).val();
+                $.ajax({
+                    url: '{{route('site.getDistricts')}}',
+                    method: "get",
+                    data: {zone_id: id},
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var zones = document.getElementById('district_id');
+                        zones.innerHTML = "<option>Select District</option>";
+
+                        data.forEach(zone => zones.innerHTML += "<option value=" + zone.id + ">" + zone['title_en'] + "</option>");
+                        //console.log(typeof data);
+                        // console.log(data);
+
+
+                    }
+                });
+
+            });
+            $('#shop_id').on('change', function () {
+                var id = $(this).val();
+                //  alert(id);
+                $.ajax({
+                    url: '{{route('site.getProducts')}}',
+                    method: "get",
+                    data: {shop_id: id},
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var shops = document.getElementsByClassName('product_id_view');
+                        if( shops.length != 0 ){
+                            for (var i = 0; i < shops.length; i++) {
+                                shops[i].innerHTML = "";
+                                data.forEach(shop => shops[i].innerHTML += "<option value=" + shop['product_id'] + ">" + shop['product_name'] + "</option>");
+                            }
+                        }else{
+                            shops.innerHTML=  "<option > There is no records yet!</option>";
+                        }
+
+                        //console.log(typeof data);
+
+                        // console.log(data);
+                    }
+                });
+
+            });
+            $('#status_id').on('change', function () {
+                var id = $(this).val();
+                var old_status = $('#old_status').val();
+                var order_id = $('#order_id').val();
+                $.ajax({
+                    url: '{{route('change_order_state')}}',
+                    method: "get",
+                    data: {
+                        old_status:old_status,
+                        new_status:id,
+                        order_id:order_id,
+                    },
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function () {
+                        location.reload();
+
+                    }
+                });
+
+            });
+
+            $('#shop_order_button').on('click', function () {
+                var id = $(this).val();
+                var product_id = $('#product_seller_new').val();
+                var order_id = $('#shop_order_id').val();
+                var product_seller_price = $('#product_seller_price').val();
+                var product_seller_amount = $('#product_seller_amount').val();
+                var res = {
+                    product_id: product_id ,
+                    product_seller_price: product_seller_price ,
+                    product_seller_amount: product_seller_amount ,
+                    order_id: order_id ,
+                    "_token": "{{ csrf_token() }}",
+                };
+                console.log(res);
+                $.ajax({
+                    url: '{{route('addProductOrder')}}',
+                    method: "post",
+                    data: res,
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        location.reload();
+
+                    }
+                });
+
+            });
+
+        });
+        function updateOrderProduct(OrderProductId){
+            var product_amount = $('#amount'+OrderProductId).val();
+            var product_price = $('#price'+OrderProductId).val();
+
+            res= {
+                OrderProductId: OrderProductId,
+                product_amount: product_amount,
+                product_price: product_price,
+            };
+            $.ajax({
+                url: '{{route('change_order_product_details')}}',
+                method: "get",
+                data: res,
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (data) {
+                    //location.reload();
+                    console.log(data);
+                }
+            });
+        }
     </script>
 
 @endsection

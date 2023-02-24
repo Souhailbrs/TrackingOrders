@@ -2,58 +2,74 @@
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 
-$type_users =  Auth::guard('seller')->user()->id;
+$type_users = Auth::guard('seller')->user()->id;
 ?>
-@extends("layouts.seller")
-@if(LaravelLocalization::getCurrentLocale() == 'ar')
-    @section("pageTitle", "الرئيسية")
+@extends('layouts.seller')
+@if (LaravelLocalization::getCurrentLocale() == 'ar')
+    @section('pageTitle', 'الرئيسية')
 @else
-    @section("pageTitle", "Home")
+    @section('pageTitle', 'Home')
 @endif
 
-@section("content")
+@section('content')
     <div class="container">
         <div class="row">
             <div class="container">
-                <form class="row text-center" action="{{route('seller.filter.statistics',['type_users'=>$type_users])}}" method="POST">
+                <form class="row text-center d-flex justify-content-center" action="{{ route('seller.filter.statistics', ['type_users' => $type_users]) }}"
+                    method="POST">
                     @csrf
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2 h6 ">
                         <label for="filter">Filter</label> :
                         <select class="form-control" id="filter" name="date">
-                            <option value="today">Today</option>
-                            <option value="all">All</option>
-                            <option value="from">From To</option>
+                            <option value="today" @if ($res['date'] == 'today') selected @endif>Today</option>
+                            <option value="yesterday"@if ($res['date'] == 'yesterday') selected @endif>Yesterday</option>
+                            <option value="7days" @if ($res['date'] == '7days') selected @endif>Last 7 Days</option>
+                            <option value="30days" @if ($res['date'] == '30days') selected @endif>Last 30 Days</option>
+                            <option value="all" @if ($res['date'] == 'all') selected @endif>All</option>
+                            <option value="from" @if ($res['date'] == 'from') selected @endif>From To</option>
                         </select>
                     </div>
                     <div class="col-sm-2 h6 ">
-                        <label for="from">From</label> : <input type="date" class="form-control" id="from" name="from">
+                        <label for="product">Product</label> :
+                        <select class="form-control" id="product" name="product">
+                            <option value="all" @if ($res['selected_product'] == 'all') selected @endif>All</option>
+                            @foreach ($res['products'] as $product)
+                                <option value="{{ $product->id }}"@if ($res['selected_product'] == $product->id ) selected @endif>{{ $product->name }}</option>
+                            @endforeach
+                            
+                        </select>
                     </div>
                     <div class="col-sm-2 h6 ">
-                        <label for="from">To</label> : <input type="date" class="form-control" id="to" name="to">
+                        <label for="from">From</label> : <input type="date" class="form-control" id="from"
+                            value="{{ $res['date_from'] }}" name="from">
+                    </div>
+                    <div class="col-sm-2 h6 ">
+                        <label for="from">To</label> : <input type="date" class="form-control" id="to"
+                            value="{{ $res['date_to'] }}" name="to">
                     </div>
                     <div class="col-sm-2 h6 ">
                         <label for="from">Country</label> :
-                        <select class="form-control"  name="country" id="country_id">
-                            @foreach($res['countries'] as $country)
-                                <option value="{{$country['id']}}">{{$country['title_' . App::getLocale()]}}</option>
+                        <select class="form-control" name="country" id="country_id">
+                            @foreach ($res['countries'] as $country)
+                                <option value="{{ $country['id'] }}" @if ($res['country'] == $country['id']) selected @endif>
+                                    {{ $country['title_' . App::getLocale()] }}</option>
                             @endforeach
 
                         </select>
                     </div>
-                    <div class="col-sm-2 h6 ">
+                    <div class="col-sm-2 h6">
                         <label for="from"> &#160;</label>
                         <input class="form-control btn btn-dark" type="submit">
 
                     </div>
-                    <div class="col-sm-1"></div>
 
                 </form>
             </div>
         </div>
         <hr>
         <div class="row row-cols-1 row-cols-lg-2 row-cols-xxl-4">
-            <div class="col">
+            <div class="col" style="width: 100% !important">
                 <div class="card radius-10">
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2">
@@ -69,7 +85,8 @@ $type_users =  Auth::guard('seller')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{$res['total_earnings']}} Dollars</h5>
+                                <h5 class="mb-0">{{ $res['total_earnings'] }}
+                                    {{ empty($res['current_country'][0]) ? '$' : $res['current_country'][0] }}</h5>
                             </div>
 
                         </div>
@@ -84,7 +101,7 @@ $type_users =  Auth::guard('seller')->user()->id;
                                 <ion-icon name="heart-outline"></ion-icon>
                             </div>
                             <div>
-                                <p class="mb-0"> New Orders</p>
+                                <p class="mb-0"> Orders</p>
                             </div>
                             <div class="fs-5 ms-auto">
                                 <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
@@ -92,7 +109,7 @@ $type_users =  Auth::guard('seller')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{$res['new_orders']}} Orders</h5>
+                                <h5 class="mb-0">{{ $res['all_orders'] }} Orders</h5>
                             </div>
 
                         </div>
@@ -115,7 +132,7 @@ $type_users =  Auth::guard('seller')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{$res['new_orders']}} Orders</h5>
+                                <h5 class="mb-0">{{ $res['confirmed_orders'] }} Orders</h5>
                             </div>
 
                         </div>
@@ -138,12 +155,74 @@ $type_users =  Auth::guard('seller')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{$res['delivered_orders']}} Orders</h5>
+                                <h5 class="mb-0">{{ $res['delivered_orders'] }} Orders</h5>
                             </div>
 
                         </div>
                     </div>
                 </div>
+            </div>
+            <br>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="mail-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Canceled Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{ $res['canceled_orders'] }} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0"> Confirmation Rate</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <h5 class="mb-0">{{ number_format((float) $res['confirmed_percentage'], 2, '.', '') }}
+                                    %</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="storefront-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Delivered Rate</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <h5 class="mb-0">{{ number_format((float) $res['delivered_percentage'], 2, '.', '') }} %
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="chart000">
             </div>
         </div>
 
@@ -156,21 +235,58 @@ $type_users =  Auth::guard('seller')->user()->id;
                             <h6 class="mb-0">Statistics</h6>
                             <div class="ms-auto">
                                 <div class="d-flex align-items-center font-13 gap-2">
-                      <span class="border px-1 rounded cursor-pointer"><i
-                              class="bx bxs-circle me-1 text-primary"></i>Downloads</span>
                                     <span class="border px-1 rounded cursor-pointer"><i
                                             class="bx bxs-circle me-1 text-primary opacity-50"></i>Earnings</span>
                                 </div>
                             </div>
                         </div>
                         <div class="chart-container1">
-                            <canvas id="chart5"></canvas>
+                            <canvas id="myChart" style="width:100%;max-height:350px"></canvas>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
+
+        <script>
+            var xValues = {!! json_encode($res['xValues']) !!};
+            var yValues = {!! json_encode($res['yValues']) !!};
+            var calcul = 0;
+            if (Math.max(...yValues) == 0) {
+                calcul = 50;
+            } else {
+                calcul = Math.max(...yValues);
+            }
+            new Chart("myChart", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(0,0,255,1.0)",
+                        borderColor: "rgba(0,0,255,0.1)",
+                        data: yValues
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: calcul
+                            }
+                        }],
+                    }
+                }
+            });
+        </script>
+
+        {{-- <div class="row">
             <div class="col-xl-6 mx-auto">
                 <h6 class="mb-0 text-uppercase">Confirmation Percentage</h6>
                 <hr />
@@ -191,7 +307,7 @@ $type_users =  Auth::guard('seller')->user()->id;
                 </div>
             </div>
 
-        </div>
+        </div> --}}
 
 
 
@@ -202,208 +318,208 @@ $type_users =  Auth::guard('seller')->user()->id;
     </div>
 @endsection
 
-@section("script")
+// @section('script')
 
 
+    //
     <script>
-        $(document).ready(function () {
-            $('#country_id').on('change', function () {
-                var id = $(this).val();
-                //alert(id);
-                $.ajax({
-                    url: '{{route('site.getCities')}}',
-                    method: "get",
-                    data: {country_id: id},
-                    dataType: "json",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        var cities = document.getElementById('city_id');
-                        cities.innerHTML = "<option>Select City</option>";
-                        data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_ar'] + "</option>");
-                        //console.log(typeof data);
+        //         $(document).ready(function () {
+        //             // $('#country_id').on('change', function () {
+        //             //     var id = $(this).val();
+        //             //     //alert(id);
+        //             //     $.ajax({
+        //             //         url: '{{ route('site.getCities') }}',
+        //             //         method: "get",
+        //             //         data: {country_id: id},
+        //             //         dataType: "json",
+        //             //         headers: {
+        //             //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             //         },
+        //             //         success: function (data) {
+        //             //             console.log(data);
+        //             //             var cities = document.getElementById('city_id');
+        //             //             cities.innerHTML = "<option>Select City</option>";
+        //             //             data.forEach(city => cities.innerHTML += "<option value=" + city.id + ">" + city['title_ar'] + "</option>");
+        //             //             //console.log(typeof data);
 
-                        // console.log(data);
-                    }
-                });
+        //             //             // console.log(data);
+        //             //         }
+        //             //     });
 
-            });
-        });
+        //             });
+        //     //     var xValues = [0];
+        //     //     var yValues = [0];
+        //     //     <?php $max = 0; ?>
 
-        var xValues = [0];
-        var yValues = [0];
-        <?php $max = 0; ?>
-
-        @foreach($res['graph_earnings'] as $key => $value)
-        xValues.push('<?php echo $key ?>');
-        yValues.push('<?php echo $value ?>');
-        <?php $max +=$value; ?>
-        @endforeach
-        <?php $node = $max / 10 ; ?>
-        new Chart("myChart", {
-            type: "line",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    fill: true,
-                    lineTension: 0,
-                    backgroundColor: "rgb(190,137,234)",
-                    borderColor: "rgba(0,0,255,0.1)",
-                    data: yValues
-                }]
-            },
-            options: {
-                legend: {display: false},
-                scales: {
-                    yAxes: [{ticks: {min: {{0}}, max: {{$max}}}}],
-                }
-            }
-        });
+        //     //     @foreach ($res['graph_earnings'] as $key => $value)
+        //     //     xValues.push('<?php echo $key; ?>');
+        //     //     yValues.push('<?php echo $value; ?>');
+        //     //     <?php $max += $value; ?>
+        //     //     @endforeach
+        //     //     <?php $node = $max / 10; ?>
+        //     //     new Chart("myChart", {
+        //     //         type: "line",
+        //     //         data: {
+        //     //             labels: xValues,
+        //     //             datasets: [{
+        //     //                 fill: true,
+        //     //                 lineTension: 0,
+        //     //                 backgroundColor: "rgb(190,137,234)",
+        //     //                 borderColor: "rgba(0,0,255,0.1)",
+        //     //                 data: []
+        //     //             }]
+        //     //         },
+        //     //         options: {
+        //     //             legend: {display: false},
+        //     //             scales: {
+        //     //                 yAxes: [{ticks: {min: {{ 0 }}, max: {{ $max }}}}],
+        //     //             }
+        //     //         }
+        //     //     });
+        //     // 
     </script>
 
+    // //
     <script>
-        var yarab = [];
-        var ii = 0;
-        <?php $categories = [] ?>
-            @foreach( $categories as $course)
-            yarab[ii] = "{{$course['name']}}";
-        ii++;
-        @endforeach
-        <?php
-            $xx = 0;
-            $yy = 0;
-            ?>
-            !function (e) {
-            "use strict";
+        //     //     var yarab = [];
+        //     //     var ii = 0;
+        //     //     <?php $categories = []; ?>
+        //     //         @foreach ($categories as $course)
+        //     //         yarab[ii] = "{{ $course['name'] }}";
+        //     //     ii++;
+        //     //     @endforeach
+        //     //     <?php
+        //     //         $xx = 0;
+        //     //         $yy = 0;
+        //     //
+        ?>
+        //     //         !function (e) {
+        //     //         "use strict";
 
-            function a() {
-            }
+        //     //         function a() {
+        //     //         }
 
-            a.prototype.init = function () {
-                c3.generate({
-                    bindto: "#chart", data: {
-                        columns: [
-                            ["{{__('admin/section.available_products')}}"{{$xx}}],
-                            ["{{__('admin/section.sold_products')}}"{{$yy}}],
-                        ],
-                        type: "bar",
-                    },
-                    tooltip: {
-                        contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-                            var $$ = this, config = $$.config,
-                                titleFormat = config.tooltip_format_title || defaultTitleFormat,
-                                nameFormat = config.tooltip_format_name || function (name) {
-                                    return name;
-                                },
-                                valueFormat = config.tooltip_format_value || defaultValueFormat,
-                                text, i, title, value, name, bgcolor;
-                            for (i = 0; i < d.length; i++) {
-                                var y = 0;
-                                if (!(d[i] && (d[i].value || d[i].value === 0))) {
-                                    continue;
-                                }
+        //     //         a.prototype.init = function () {
+        //     //             c3.generate({
+        //     //                 bindto: "#chart", data: {
+        //     //                     columns: [
 
-                                if (!text) {
-                                    title = titleFormat ? titleFormat(d[i].x) : d[i].x;
-                                    var list = document.getElementsByClassName("c3-axis")[0];
-                                    list.getElementsByTagName("tspan")[title].innerHTML = yarab[title];
-                                    text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + yarab[title] + "</th></tr>" : "");
-                                }
+        //     //                     ],
+        //     //                     type: "bar",
+        //     //                 },
+        //     //                 tooltip: {
+        //     //                     contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+        //     //                         var $$ = this, config = $$.config,
+        //     //                             titleFormat = config.tooltip_format_title || defaultTitleFormat,
+        //     //                             nameFormat = config.tooltip_format_name || function (name) {
+        //     //                                 return name;
+        //     //                             },
+        //     //                             valueFormat = config.tooltip_format_value || defaultValueFormat,
+        //     //                             text, i, title, value, name, bgcolor;
+        //     //                         for (i = 0; i < d.length; i++) {
+        //     //                             var y = 0;
+        //     //                             if (!(d[i] && (d[i].value || d[i].value === 0))) {
+        //     //                                 continue;
+        //     //                             }
 
-                                name = nameFormat(d[i].name);
-                                value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
-                                bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+        //     //                             if (!text) {
+        //     //                                 title = titleFormat ? titleFormat(d[i].x) : d[i].x;
+        //     //                                 var list = document.getElementsByClassName("c3-axis")[0];
+        //     //                                 list.getElementsByTagName("tspan")[title].innerHTML = yarab[title];
+        //     //                                 text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + yarab[title] + "</th></tr>" : "");
+        //     //                             }
 
-                                text += "<tr class='" + $$.CLASS.tooltipName + "-" + d[i].id + "'>";
-                                text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
-                                text += "<td class='value'>" + value + "</td>";
-                                text += "</tr>";
-                                y++;
-                            }
-                            return text + "</table>";
-                        }
-                    }
+        //     //                             name = nameFormat(d[i].name);
+        //     //                             value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
+        //     //                             bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
 
-                }),
-                    c3.generate({
-                        bindto: "#donut-chart",
-                        data: {
-                            columns: [
-                                ["{{__('admin/home.Open')}}", {{1}}],
-                                ["{{__('admin/home.Close')}}", {{1}}],
-                                ["{{__('admin/home.Accept')}}", {{1}}],
-                                ["{{__('admin/home.Refused')}}", {{1}}],
-                                ["{{__('admin/home.Pending')}}", {{1}}]
-                            ],
-                            type: "donut"
-                        },
-                        donut: {
-                            title: "{{__('admin/home.Ticket')}}",
-                            width: 30,
-                            label: {show: !1}
-                        },
-                        color: {
-                            pattern: ["#ffbb44", "#39325c", "#4ac18e", "#f06292", "#3bc3e9"]
-                        }
-                    })
-            }
-            e.ChartC3 = new a, e.ChartC3.Constructor = a
-        }(window.jQuery), function () {
-            "use strict";
-            window.jQuery.ChartC3.init()
-        }();
+        //     //                             text += "<tr class='" + $$.CLASS.tooltipName + "-" + d[i].id + "'>";
+        //     //                             text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+        //     //                             text += "<td class='value'>" + value + "</td>";
+        //     //                             text += "</tr>";
+        //     //                             y++;
+        //     //                         }
+        //     //                         return text + "</table>";
+        //     //                     }
+        //     //                 }
 
-        ////////////
-        !function (e) {
-            "use strict";
+        //     //             }),
+        //     //                 c3.generate({
+        //     //                     bindto: "#donut-chart",
+        //     //                     data: {
+        //     //                         columns: [
+        //     //                             ["{{ __('admin/home.Open') }}", {{ 1 }}],
+        //     //                             ["{{ __('admin/home.Close') }}", {{ 1 }}],
+        //     //                             ["{{ __('admin/home.Accept') }}", {{ 1 }}],
+        //     //                             ["{{ __('admin/home.Refused') }}", {{ 1 }}],
+        //     //                             ["{{ __('admin/home.Pending') }}", {{ 1 }}]
+        //     //                         ],
+        //     //                         type: "donut"
+        //     //                     },
+        //     //                     donut: {
+        //     //                         title: "{{ __('admin/home.Ticket') }}",
+        //     //                         width: 30,
+        //     //                         label: {show: !1}
+        //     //                     },
+        //     //                     color: {
+        //     //                         pattern: ["#ffbb44", "#39325c", "#4ac18e", "#f06292", "#3bc3e9"]
+        //     //                     }
+        //     //                 })
+        //     //         }
+        //     //         e.ChartC3 = new a, e.ChartC3.Constructor = a
+        //     //     }(window.jQuery), function () {
+        //     //         "use strict";
+        //     //         window.jQuery.ChartC3.init()
+        //     //     }();
 
-            function a() {
-            }
+        //     //     ////////////
+        //     //     !function (e) {
+        //     //         "use strict";
 
-            a.prototype.init = function () {
-                c3.generate({
-                    bindto: "#chart-with-area-moka",
-                    data: {
-                        columns: [["SonyVaio", 30, 20, 50, 40, 60, 50], ["iMacs", 200, 130, 90, 240, 130, 220], ["Tablets", 300, 200, 160, 400, 250, 250], ["iPhones", 200, 130, 90, 240, 130, 220], ["Macbooks", 130, 120, 150, 140, 160, 150]],
-                        types: {SonyVaio: "bar", iMacs: "bar", Tablets: "spline", iPhones: "line", Macbooks: "bar"},
-                        colors: {
-                            SonyVaio: "#67a8e4",
-                            iMacs: "#4ac18e",
-                            Tablets: "#3bc3e9",
-                            iPhones: "#ffbb44",
-                            Macbooks: "#ea553d"
-                        },
-                        groups: [["SonyVaio", "iMacs"]]
-                    },
-                    axis: {x: {type: "categorized"}}
-                }), c3.generate({
-                    bindto: "#donut-chart",
-                    data: {
-                        columns: [["Desktops", 78], ["Smart Phones", 55], ["Mobiles", 40], ["Tablets", 25]],
-                        type: "donut"
-                    },
-                    donut: {title: "Candidates", width: 30, label: {show: !1}},
-                    color: {pattern: ["#f06292", "#6d60b0", "#5468da", "#009688"]}
-                }), c3.generate({
-                    bindto: "#pie-chart",
-                    data: {
-                        columns: [["Desktops", 78], ["Smart Phones", 55], ["Mobiles", 40], ["Tablets", 25]],
-                        type: "pie"
-                    },
-                    color: {pattern: ["#afb42b", "#fb8c00", "#8d6e63", "#90a4ae"]},
-                    pie: {label: {show: !1}}
-                })
-            }, e.ChartC3 = new a, e.ChartC3.Constructor = a
-        }(window.jQuery), function () {
-            "use strict";
-            window.jQuery.ChartC3.init()
-        }();
-        //////////////////////////////////
+        //     //         function a() {
+        //     //         }
 
+        //     //         a.prototype.init = function () {
+        //     //             c3.generate({
+        //     //                 bindto: "#chart-with-area-moka",
+        //     //                 data: {
+        //     //                     columns: [["SonyVaio", 30, 20, 50, 40, 60, 50], ["iMacs", 200, 130, 90, 240, 130, 220], ["Tablets", 300, 200, 160, 400, 250, 250], ["iPhones", 200, 130, 90, 240, 130, 220], ["Macbooks", 130, 120, 150, 140, 160, 150]],
+        //     //                     types: {SonyVaio: "bar", iMacs: "bar", Tablets: "spline", iPhones: "line", Macbooks: "bar"},
+        //     //                     colors: {
+        //     //                         SonyVaio: "#67a8e4",
+        //     //                         iMacs: "#4ac18e",
+        //     //                         Tablets: "#3bc3e9",
+        //     //                         iPhones: "#ffbb44",
+        //     //                         Macbooks: "#ea553d"
+        //     //                     },
+        //     //                     groups: [["SonyVaio", "iMacs"]]
+        //     //                 },
+        //     //                 axis: {x: {type: "categorized"}}
+        //     //             }), c3.generate({
+        //     //                 bindto: "#donut-chart",
+        //     //                 data: {
+        //     //                     columns: [["Desktops", 78], ["Smart Phones", 55], ["Mobiles", 40], ["Tablets", 25]],
+        //     //                     type: "donut"
+        //     //                 },
+        //     //                 donut: {title: "Candidates", width: 30, label: {show: !1}},
+        //     //                 color: {pattern: ["#f06292", "#6d60b0", "#5468da", "#009688"]}
+        //     //             }), c3.generate({
+        //     //                 bindto: "#pie-chart",
+        //     //                 data: {
+        //     //                     columns: [["Desktops", 78], ["Smart Phones", 55], ["Mobiles", 40], ["Tablets", 25]],
+        //     //                     type: "pie"
+        //     //                 },
+        //     //                 color: {pattern: ["#afb42b", "#fb8c00", "#8d6e63", "#90a4ae"]},
+        //     //                 pie: {label: {show: !1}}
+        //     //             })
+        //     //         }, e.ChartC3 = new a, e.ChartC3.Constructor = a
+        //     //     }(window.jQuery), function () {
+        //     //         "use strict";
+        //     //         window.jQuery.ChartC3.init()
+        //     //     }();
+        //     //     //////////////////////////////////
+
+        //     
     </script>
 
-@endsection
-
-
+// @endsection

@@ -331,8 +331,8 @@
                                     <div class="d-flex flex-row align-items-center gap-2">
                                         <img src="{{asset('assets/admin/'. $lang .'/images/avatars/06.png')}}" alt="" class="rounded-circle" width="54" height="54">
                                         <div class="">
-                                            <h6 class="mb-0 dropdown-user-name">Jhon Deo</h6>
-                                            <small class="mb-0 dropdown-user-designation text-secondary">UI Developer</small>
+                                            <h6 class="mb-0 dropdown-user-name">{{Auth::guard('delivery')->user()->name}}</h6>
+                                            <small class="mb-0 dropdown-user-designation text-secondary">{{Auth::guard('delivery')->user()->email}}</small>
                                         </div>
                                     </div>
                                 </a>

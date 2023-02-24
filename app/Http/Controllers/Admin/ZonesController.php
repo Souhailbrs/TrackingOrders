@@ -25,7 +25,13 @@ class ZonesController extends Controller
         if(Auth::guard('admin')->user()->is_super_admin) {
             $records = Zone::orderBy('id', 'ASC')->get();
         }else{
-           $cities =  Auth::guard('admin')->user()->country->cities;
+            $country = Auth::guard('admin')->user()->country;
+            if ($country) {
+                $cities = $country->cities;
+            } else {
+                $cities = [];
+            }
+
            $records = [];
            foreach($cities as $city){
                $city_zones = $city->zones;

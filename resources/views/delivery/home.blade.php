@@ -155,7 +155,7 @@
                         <table class="table">
                             <tr>
                                 <th>
-                                    {{__('orders.State')}}
+                                    {{__('orders.State')}} 
                                 </th>
                                 <th>
                                     <select name="state" class="btn btn-dark form-control">

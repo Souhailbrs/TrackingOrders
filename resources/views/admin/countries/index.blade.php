@@ -1,12 +1,12 @@
-@extends("layouts.admin")
-@section("pageTitle", "Countries")
-@section("style")
+@extends('layouts.admin')
+@section('pageTitle', 'Countries')
+@section('style')
 @endsection
-@section("content")
+@section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body table-responsive " >
+                <div class="card-body table-responsive ">
 
 
 
@@ -14,55 +14,69 @@
 
 
 
-                            <div class="row">
-                                <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
 
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table id="example2" class="table table-striped table-bordered pt-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table id="example2" class="table table-striped table-bordered pt-3">
 
                                                 <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Name Arabic</th>
-                                                    <th>Name English</th>
-                                                    <th>Action</th>
-                                                </tr>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Name Arabic</th>
+                                                        <th>Name English</th>
+                                                        <th>Currency</th>
+                                                        <th>Currency Symbol</th>
+                                                        <th>Action</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                @foreach ($records as $record)
-                                                  <tr>
-                                                      <td>#{{$record->id}}</td>
-                                                      <td>{{$record->title_ar}}</td>
-                                                      <td>{{$record->title_en}}</td>
+                                                    @foreach ($records as $record)
+                                                        <tr>
+                                                            <td>#{{ $record->id }}</td>
+                                                            <td>{{ $record->title_ar }}</td>
+                                                            <td>{{ $record->title_en }}</td>
+                                                            <td>{{ $record->currency }}</td>
+                                                            <td>{{ $record->currency_symbol }}</td>
 
-                                                    <td>
-                                                        <a href="{{route('countries.edit',['country'=>$record->id])}}" class="mr-3 text-muted" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
+                                                            <td>
+                                                                <a href="{{ route('countries.edit', ['country' => $record->id]) }}"
+                                                                    class="mr-3 text-muted" data-toggle="tooltip"
+                                                                    data-placement="top" title=""
+                                                                    data-original-title="Edit"><i
+                                                                        class="mdi mdi-pencil font-size-18"></i></a>
 
-                                                        <form action="{{route('countries.destroy',['country'=>$record->id])}}" method="post" style="display:inline-block">
-                                                            @method('DELETE')
-                                                            @csrf
-                                                            <span type="submit" class="mr-3 text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete" onclick="$(this).closest('form').submit();"> <i class="mdi mdi-close font-size-18"></i> </span>
+                                                                <form
+                                                                    action="{{ route('countries.destroy', ['country' => $record->id]) }}"
+                                                                    method="post" style="display:inline-block">
+                                                                    @method('DELETE')
+                                                                    @csrf
+                                                                    <span type="submit" class="mr-3 text-muted"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                        title="" data-bs-original-title="Delete"
+                                                                        onclick="$(this).closest('form').submit();"> <i
+                                                                            class="mdi mdi-close font-size-18"></i> </span>
 
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                @endforeach
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
 
                                                 </tbody>
                                             </table>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
 
 
-                        </div> <!-- container-fluid -->
+                    </div> <!-- container-fluid -->
 
-{{--
+                    {{--
                     {{ $data->links() }}
 --}}
                 </div>
@@ -75,21 +89,21 @@
     <div id="modelAdd">
 
     </div>
-<script>
-    function modelDes(x,y){
-        document.getElementById('modelImagee').innerHTML =`
-            <div class="modal " id="image`+x+`" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <script>
+        function modelDes(x, y) {
+            document.getElementById('modelImagee').innerHTML = `
+            <div class="modal " id="image` + x + `" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">  {{__('admin/category.Image')}}  </h5>
+                            <h5 class="modal-title" id="exampleModalLabel">  {{ __('admin/category.Image') }}  </h5>
                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="group-img-container text-center post-modal">
-                                <img  src="{{asset('assets/images/users/`+ y +`')}}" alt="" class="group-img img-fluid" style="width:400px; hieght:400px" ><br>
+                                <img  src="{{ asset('assets/images/users/`+ y +`') }}" alt="" class="group-img img-fluid" style="width:400px; hieght:400px" ><br>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -99,39 +113,38 @@
                 </div>
             </div>
         `
-    }
+        }
 
-    function modelAddProduct(x){
-        document.getElementById('modelAdd').innerHTML =`
-            <div class="modal " id="form`+x+`" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        function modelAddProduct(x) {
+            document.getElementById('modelAdd').innerHTML = `
+            <div class="modal " id="form` + x + `" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel"> {{__('admin/category.Image')}} </h5>
+                            <h5 class="modal-title" id="exampleModalLabel"> {{ __('admin/category.Image') }} </h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" action="{{route('usersTypes.store')}}" >
+                            <form method="post" action="{{ route('usersTypes.store') }}" >
                             @csrf
-                            <input type="hidden" name="category_id" value="`+x+`">
+                            <input type="hidden" name="category_id" value="` + x + `">
                             <input type="hidden" name="state" value="available">
                                 <div class="form-group">
-                                    <label for="message-text" class="col-form-label">{{__('admin/category.Code')}}:</label>
+                                    <label for="message-text" class="col-form-label">{{ __('admin/category.Code') }}:</label>
                                     <textarea class="form-control" name="code" id="message-text"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">{{__('admin/category.Save')}}</button>
+                                <button type="submit" class="btn btn-primary">{{ __('admin/category.Save') }}</button>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('admin/category.Close')}}</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin/category.Close') }}</button>
                         </div>
                     </div>
                 </div>
             </div>
         `
-    }
-</script>
+        }
+    </script>
 @endsection
-

@@ -137,7 +137,7 @@
                                 {{$record->boxes_number}} Box
                             </td>
                             <td>
-                                {{$record->product_amount}}
+                                {{$record->product_amount}} 
                             </td>
                             <td>
                                 {{$record->delivery_type}}

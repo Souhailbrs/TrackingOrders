@@ -87,8 +87,8 @@
                                            style="color:white;margin-right: 10px;margin-left: 10px">
                                             {{__('orders.customer_received')}}
                                         </a>
-                                        <a data-bs-toggle="modal" data-bs-target="#exampleModalCenterConfirmed"  class="col-sm-2 mr-1 btn btn-dark h6"
-                                           style="color:white" href="">
+                                        <a class="col-sm-2 mr-1 btn btn-dark h6"
+                                           style="color:white" href="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>8])}}">
                                             {{__('orders.confirm_order')}}
                                         </a>
 
@@ -278,7 +278,7 @@
                 </div>
                 <div class="modal-body">
                     <form method="post"
-                          action="{{route('packaging.'.$pages . '.' . $action , ['order' =>$data->id])}}"
+                          action="{{route('packaging.change.order_state_supporter',['order'=>$data->id,'old'=>$data->status,'new'=>5])}}"
                           id="myForm">
                         @method('PUT')
                         @csrf

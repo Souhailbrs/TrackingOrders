@@ -17,7 +17,7 @@ class CountriesController extends Controller
     public function index()
     {
         $records = Country::get();
-        return view('admin.countries.index',compact('records'));
+        return view('admin.countries.index', compact('records'));
     }
 
     /**
@@ -28,7 +28,6 @@ class CountriesController extends Controller
     public function create()
     {
         return view('admin.countries.create');
-
     }
 
     /**
@@ -40,11 +39,12 @@ class CountriesController extends Controller
     public function store(Request $request)
     {
         Country::create([
-            'title_en'=>$request->title_en,
-            'title_ar'=>$request->title_ar
+            'title_en' => $request->title_en,
+            'title_ar' => $request->title_ar,
+            'currency' => $request->currency,
+            'currency_symbol' => $request->currency_symbol
         ]);
-        return redirect()->back()->with('success','Country Added Successfully');
-
+        return redirect()->back()->with('success', 'Country Added Successfully');
     }
 
     /**
@@ -67,7 +67,7 @@ class CountriesController extends Controller
     public function edit($id)
     {
         $record = Country::find($id);
-        return view('admin.countries.edit',compact('id','record'));
+        return view('admin.countries.edit', compact('id', 'record'));
     }
 
     /**
@@ -81,10 +81,12 @@ class CountriesController extends Controller
     {
         $country  = Country::find($id);
         $country->update([
-           'title_ar'=>$request->title_ar,
-           'title_en'=>$request->title_en
+            'title_ar' => $request->title_ar,
+            'title_en' => $request->title_en,
+            'currency' => $request->currency,
+            'currency_symbol' => $request->currency_symbol
         ]);
-        return redirect()->back()->with('success','Done Successfully !');
+        return redirect()->back()->with('success', 'Done Successfully !');
     }
 
     /**
@@ -95,11 +97,11 @@ class CountriesController extends Controller
      */
     public function destroy($id)
     {
-        $cities = City::where('country_id',$id)->count();
-        if($cities > 0) {
+        $cities = City::where('country_id', $id)->count();
+        if ($cities > 0) {
             return redirect()->back()->with('error', 'Country in use');
         }
         Country::destroy($id);
-        return redirect()->back()->with('success','Country Delete Successfully');
+        return redirect()->back()->with('success', 'Country Delete Successfully');
     }
 }

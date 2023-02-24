@@ -24,10 +24,13 @@ class ProductsController extends Controller
         }else {
             $records = [];
             $products =  ProductSeller::orderBy('id','DESC')->get();
+            $admin = Auth::guard('admin')->user();
             $countries = [];
             foreach($products as $pro ){
-                if(Auth::guard('admin')->user()->country_id == $pro->shop->country_id){
-                    $records [] = $pro;
+                if($pro->shop) {
+                    if ($admin->country_id == $pro->shop->country_id) {
+                        $records [] = $pro;
+                    }
                 }
             }
         }

@@ -19,7 +19,11 @@ Route::group(
     Route::resource('sellChannels', 'SellChannelsController');
     Route::resource('inventories', 'InventoryController');
     Route::get('inventory/myRequets', 'InventoryController@myRquests')->name('inventory.requests');
+
     Route::resource('orders', 'OrdersController');
+    Route::get('orders/get/{state}/{from}/{to}', 'OrdersController@index')->name('orders.index');
+    Route::post('postDate', 'OrdersController@postDate')->name('orders.postDate');
+
     Route::post('orders/get/import', 'OrdersController@import')->name('import.orders');
 
     Route::get('orders/get/hide/{id}/{state}', 'OrdersController@hide')->name('hide.order');

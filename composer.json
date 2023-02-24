@@ -22,7 +22,9 @@
         "maatwebsite/excel": "^3.1",
         "mcamara/laravel-localization": "^1.6",
         "psr/simple-cache": "1.0",
-        "simplesoftwareio/simple-qrcode": "^1.0.3"
+        "simplesoftwareio/simple-qrcode": "^1.0.3",
+        "yajra/laravel-datatables": "1.5",
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

@@ -11,7 +11,7 @@
         </li>
 
         <li>
-            <a href="{{route('packaging.wrapping.index',[''])}}" >
+            <a href="{{route('packaging.wrapping.index',['state'=>'today','from'=>'1','to'=>'1'])}}" >
                 <div class="parent-icon">
                     <ion-icon name="print-outline"></ion-icon>
                 </div>
@@ -30,6 +30,7 @@
             <ul>
 
                 <li>
+
                     <a href="{{route('packaging.wrapping.sentOrders',['day'=>'today','filter'=>'all'])}}" >
                         <div class="parent-icon">
                             <ion-icon name="today-outline"></ion-icon>

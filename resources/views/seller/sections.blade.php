@@ -129,7 +129,7 @@ $type_users =  Auth::guard('seller')->user()->id;
             <ul>
 
                 <li>
-                    <a href="{{route('seller.orders.index')}}" >
+                    <a href="{{route('seller.orders.index',['state'=>'today','from'=>1,'to'=>1])}}" >
                         <div class="parent-icon">
                             <ion-icon name="eye-outline"></ion-icon>
                         </div>

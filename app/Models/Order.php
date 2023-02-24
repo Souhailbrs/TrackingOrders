@@ -10,7 +10,7 @@ class Order extends Model
     protected $table = 'sales_channele_orders';
     protected $fillable = [
         'id',
-       'sales_channel',
+        'sales_channel',
         'customer_name',
         'customer_phone1',
         'customer_phone2',

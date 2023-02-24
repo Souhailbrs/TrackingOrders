@@ -14,6 +14,7 @@ use App\Models\SalesChannelsType;
 
 use App\Models\Seller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SellChannelsController extends Controller
 {
@@ -32,7 +33,12 @@ class SellChannelsController extends Controller
     {
         $page =  $this->page;
         $pages =  $this->pages;
-        $data = SalesChannels::get();
+        $user = Auth::guard('admin')->user();
+        if(!$user->is_super_admin) {
+            $data = SalesChannels::where('country_id',$user->country_id)->get();
+        }else {
+            $data = SalesChannels::get();
+        }
         return view('admin.sellChannels.index',compact('page','pages','data'));
     }
     public function ChangeStatus($id){

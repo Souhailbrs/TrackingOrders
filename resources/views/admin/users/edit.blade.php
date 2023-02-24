@@ -82,7 +82,7 @@
                     @endif
 
 
-                    @if(Auth::guard('admin')->user()->is_super_admin)
+                    @if(Auth::guard('admin')->user()->is_super_admin && $type != 'seller')
                         <div class="form-group row" >
                             <label for="example-text-input"
                                    class="col-sm-2 col-form-label">{{__('admin/fields.country')}}</label>

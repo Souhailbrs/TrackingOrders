@@ -51,7 +51,9 @@
                                                     <img src="{{asset('assets/admin/products/'. $record->image)}}"  style="height:100px;width:100px">
                                                 </td>
                                                 <td>
+                                                    @if($record->shop)
                                                     {{$record->shop['title_' . App::getLocale()]}}
+                                                        @endif
                                                 </td>
                                                 <td>
                                                     {{$record->name}}
@@ -146,7 +148,7 @@
                                 {{$record->product_amount}}
                             </td>
                             <td>
-                                {{$record->delivery_type}}
+                                {{$record->delivery_type}} 
                             </td>
                         </tr>
                     </table>

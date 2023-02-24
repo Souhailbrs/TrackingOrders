@@ -972,7 +972,7 @@
                 </div>
                 <div class="col-lg-4 col-sm-4">
                     <h5 class="footer-title">تواصل معنا</h5>
-                    <ul class="footer_menu_list list-unstyled mb-0 mt-4 contact-menu-list">
+                    <ul class="footer_menu_list list-unstyled mb-0 mt-4 contact-menu-list" >
                         <!--
                         <li>
                              <i class="md-icon mdi mdi-map-marker"></i>
@@ -982,9 +982,9 @@
                              </a>
                          </li>
                          -->
-                        <li><i class="md-icon mdi mdi-email-outline"></i><a href="contact@codafrica.network">contact@codafrica.network</a></li>
-                        <li><i class="md-icon mdi mdi-phone-in-talk"></i><a href="tel:+212666738995">212666738995</a></li>
-                        <li><i class="md-icon mdi mdi-phone-in-talk"></i><a href="tel:+212660497180">212660497180</a></li>
+                        <li ><i class="md-icon mdi mdi-email-outline"></i><a href="contact@codafrica.network">contact@codafrica.network</a></li>
+                        <li ><i class="md-icon mdi mdi-phone-in-talk"></i><a style="direction: ltr;" href="tel:+212666738995">21 26 66 73 89 95</a></li>
+                        <li><i class="md-icon mdi mdi-phone-in-talk"></i><a  style="direction: ltr;" href="tel:+212660497180">21 26 60 49 71 80</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-12">

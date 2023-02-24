@@ -1,7 +1,12 @@
+<?php
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
+$type_users =  Auth::guard('supporter')->user()->id;
+?>
          <li>
 
-             <a href="{{route('supporter.home')}}">
+             <a href="{{route('supporter.home',['type_users'=>$type_users])}}">
                  <div class="parent-icon">
                      <ion-icon name="home-sharp"></ion-icon>
                  </div>
