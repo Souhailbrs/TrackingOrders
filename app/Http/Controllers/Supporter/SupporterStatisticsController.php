@@ -66,11 +66,10 @@ class SupporterStatisticsController extends Controller
         } else {
             $city = $request->city;
         }
-
+        $current_country = Country::where('id', $country)->pluck('currency_symbol')->all();
         //get values of all orders
         $current_year = Carbon::now()->format('Y');
         $current_month = Carbon::now()->format('M');
-        $sales = WorkDayOrder::where('userID', $type_users)->pluck('user_sales_channele_orders')->all();
         $yValues = [];
         $xValues = [];
         $months = [];
@@ -78,61 +77,100 @@ class SupporterStatisticsController extends Controller
         $total_earnings = 0;
         switch ($date_input) {
             case 'today': {
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
+
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
                     break;
                 }
             case 'yesterday': {
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
+
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
                     break;
                     break;
                 }
             case '7days': {
                     $filter_date = Carbon::now()->subDays(7);
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
+
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
                     $days = array();
                     array_push($days, date('l', strtotime($filter_date)));
@@ -161,21 +199,34 @@ class SupporterStatisticsController extends Controller
                 }
             case '30days': {
                     $filter_date = Carbon::now()->subDays(30);
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
+
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
                     $days = array();
                     array_push($days, date('d-m-Y', strtotime($filter_date)));
@@ -203,27 +254,36 @@ class SupporterStatisticsController extends Controller
                     break;
                 }
             case 'all': {
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereYear('created_at', '=', $current_year)
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $total_per_months = [];
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::whereYear('created_at', '=', $current_year)
-                            ->where('id', $sales_all)->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('id', $sales_all)->where('country_id', $country)->where('status', 0)->get()->toArray();
-                        $result_confirmed_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('id', $sales_all)->where('country_id', $country)->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 0)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
+
                     for ($i = 1; $i < 13; $i++) {
                         $total_earnings = 0;
                         array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
@@ -246,21 +306,34 @@ class SupporterStatisticsController extends Controller
             case 'from': {
                     $dateS = new Carbon($request->from);
                     $dateE = new Carbon($request->to);
+                    $sales = WorkDayOrder::where('userID', $type_users)
+                        ->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])
+                        ->where('status', 1)->pluck('user_sales_channele_orders')->all();
                     $all_orders = [];
                     $new_orders = [];
                     $confirmed_orders = [];
                     $delivered_orders = [];
+                    $no_answer_orders = [];
+                    $not_confirmed_orders = [];
+                    $canceled_orders = [];
                     $monthsname = [];
                     $total_earnings = 0;
                     foreach ($sales as $sales_all) {
-                        $result_all_orders  = Order::where('id', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get()->toArray();
-                        $result_new_orders = Order::where('id', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 0)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get()->toArray();
+                        $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
+                        $result_new_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 0)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 4)->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
+                        $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
+                        $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
+                        $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
+
                         $all_orders = array_merge($all_orders, $result_all_orders);
                         $new_orders = array_merge($result_new_orders, $new_orders);
                         $confirmed_orders = array_merge($result_confirmed_orders, $confirmed_orders);
                         $delivered_orders = array_merge($result_delivered_orders, $delivered_orders);
+                        $no_answer_orders = array_merge($result_no_answer_orders, $no_answer_orders);
+                        $not_confirmed_orders = array_merge($result_not_confirmed_orders, $not_confirmed_orders);
+                        $canceled_orders = array_merge($result_canceled_orders, $canceled_orders);
                     }
                     $dates = [];
                     $total_per_months = [];
@@ -302,43 +375,34 @@ class SupporterStatisticsController extends Controller
         // $delivered_orders = $this->ordersWithState($request, 10, $date, $country, $city, $type_users);
         // //Percentage
 
-
-        if (count($new_orders) > 0) {
-            $confirmed_percentage = count($confirmed_orders) / count($new_orders) * 100;
+        if (count($all_orders) > 0) {
+            $confirmed_percentage = count($confirmed_orders) / count($all_orders) * 100;
             if ($confirmed_percentage > 100) {
                 $confirmed_percentage = 100;
             }
         } else {
             $confirmed_percentage = 0;
         }
-        if (count($confirmed_orders) > 0) {
-            $delivered_percentage = count($delivered_orders) / count($confirmed_orders) * 100;
+        if (count($all_orders) > 0) {
+            $delivered_percentage = count($delivered_orders) / count($all_orders) * 100;
             if ($delivered_percentage > 100) {
                 $delivered_percentage = 100;
             }
         } else {
             $delivered_percentage = 0;
         }
-        $total_earnings = 0;
-        foreach ($delivered_orders as $order) {
-            $id = $order['id'];
-            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-            $total = $amount[0] * $price[0];
-            $total_earnings += $total;
-        }
-
-        // //Total Earnings
-        // $total_earnings_data = $this->earningGraph($request, 10, $date, $country, $city, $type_users);
         // $total_earnings = 0;
-
-        // foreach ($total_earnings_data  as $total) {
-        //     $total_earnings_products = $total->order->product;
-        //     foreach ($total_earnings_products as $pro) {
-        //         $total_earnings += $pro->price;
+        // foreach ($delivered_orders as $order) {
+        //     $id = $order['id'];
+        //     $prices = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
+        //     $amounts = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
+        //     foreach ($prices as $price) {
+        //         foreach ($amounts as $amount) {
+        //             $total = $amount * $price;
+        //             $total_earnings += $total;
+        //         }
         //     }
         // }
-        // $graph_earnings =  $this->earningGraph($request, 10, $date, $country, $city, $type_users);
         $countries =  Country::where('id', Auth::guard('supporter')->user()->country_id)->get();
         $cities =  City::get();
 
@@ -347,6 +411,9 @@ class SupporterStatisticsController extends Controller
             'new_orders' => count($new_orders),
             'confirmed_orders' => count($confirmed_orders),
             'delivered_orders' => count($delivered_orders),
+            'no_answer_orders' => count($no_answer_orders),
+            'not_confirmed_orders' => count($not_confirmed_orders),
+            'canceled_orders' => count($canceled_orders),
             'confirmed_percentage' =>  $confirmed_percentage,
             'delivered_percentage' =>  $delivered_percentage,
             'all_orders' => count($all_orders),
@@ -359,7 +426,8 @@ class SupporterStatisticsController extends Controller
             'date_to' => $request->to,
             'graph_earnings' => [], //$graph_earnings,
             'countries' => $countries,
-            'cities' => $cities
+            'cities' => $cities,
+            'current_country' => $current_country,
         ];
 
         return view('supporter.home', compact('res', 'records', 'today_work'));

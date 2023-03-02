@@ -80,7 +80,11 @@ class CustomOrdersController extends Controller
         $order = Order::find($id);
         return view('admin.orders.custom.show', compact('order', 'today_work'));
     }
-
+    public function showOrder($id)
+    {
+        $order = Order::find($id);
+        return view('packaging.orders.custom.show', compact('order'));
+    }
     /**
      * Show the form for editing the specified resource.
      *

@@ -38,10 +38,10 @@
                                     <form style="display: inline-block"
                                         action="{{ route('supporter.orders.index', ['state' => $state, 'from' => $from, 'to' => $to]) }}"
                                         method="get">
-                                        @if (count($records))
+                                        {{-- @if (count($records))
                                             Show {{ $records->firstItem() }} - {{ $records->lastItem() }}
                                             From {{ $records->total() }}
-                                        @endif
+                                        @endif --}}
                                         <select name="entries" id="" onchange="this.form.submit()">
                                             @if ($pagination)
                                                 <option value="{{ $pagination }}">{{ $pagination }}</option>
@@ -125,10 +125,10 @@
                                                             #{{ $record->id }}
                                                         </td>
                                                         <!--                                                <td>
-                                                                    <a class="btn btn-dark col-sm-12 d-block"  data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{ $record->id }}">
-                                                                        {{ $record->shop['title_' . App::getlocale()] }}
-                                                                    </a>
-                                                                </td>-->
+                                                                        <a class="btn btn-dark col-sm-12 d-block"  data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{ $record->id }}">
+                                                                            {{ $record->shop['title_' . App::getlocale()] }}
+                                                                        </a>
+                                                                    </td>-->
                                                         <td style="width: 900px !important;">
 
                                                             <?php $price = 0;
@@ -305,10 +305,10 @@
 
 
                 </div> <!-- container-fluid -->
-
+                {{-- 
                 @if (count($records))
                     {{ $records->links() }}
-                @endif
+                @endif --}}
 
 
             </div>

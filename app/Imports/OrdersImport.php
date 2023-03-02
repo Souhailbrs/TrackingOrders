@@ -83,7 +83,7 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
         $array = $this->products_ids;
         return [
             'customer_name' => ['required'],
-            'customer_phone' => ['required','min:8','max:8'],
+            'customer_phone' => ['required','min:8'],
             'product_id' => ['required',
                 Rule::in($array),
             ],

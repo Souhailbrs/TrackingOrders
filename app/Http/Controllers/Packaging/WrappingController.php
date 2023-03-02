@@ -88,7 +88,6 @@ class WrappingController extends Controller
         $user =  Auth::guard('packaging')->user();
 
         $records = Order::whereIn('id', $workDayOrdersFilter)->where('status', 7)->where('country_id', $user->country_id)->paginate($pagination);
-
         return view('packaging.wrap.index', compact('records', 'state', 'from', 'to', 'pagination', 'search', 'today_work'));
     }
     public function index(Request $request)
@@ -148,9 +147,9 @@ class WrappingController extends Controller
             $work_day_id = 0;
         }
         if ($day == 'today') {
-            $records = Order::WhereIn('status', $filtered)->whereDate('delivery_date', Carbon::today())->where('country_id', $user->country_id)->get();
+            $records = Order::WhereIn('status', $filtered)->whereDate('delivery_date', Carbon::today())->where('country_id', $user->country_id)->orderBy('id', 'DESC')->paginate(1000);
         } else {
-            $records = Order::WhereIn('status', $filtered)->where('country_id', $user->country_id)->get();
+            $records = Order::WhereIn('status', $filtered)->where('country_id', $user->country_id)->orderBy('id', 'DESC')->paginate(1000);
         }
 
         //state

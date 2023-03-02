@@ -226,13 +226,13 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
-
+        
         //Shop ID
         $sales_channel_id = $request->sales_channel_id;
         $shop = SalesChannels::find($request->sales_channel_id);
         $customer_name = $request->customer_name;
-        $customer_phone1 = $request->phone_number['full'];
-        $customer_phone2 = $request->phone_number['full'];
+        $customer_phone1 = substr($request->phone_number['full'], 1);
+        $customer_phone2 = substr($request->phone_number['full'], 1);
         $customer_notes = $request->customer_notes;
         $country_id = $shop->country->id;
         $city_id = $request->city_id;
@@ -246,6 +246,7 @@ class OrdersController extends Controller
             if ($products_number == 0) {
                 return redirect()->back()->with('error', 'Your order must have at least one product');
             }
+
             $order = Order::create([
                 'sales_channel' => $sales_channel_id,
                 'customer_name' => $customer_name,

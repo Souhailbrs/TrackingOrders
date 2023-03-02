@@ -103,7 +103,7 @@
                 <div class="mobile-menu-button">
                     <ion-icon name="menu-sharp"></ion-icon>
                 </div>
-                <form class="searchbar">
+                {{-- <form class="searchbar">
                     <div class="position-absolute top-50 translate-middle-y search-icon ms-3">
                         <ion-icon name="search-sharp"></ion-icon>
                     </div>
@@ -111,7 +111,7 @@
                     <div class="position-absolute top-50 translate-middle-y search-close-icon">
                         <ion-icon name="close-sharp"></ion-icon>
                     </div>
-                </form>
+                </form> --}}
                 <div class="d-flex">
                     <div class="dropdown d-inline-block mr- h6">
 
@@ -123,37 +123,6 @@
                     <div style="width:30px">
 
                     </div>
-                    <div class="dropdown d-inline-block mr-3 h6" style="cursor:pointer;font-size: 20px">
-                        <form action="{{ route('supporter.workState.sad') }}" method="post"
-                            style="font-weight: bolder">
-                            @csrf
-
-                            <div class=" form-check form-switch pt-4 waves-effect">
-                                <label class="form-check-label" for="flexSwitchCheckDefault" data-on-label="Yes"
-                                    data-off-label="No">
-                                    Work State
-                                </label>
-                                @if ($today_work == 1)
-                                    <input class="  form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                                        checked switch="dark" onchange="submit()" name="state" />
-                                @else
-                                    <input class="  form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                                        switch="dark" onchange="submit()" name="state" />
-                                @endif
-
-                            </div>
-
-
-
-                        </form>
-
-                    </div>
-
-
-
-
-
-
 
                 </div>
 
@@ -375,8 +344,10 @@
                                             <img src="{{ asset('assets/admin/' . $lang . '/images/avatars/06.png') }}"
                                                 alt="" class="rounded-circle" width="54" height="54">
                                             <div class="">
-                                                <h6 class="mb-0 dropdown-user-name">{{Auth::guard('supporter')->user()->name}}</h6>
-                                                <small class="mb-0 dropdown-user-designation text-secondary">{{Auth::guard('supporter')->user()->email}}</small>
+                                                <h6 class="mb-0 dropdown-user-name">
+                                                    {{ Auth::guard('supporter')->user()->name }}</h6>
+                                                <small
+                                                    class="mb-0 dropdown-user-designation text-secondary">{{ Auth::guard('supporter')->user()->email }}</small>
                                             </div>
                                         </div>
                                     </a>

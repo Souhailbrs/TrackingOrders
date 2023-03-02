@@ -19,10 +19,10 @@ class MainController extends Controller
     public function home($filter)
     {
         $user = Auth::guard('delivery')->user();
+        $user_zone_id =  Auth::guard('delivery')->user()->zone_id;
         $user_id =  Auth::guard('delivery')->user()->id;
         $work_days = WorkDay::where('user_type', 'delivery')->where('user_id', $user_id)->get()->reverse();
         $records = $work_days;
-
         //Today State
         $today_work_days = WorkDay::where('user_type', 'delivery')->where('user_id', $user_id)->where('completed', 0)->get();
         if (count($today_work_days) > 0) {
@@ -30,41 +30,18 @@ class MainController extends Controller
         } else {
             $today_work = 0;
         }
+        // $order_day = WorkDayOrder::where('userType', 'delivery')->where('userID', $user_id)->get();
 
-        $order_day = WorkDayOrder::where('userType', 'delivery')->where('userID', $user_id)->get();
-        $orders = [];
-        foreach ($order_day as $one_day) {
-
-            if ($filter == 'today') {
-                if ($one_day->order->status == 8) {
-                    if ($one_day->order->zone_id == $user->zone_id) {
-                        $orders[] = $one_day->order;
-                    }
-                }
-            } elseif ($filter == 'finishedToday') {
-
-                if ($one_day->order->status != 8 && date('Y-m-d', strtotime($one_day->order->delivery_date))  == date('Y-m-d')) {
-                    if ($one_day->order->zone_id == $user->zone_id) {
-                        $orders[] = $one_day->order;
-                    }
-                }
-            } elseif ($filter == 'yesterday') {
-
-                if (date('Y-m-d', strtotime($one_day->order->delivery_date))  == date('Y-m-d', strtotime(' - 1 days'))) {
-                    if ($one_day->order->zone_id == $user->zone_id) {
-                        $orders[] = $one_day->order;
-                    }
-                }
-            } else {
-                if ($one_day->order->status != 8 && $one_day->order->delivery_date != Carbon::today()) {
-                    if ($one_day->order->zone_id == $user->zone_id) {
-                        $orders[] = $one_day->order;
-                    }
-                }
-            }
+        if ($filter == 'today') {
+            $orders = Order::where('zone_id', $user_zone_id)->whereIn('status', [8, 12])->where('delivery_date', date('Y-m-d'))->get();
+        } elseif ($filter == 'finishedToday') {
+            $orders = Order::where('zone_id', $user_zone_id)->whereIn('status', [10, 11, 13])->where('delivery_date', date('Y-m-d'))->get();
+        } elseif ($filter == 'yesterday') {
+            $orders = Order::where('zone_id', $user_zone_id)->whereIn('status', [8, 12, 10, 11, 13])->where('delivery_date', date('Y-m-d', strtotime(' - 1 days')))->get();
+        } else {
+            $orders = Order::where('zone_id', $user_zone_id)->whereIn('status', [8, 12, 10, 11, 13])->where('delivery_date', '!=', date('Y-m-d'))->get();
         }
 
-        $orders = array_unique($orders);
 
         return view('delivery.home', compact('records', 'today_work', 'filter', 'orders'));
     }
@@ -106,7 +83,7 @@ class MainController extends Controller
     }
     public function sad(Request $request)
     {
-        if ($request->state) {
+        if ($request->state == 'on') {
             return $this->workState('start');
         } else {
             return $this->workState('end');
@@ -129,7 +106,13 @@ class MainController extends Controller
     public function change_order_state_post(Request $request)
     {
         $order = $request->order_id;
-        $new = intval($request->state);
+        $order_tracks = OrderTrack::where('sales_channele_order', $order)
+            ->where('last_status', 12)->get();
+        if (count($order_tracks) > 3) {
+            $new = 11;
+        } else {
+            $new = intval($request->state);
+        }
         $current_order = Order::find($order);
         $old = intval($current_order->status);
         $current_order->update([

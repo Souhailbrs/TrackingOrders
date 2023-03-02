@@ -118,11 +118,13 @@
 
 
                                 <a href="tel:+{{$record->customer_phone1}}" class="btn btn-dark">{{__('orders.Call_Customer')}}</a>
-                                <a data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{$record->id}}" class="btn btn-dark">{{__('orders.Change_state')}}</a>
+                                @if ($filter=='today' || $filter=='yesterday')
+                                    <a data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{$record->id}}" class="btn btn-dark">{{__('orders.Change_state')}}</a>
+                                @endif
 
                             </div>
                             <div class="card-footer text-muted">
-                                {{$record->zone['title_'. App::getLocale()]}} , {{$record->district['title_'. App::getLocale()]}}  , {{$record->address}}
+                                {{$record->address}}
                             </div>
                         </div>
                         @endforeach

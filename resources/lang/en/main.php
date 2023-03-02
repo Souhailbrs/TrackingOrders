@@ -17,4 +17,7 @@ return [
     'view'=>'View',
     'edit'=>'Edit',
     'delete'=>'Delete',
+    'confirmed_supporter' => 'Call center',
+    'confirmed_delivery' => 'Deliveried By',
+    'zone_delivery' => 'Zone Delivery',
 ];

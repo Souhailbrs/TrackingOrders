@@ -115,6 +115,6 @@ class LoginController extends Controller
         Auth::guard('supporter')->logout();
         Auth::guard('packaging')->logout();
 
-        return redirect()->back();
+        return redirect('/view/login');
     }
 }

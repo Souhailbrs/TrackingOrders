@@ -110,7 +110,7 @@
                     <div class="form-group row">
                         <label for="example-text-input" class="col-sm-2 col-form-label">{{ __('Customer Phone1') }}</label>
                         <div class="col-sm-10">
-                            <input type="tel" name="phone_number[main]" id="phone_number" class="form-control" required 
+                            <input type="tel" name="phone_number[main]" id="phone_number" class="form-control" required
                                 @if ($action == 'update') value="{{ $data->customer_phone1 }}" @endif>
                         </div>
                     </div>

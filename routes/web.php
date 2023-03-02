@@ -99,6 +99,7 @@ Route::group(
         Route::get('change_order_product_details', 'CustomOrdersController@change_order_product_details')->name('change_order_product_details');
 
         Route::get('custom_orders_export/{pagination}', 'CustomOrdersController@exportOrders')->name('custom_orders_export');
+        Route::get('customOrders/{pagination}', 'CustomOrdersController@exportOrders')->name('custom_orders_export');
         Route::resource('customOrders', 'CustomOrdersController');
     }
 );

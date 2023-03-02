@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\OrderContact;
 use App\Models\OrderProduct;
+use App\Models\OrderTrack;
 use App\Models\OrderType;
 use App\Models\SalesChannels;
 use App\Models\Seller;
@@ -30,7 +31,12 @@ class OrdersController extends Controller
     {
         $user_id = Auth::guard('supporter')->user()->id;
         $today_work_days = WorkDay::where('user_id', $user_id)->where('user_type', 'supporter')->where('completed', 0)->get();
-        $orders_user = WorkDayOrder::where('userID', $user_id)->where('userType', 'supporter')->pluck('user_sales_channele_orders')->all();
+        $work_days_order_id = WorkDayOrder::where('userID', $user_id)->where('status', 1)
+            ->where('userType', 'supporter')->pluck('user_sales_channele_orders')->all();
+        $work_days_orders_data
+            = WorkDayOrder::where('userID', $user_id)->where('status', 1)
+            ->where('userType', 'supporter')->get();
+
         if (count($today_work_days) > 0) {
             $today_work = 1;
             $work_day_id = $today_work_days[0]->id;
@@ -45,41 +51,43 @@ class OrdersController extends Controller
         }
         if ($request->search) {
             $search = $request->search;
-            $workDayOrders = Order::where('id', 'like', '%' . $search . '%')->whereIn('id', $orders_user)->orWhere('customer_phone1', 'like', '%' . $search . '%')->whereIn('id', $orders_user)->get();
+            $workDayOrders = Order::where('id', 'like', '%' . $search . '%')->whereIn('id', $work_days_order_id)
+                ->orWhere('customer_phone1', 'like', '%' . $search . '%')->whereIn('id', $work_days_order_id)->get();
             //product
         } else {
             $search = '';
-            $workDayOrders = Order::whereIn('id', $orders_user)->get();
+            $workDayOrders = Order::whereIn('id', $work_days_order_id)->get();
         }
         if ($state === 'today') {
             $workDayOrdersFilter = [];
-            foreach ($workDayOrders as $order) {
+            foreach ($work_days_orders_data as $order) {
                 $order_date = date('Y-m-d', strtotime($order->created_at));
                 $today = date('Y-m-d', strtotime(date('Y-m-d')));
                 if ($order_date == $today) {
-                    $workDayOrdersFilter[] = $order->id;
+                    $workDayOrdersFilter[] = $order->user_sales_channele_orders;
                 }
             }
         } elseif ($state == '7days') {
             $workDayOrdersFilter = [];
-            foreach ($workDayOrders as $order) {
+            foreach ($work_days_orders_data as $order) {
                 $order_date = date('Y-m-d', strtotime($order->created_at));
                 $today = date('Y-m-d', strtotime(date('Y-m-d') . '-7 days'));
                 if ($order_date >= $today) {
-                    $workDayOrdersFilter[] = $order->id;
+                    $workDayOrdersFilter[] =  $order->user_sales_channele_orders;
                 }
             }
         } elseif ($state == 'custom') {
             $workDayOrdersFilter = [];
-            foreach ($workDayOrders as $order) {
+            foreach ($work_days_orders_data as $order) {
                 $order_date = date('Y-m-d', strtotime($order->created_at));
-                $from_filter = date('Y-m-d', strtotime($from));
-                $to_filter = date('Y-m-d', strtotime($to));
-                if ($order_date >= $from_filter && $order_date <= $to_filter) {
-                    $workDayOrdersFilter[] = $order->id;
+                $from = date('Y-m-d', strtotime($from));
+                $to = date('Y-m-d', strtotime($to));
+                if ($order_date >= $from && $order_date <= $to) {
+                    $workDayOrdersFilter[] =  $order->user_sales_channele_orders;
                 }
             }
         }
+
         $user = Auth::guard('supporter')->user();
         $country = Country::find($user->country_id)->id;
         $records = Order::whereIn('id', $workDayOrdersFilter)->where('country_id', $country)->paginate($pagination);
@@ -138,8 +146,8 @@ class OrdersController extends Controller
         $state = 'today';
         $from = date('Y-m-d', strtotime(Carbon::yesterday()));
         $to = date('Y-m-d', strtotime(Carbon::today()));
-        $search='';
-        $pagination=10;
+        $search = '';
+        $pagination = 20;
         $user_id = Auth::guard('supporter')->user()->id;
         //Today State
         $today_work_days = WorkDay::where('user_id', $user_id)->where('user_type', 'supporter')->where('completed', 0)->get();
@@ -158,8 +166,7 @@ class OrdersController extends Controller
         foreach ($records_old as $rec) {
             $records[] = $rec->order;
         }
-        
-        return view('supporter.orders.index', compact('records','today_work','pagination', 'state', 'from', 'to','search'));
+        return view('supporter.orders.index', compact('records', 'today_work', 'pagination', 'state', 'from', 'to', 'search'));
     }
 
     public function postDate(Request $request)
@@ -307,7 +314,7 @@ class OrdersController extends Controller
             $pages = 'orders';
             //IS There available orders!
             if ($data) {
-                if (!$this->IsUserHasOrder($data)) {
+                if (!$this->IsUserHasOrder()) {
                     //Take New Order
                     $data->update([
                         'status' => 1
@@ -530,7 +537,7 @@ class OrdersController extends Controller
     public function No_Answer_Call_Center()
     {
         $user_id = Auth::guard('supporter')->user()->id;
-        $orders_no_answer_delivery = Order::where('status', 2)->where('deleted', 0)->get();
+        $orders_no_answer_delivery = Order::whereIn('status', 2)->where('deleted', 0)->get();
         $orders_no_answer_delivery_new = [];
         foreach ($orders_no_answer_delivery as $record) {
             $exist = OrderContact::where('status', 2)->where('sale_channele_order_id', $record->id)->where('created_at', '>=', date('Y-m-d') . ' 00:00:00')->where('userType', 'supporter')->where('user_id', $user_id)->get();
@@ -590,12 +597,11 @@ class OrdersController extends Controller
 
     // Not Confirmed
 
-    public function IsUserHasOrder($data)
+    public function IsUserHasOrder()
     {
-
         $user_id = Auth::guard('supporter')->user()->id;
         $user_type = 'supporter';
-        $orders = WorkDayOrder::where('user_sales_channele_orders', $data->id)->where('userType', $user_type)->where('userID', $user_id)->get();
+        $orders = WorkDayOrder::where('userType', $user_type)->where('userID', $user_id)->where('status', 0)->get();
         if (count($orders) > 0) {
             return 1;
         }
@@ -634,7 +640,7 @@ class OrdersController extends Controller
             }
             return view('supporter.orders.control', compact('data', 'action', 'page', 'pages', 'shopTypes', 'cities', 'countries', 'zones', 'shops', 'today_work'));
         } else {
-            return redirect()->route('supporter.home',['type_users' => $user_id])->with('error', 'You Dont Have any orders!');
+            return redirect()->route('supporter.home')->with('error', 'You Dont Have any orders!');
         }
     }
 
@@ -751,24 +757,98 @@ class OrdersController extends Controller
         }
     }
 
-    public function change_order_state($order, $old, $new)
+    public function change_order_state($order_id, $old, $new)
     {
-
         $user_id = Auth::guard('supporter')->user()->id;
         OrderContact::create([
-            'sale_channele_order_id' => $order,
+            'sale_channele_order_id' => $order_id,
             'times' => 1,
             'status' => $new,
             'user_id' => $user_id,
             'userType' => 'supporter',
         ]);
+        OrderState::broadcast($order_id, $old, $new);
+        $order = Order::find($order_id);
+        switch ($new) {
+            case 2: {
+                    $no_answer_order = OrderTrack::where('sales_channele_order', $order_id)->where('last_status', 2)->get();
+                    if (count($no_answer_order) > 6) {
+                        $order->update([
+                            'status' => 6
+                        ]);
+                        OrderTrack::create([
+                            'sales_channele_order' => $order_id,
+                            'old_status' => $old,
+                            'last_status' => 6,
+                        ]);
+                    } else {
+                        $order->update([
+                            'status' => $new
+                        ]);
+                    }
+                    break;
+                }
+            case 5: {
+                    $not_confirmed_order = OrderTrack::where('sales_channele_order', $order_id)->where('last_status', 5)->get();
+                    if (count($not_confirmed_order) > 2) {
+                        $order->update([
+                            'status' => 6
+                        ]);
+                        OrderTrack::create([
+                            'sales_channele_order' => $order_id,
+                            'old_status' => $old,
+                            'last_status' => 6,
+                        ]);
+                    } else {
+                        $order->update([
+                            'status' => $new
+                        ]);
+                    }
+                    break;
+                }
+            case 12: {
+                    $no_answer_delivery_order = OrderTrack::where('sales_channele_order', $order_id)->where('last_status', 12)->get();
+                    if (count($no_answer_delivery_order) > 2) {
+                        $order->update([
+                            'status' => 6
+                        ]);
+                        OrderTrack::create([
+                            'sales_channele_order' => $order_id,
+                            'old_status' => $old,
+                            'last_status' => 6,
+                        ]);
+                    } else {
+                        $order->update([
+                            'status' => $new
+                        ]);
+                    }
+                    break;
+                }
+            case 9: {
+                    $no_answer_delivery_order = OrderTrack::where('sales_channele_order', $order_id)->where('last_status', 9)->get();
+                    if (count($no_answer_delivery_order) > 1) {
+                        $order->update([
+                            'status' => 6
+                        ]);
+                        OrderTrack::create([
+                            'sales_channele_order' => $order_id,
+                            'old_status' => $old,
+                            'last_status' => 6,
+                        ]);
+                    } else {
+                        $order->update([
+                            'status' => $new
+                        ]);
+                    }
+                    break;
+                }
+            default:
+                $order->update([
+                    'status' => $new
+                ]);
+                break;
+        }
 
-
-        OrderState::broadcast($order, $old, $new);
-        $order = Order::find($order);
-        $order->update([
-            'status' => $new
-        ]);
         $user_id_seller = Seller::where('email', $order->shop->owner_email)->first()->id;
         $this->ordeLog($user_id_seller, $order->id, $new);
 

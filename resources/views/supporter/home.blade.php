@@ -67,10 +67,10 @@ $type_users = Auth::guard('supporter')->user()->id;
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2">
                             <div class="fs-5">
-                                <ion-icon name="person-add-outline"></ion-icon>
+                                <ion-icon name="albums-outline"></ion-icon>
                             </div>
                             <div>
-                                <p class="mb-0">Total Sales</p>
+                                <p class="mb-0"> Orders</p>
                             </div>
                             <div class="fs-5 ms-auto">
                                 <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
@@ -78,7 +78,7 @@ $type_users = Auth::guard('supporter')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{ $res['total_earnings'] }} Dollars</h5>
+                                <h5 class="mb-0">{{ $res['all_orders'] }} Orders</h5>
                             </div>
 
                         </div>
@@ -90,10 +90,10 @@ $type_users = Auth::guard('supporter')->user()->id;
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2">
                             <div class="fs-5">
-                                <ion-icon name="heart-outline"></ion-icon>
+                                <ion-icon name="call-outline"></ion-icon>
                             </div>
                             <div>
-                                <p class="mb-0"> New Orders</p>
+                                <p class="mb-0">No Answer Orders</p>
                             </div>
                             <div class="fs-5 ms-auto">
                                 <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
@@ -101,7 +101,7 @@ $type_users = Auth::guard('supporter')->user()->id;
                         </div>
                         <div class="d-flex align-items-center mt-3">
                             <div class="text-center h5 ">
-                                <h5 class="mb-0">{{ $res['new_orders'] }} Orders</h5>
+                                <h5 class="mb-0">{{ $res['no_answer_orders'] }} Orders</h5>
                             </div>
 
                         </div>
@@ -113,7 +113,7 @@ $type_users = Auth::guard('supporter')->user()->id;
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2">
                             <div class="fs-5">
-                                <ion-icon name="chatbox-outline"></ion-icon>
+                                <ion-icon name="checkmark-done-circle-outline"></ion-icon>
                             </div>
                             <div>
                                 <p class="mb-0">Confirmed Orders</p>
@@ -136,7 +136,53 @@ $type_users = Auth::guard('supporter')->user()->id;
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2">
                             <div class="fs-5">
-                                <ion-icon name="mail-outline"></ion-icon>
+                                <ion-icon name="alert-circle-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Not Confirmed Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{ $res['not_confirmed_orders'] }} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="trash-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <p class="mb-0">Canceled Orders</p>
+                            </div>
+                            <div class="fs-5 ms-auto">
+                                <ion-icon name="ellipsis-horizontal-sharp"></ion-icon>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="text-center h5 ">
+                                <h5 class="mb-0">{{ $res['canceled_orders'] }} Orders</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card radius-10">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="fs-5">
+                                <ion-icon name="receipt-outline"></ion-icon>
                             </div>
                             <div>
                                 <p class="mb-0">Delivered Orders</p>
@@ -162,10 +208,11 @@ $type_users = Auth::guard('supporter')->user()->id;
                                 <ion-icon name="checkmark-circle-outline"></ion-icon>
                             </div>
                             <div>
-                                <p class="mb-0"> Confirmation Percentage</p>
+                                <p class="mb-0"> Confirmation Rate</p>
                             </div>
                             <div class="fs-5 ms-auto">
-                                <h5 class="mb-0">{{ number_format((float)$res['confirmed_percentage'], 2, '.', '') }} %</h5>
+                                <h5 class="mb-0">{{ number_format((float) $res['confirmed_percentage'], 2, '.', '') }} %
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -179,10 +226,11 @@ $type_users = Auth::guard('supporter')->user()->id;
                                 <ion-icon name="storefront-outline"></ion-icon>
                             </div>
                             <div>
-                                <p class="mb-0">Delivered Percentage</p>
+                                <p class="mb-0">Delivered Rate</p>
                             </div>
                             <div class="fs-5 ms-auto">
-                                <h5 class="mb-0">{{ number_format((float)$res['delivered_percentage'], 2, '.', '') }} %</h5>
+                                <h5 class="mb-0">{{ number_format((float) $res['delivered_percentage'], 2, '.', '') }} %
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -193,7 +241,7 @@ $type_users = Auth::guard('supporter')->user()->id;
         </div>
 
         <!--end row-->
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-12 col-lg-12 col-xl-12 d-flex">
                 <div class="card radius-10 w-100">
                     <div class="card-body">
@@ -213,7 +261,7 @@ $type_users = Auth::guard('supporter')->user()->id;
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <script>
             var xValues = {!! json_encode($res['xValues']) !!};
             var yValues = {!! json_encode($res['yValues']) !!};

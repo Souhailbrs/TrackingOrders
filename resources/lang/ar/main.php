@@ -18,5 +18,6 @@ return [
     'view'=>'عرض',
     'edit'=>'تعديل',
     'delete'=>'حذف',
-
+    'confirmed_supporter'=> 'مركز الاتصال',
+    'zone_delivery' => 'تسليم المنطقة',
 ];
