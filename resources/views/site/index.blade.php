@@ -983,7 +983,7 @@
                          </li>
                          -->
                         <li ><i class="md-icon mdi mdi-email-outline"></i><a href="contact@codafrica.network">contact@codafrica.network</a></li>
-                        <li ><i class="md-icon mdi mdi-phone-in-talk"></i><a style="direction: ltr;" href="tel:+212666738995">21 26 66 73 89 95</a></li>
+                        <li ><i class="md-icon mdi mdi-phone-in-talk"></i><a style="direction: ltr;" href="tel:+212663004305">21 26 63 00 43 05</a></li>
                         <li><i class="md-icon mdi mdi-phone-in-talk"></i><a  style="direction: ltr;" href="tel:+212660497180">21 26 60 49 71 80</a></li>
                     </ul>
                 </div>

@@ -74,22 +74,22 @@ class MainController extends Controller
                 if (count($work_days) > 0) {
                     foreach ($work_days as $wo) {
                         if ($wo != null) {
-                            // $orders = WorkDayOrder::where('userType', 'supporter')
-                            //     ->where('user_user_work_day', $wo->id)
-                            //     ->where('userID', $user_id)
-                            //     ->pluck('user_sales_channele_orders')
-                            //     ->all();
+                            $orders = WorkDayOrder::where('userType', 'supporter')
+                                ->where('user_user_work_day', $wo->id)
+                                ->where('userID', $user_id)
+                                ->pluck('user_sales_channele_orders')
+                                ->all();
 
-                            // foreach ($orders as $order) {
-                            //     $track = OrderTrack::where('sales_channele_order', $order)->where('last_status', '!=', 1)->whereDate('created_at', '>=', $wo->created_at->format('Y-m-d'))->get();
-                            //     if (count($track) == 0) {
-                            //         $is_all_orders_is_done_by_call_center = false;
-                            //         $number_order_not_handled++;
-                            //     }
-                            // }
-                            // if ($is_all_orders_is_done_by_call_center == false) {
-                            //     return redirect()->back()->with('error', 'Error!! You have ' . $number_order_not_handled . ' orders not handled You Have To Go your working day and be sure that the orders you recieved today has been handled there status');
-                            // }
+                            foreach ($orders as $order) {
+                                $track = OrderTrack::where('sales_channele_order', $order)->where('last_status', '!=', 1)->whereDate('created_at', '>=', $wo->created_at->format('Y-m-d'))->get();
+                                if (count($track) == 0) {
+                                    $is_all_orders_is_done_by_call_center = false;
+                                    $number_order_not_handled++;
+                                }
+                            }
+                            if ($is_all_orders_is_done_by_call_center == false) {
+                                return redirect()->back()->with('error', 'Error!! You have ' . $number_order_not_handled . ' orders not handled You Have To Go your working day and be sure that the orders you recieved today has been handled there status');
+                            }
                             WorkDayOrder::where('user_user_work_day', $wo->id)->where('userID', $user_id)->update([
                                 'status' => 1
                             ]);

@@ -3,8 +3,7 @@
 @section('style')
 @endsection
 @section('content')
-    <div
-        style="
+    <div style="
     height: 80px; 
     width:70vw;
     display:flex;

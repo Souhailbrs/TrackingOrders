@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\OrderLog;
 use App\Models\OrderProduct;
+use App\Models\ProductSeller;
 use App\Models\SalesChannels;
 use App\Models\Seller;
 use App\WorkDayOrder;
@@ -45,6 +46,11 @@ class StatisticsController extends Controller
         } else {
             $date_input = $request->date;
         }
+        if (!$request->product) {
+            $selected_product = 'all';
+        } else {
+            $selected_product = $request->product;
+        }
         if (!$request->country) {
             $country = '1';
         } else {
@@ -55,12 +61,22 @@ class StatisticsController extends Controller
         } else {
             $city = $request->city;
         }
-
+        $all_products = ProductSeller::get();
+        if ($selected_product == 'all') {
+            $products = $all_products;
+        } else {
+            $products = ProductSeller::where('id', $selected_product)->get();
+        }
+        $shop_ids = [];
+        foreach ($products as $product) {
+            $shop_ids[] = $product->shop_id;
+        };
         //get values of all orders
+        $current_country = Country::where('id', $country)->pluck('currency_symbol')->all();
+
         $current_year = Carbon::now()->format('Y');
         $current_month = Carbon::now()->format('M');
-        $seller_mail = Seller::where('id', $type_users)->pluck('email')->all();
-        $sales_all = SalesChannels::where('owner_email', $seller_mail)->pluck('id')->all();
+        $sales_all = SalesChannels::pluck('id')->all();
         $yValues = [];
         $xValues = [];
         $months = [];
@@ -68,139 +84,363 @@ class StatisticsController extends Controller
         $total_earnings = 0;
         switch ($date_input) {
             case 'today': {
-                    $all_orders  = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->get();
-                    $new_orders = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get();
-                    $confirmed_orders = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->get();
-                    $delivered_orders = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->get();
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->get();
+                        $new_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get();
+                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->get();
+                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->get();
+                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                    } else {
+                        $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
+                        $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                    }
                     break;
                 }
             case 'yesterday': {
-                    $all_orders  = Order::whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->get();
-                    $new_orders = Order::whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 0)->get();
-                    $confirmed_orders = Order::whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
-                    $delivered_orders = Order::whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->get();
+                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
+                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                    } else {
+                        $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
+                        $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                    }
+
                     break;
                 }
             case '7days': {
-                    $filter_date = Carbon::now()->subDays(7);
-                    $all_orders  = Order::whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get();
-                    $new_orders = Order::whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 0)->get();
-                    $confirmed_orders = Order::whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
-                    $delivered_orders = Order::whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
-                    $days = array();
-                    array_push($days, date('l', strtotime($filter_date)));
-                    $total_per_days = [];
-                    for ($i = 0; $i < 7; $i++) {
-                        $total_earnings = 0;
-                        $delivered_orders_per_month = Order::whereYear('created_at', '=', $current_year)
-                            ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                            ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                            ->where('country_id', $country)->where('status', 10)->get();
-                        foreach ($delivered_orders_per_month as $order) {
-                            $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
-                            $total_earnings += $total;
-                        }
-                        array_push($total_per_days, $total_earnings);
+                    $filter_date = Carbon::now()->subDays(8);
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get();
+                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
+                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $days = array();
                         $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
                         array_push($days, date('l', strtotime($filter_date)));
+                        $total_per_days = [];
+                        for ($i = 0; $i < 8; $i++) {
+                            $total_earnings = 0;
+                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                ->whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                ->where('country_id', $country)->where('status', 10)->get();
+                            if ($i == 7) {
+                                $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                    ->whereDate('created_at', '=', Carbon::today()->format('Y-m-d'))
+                                    ->where('country_id', $country)->where('status', 10)->get();
+                            }
+                            foreach ($delivered_orders_per_month as $orderd) {
+                                $id = $orderd->id;
+                                $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
+                                foreach ($orderCalcu as $order) {
+                                    $price = $order->price;
+                                    $amount = $order->amount;
+                                    $total = $amount * $price;
+                                    $total_earnings += $total;
+                                }
+                            }
+                            array_push($total_per_days, $total_earnings);
+                            $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                            array_push($days, date('l', strtotime($filter_date)));
+                        }
+                        $yValues = $total_per_days;
+                        $xValues = $days;
+                    } else {
+                        $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
+                        $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                        $days = array();
+                        $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                        array_push($days, date('l', strtotime($filter_date)));
+                        $total_per_days = [];
+                        for ($i = 0; $i < 8; $i++) {
+                            $total_earnings = 0;
+                            $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                ->where('status', 10)->pluck('id')->all();
+                            $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                ->where('product_id', $selected_product)->get();
+                            if ($i == 7) {
+                                $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->where('status', 10)->pluck('id')->all();
+                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                    ->where('product_id', $selected_product)->get();
+                            }
+                            foreach ($delivered_orders_per_month  as $order) {
+                                $price = $order->price;
+                                $amount = $order->amount;
+                                $total = $amount * $price;
+                                $total_earnings += $total;
+                            }
+                            array_push($total_per_days, $total_earnings);
+                            $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                            array_push($days, date('l', strtotime($filter_date)));
+                        }
+                        $yValues = $total_per_days;
+                        $xValues = $days;
                     }
-                    $yValues = $total_per_days;
-                    $xValues = $days;
+
+
                     break;
                 }
             case '30days': {
-                    $filter_date = Carbon::now()->subDays(30);
-                    $all_orders  = Order::where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->get();
-                    $new_orders = Order::where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->get();
-                    $confirmed_orders = Order::where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->get();
-                    $delivered_orders = Order::where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get();
-                    $days = array();
-                    array_push($days, date('d-m-Y', strtotime($filter_date)));
-                    $total_per_days = [];
-                    for ($i = 0; $i < 30; $i++) {
-                        $total_earnings = 0;
-                        $delivered_orders_per_month = Order::whereYear('created_at', '=', $current_year)
-                            ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                            ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                            ->where('country_id', $country)->where('status', 10)->get();
-                        foreach ($delivered_orders_per_month as $order) {
-                            $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
-                            $total_earnings += $total;
-                        }
-                        array_push($total_per_days, $total_earnings);
+                    $filter_date = Carbon::now()->subDays(31);
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->get();
+                        $new_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->get();
+                        $confirmed_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->get();
+                        $delivered_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get();
+                        $canceled_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $days = array();
                         $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
-                        array_push($days, date('l', strtotime($filter_date)) . ' - ' . date('d-m-Y', strtotime($filter_date)));
+                        array_push($days, date('d-m-Y', strtotime($filter_date)));
+                        $total_per_days = [];
+                        for ($i = 0; $i < 31; $i++) {
+                            $total_earnings = 0;
+                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                ->whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                ->where('country_id', $country)->where('status', 10)->get();
+                            if ($i == 30) {
+                                $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                    ->whereDate('created_at', '=', Carbon::today()->format('Y-m-d'))
+                                    ->where('country_id', $country)->where('status', 10)->get();
+                            }
+                            foreach ($delivered_orders_per_month as $orderd) {
+                                $id = $orderd->id;
+                                $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
+                                foreach ($orderCalcu as $order) {
+                                    $price = $order->price;
+                                    $amount = $order->amount;
+                                    $total = $amount * $price;
+                                    $total_earnings += $total;
+                                }
+                            }
+                            array_push($total_per_days, $total_earnings);
+                            $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                            array_push($days, date('l', strtotime($filter_date)) . ' - ' . date('d-m-Y', strtotime($filter_date)));
+                        }
+                        $yValues = $total_per_days;
+                        $xValues = $days;
+                    } else {
+                        $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->pluck('id')->all();
+                        $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                        $days = array();
+                        $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                        array_push($days, date('d-m-Y', strtotime($filter_date)));
+                        $total_per_days = [];
+                        for ($i = 0; $i < 31; $i++) {
+                            $total_earnings = 0;
+                            $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                ->where('status', 10)->pluck('id')->all();
+                            $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                ->where('product_id', $selected_product)->get();
+                            if ($i == 30) {
+                                $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->where('status', 10)->pluck('id')->all();
+                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                    ->where('product_id', $selected_product)->get();
+                            }
+                            foreach ($delivered_orders_per_month  as $order) {
+                                $price = $order->price;
+                                $amount = $order->amount;
+                                $total = $amount * $price;
+                                $total_earnings += $total;
+                            }
+                            array_push($total_per_days, $total_earnings);
+                            $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                            array_push($days, date('l', strtotime($filter_date)) . ' - ' . date('d-m-Y', strtotime($filter_date)));
+                        }
+                        $yValues = $total_per_days;
+                        $xValues = $days;
                     }
-                    $yValues = $total_per_days;
-                    $xValues = $days;
+
+
                     break;
                 }
             case 'all': {
-                    $all_orders  = Order::whereYear('created_at', '=', $current_year)
-                        ->where('country_id', $country)->get();
-                    $new_orders = Order::whereYear('created_at', '=', $current_year)
-                        ->where('country_id', $country)->where('status', 0)->get();
-                    $confirmed_orders = Order::whereYear('created_at', '=', $current_year)
-                        ->where('country_id', $country)->where('status', 4)->get();
-                    $delivered_orders = Order::whereYear('created_at', '=', $current_year)
-                        ->where('country_id', $country)->where('status', 10)->get();
-                    $monthsname = [];
-                    $total_per_months = [];
-                    $total_earnings = 0;
-                    for ($i = 1; $i < 13; $i++) {
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->get();
+                        $new_orders = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 0)->get();
+                        $confirmed_orders = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 4)->get();
+                        $delivered_orders = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
+                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                        $monthsname = [];
+                        $total_per_months = [];
                         $total_earnings = 0;
-                        array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
-                        $delivered_orders_per_month = Order::whereYear('created_at', '=', $current_year)
-                            ->whereMonth('created_at', '=', $i)->where('country_id', $country)->where('status', 10)->get();
-                        foreach ($delivered_orders_per_month as $order) {
-                            $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
-                            $total_earnings += $total;
+                        for ($i = 1; $i < 13; $i++) {
+                            $total_earnings = 0;
+                            array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
+                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)->whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', $i)->where('country_id', $country)->where('status', 10)->get();
+                            foreach ($delivered_orders_per_month as $orderd) {
+                                $id = $orderd->id;
+                                $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
+                                foreach ($orderCalcu as $order) {
+                                    $price = $order->price;
+                                    $amount = $order->amount;
+                                    $total = $amount * $price;
+                                    $total_earnings += $total;
+                                }
+                            }
+                            array_push($total_per_months, $total_earnings);
                         }
-                        array_push($total_per_months, $total_earnings);
+                        $yValues = $total_per_months;
+                        $xValues = $monthsname;
+                    } else {
+                        $all_orders_shop  = Order::whereYear('created_at', '=', $current_year)
+                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->pluck('id')->all();
+
+                        $confirmed_orders_shop = Order::whereYear('created_at', '=', $current_year)
+                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
+                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereYear('created_at', '=', $current_year)
+                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                        $monthsname = [];
+                        $total_per_months = [];
+                        $total_earnings = 0;
+                        for ($i = 1; $i < 13; $i++) {
+                            $total_earnings = 0;
+                            array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
+                            $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', $i)->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                            $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->where('product_id', $selected_product)->get();
+                            foreach ($delivered_orders_per_month  as $order) {
+                                $price = $order->price;
+                                $amount = $order->amount;
+                                $total = $amount * $price;
+                                $total_earnings += $total;
+                            }
+                            array_push($total_per_months, $total_earnings);
+                        }
+                        $yValues = $total_per_months;
+                        $xValues = $monthsname;
                     }
-                    $yValues = $total_per_months;
-                    $xValues = $monthsname;
+
                     break;
                 }
             case 'from': {
                     $dateS = new Carbon($request->from);
                     $dateE = new Carbon($request->to);
-                    $all_orders  = Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get();
-                    $new_orders = Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 0)->get();
-                    $confirmed_orders = Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->get();
-                    $delivered_orders = Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get();
-                    $dates = [];
-                    $total_per_months = [];
-                    $total_earnings = 0;
-                    $dates = $this->date_range1($dateS, $dateE, "+1 day", "d.m.Y");
-                    foreach ($dates as $date) {
+                    if ($selected_product == 'all') {
+                        $all_orders  = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get();
+                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->get();
+                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+
+                        $dates = [];
+                        $total_per_months = [];
                         $total_earnings = 0;
+                        $dates = $this->date_range1($dateS, $dateE, "+1 day", "d.m.Y");
+                        foreach ($dates as $date) {
+                            $total_earnings = 0;
 
-                        $delivered_orders_per_month = Order::whereYear('created_at', '=', date('Y', strtotime($date)))
-                            ->whereMonth('created_at', '=', date('m', strtotime($date)))
-                            ->whereDay('created_at', '=', date('d', strtotime($date)))
-                            ->where('country_id', $country)->where('status', 10)->get();
+                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                ->whereYear('created_at', '=', date('Y', strtotime($date)))
+                                ->whereMonth('created_at', '=', date('m', strtotime($date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($date)))
+                                ->where('country_id', $country)->where('status', 10)->get();
 
-                        foreach ($delivered_orders_per_month as $order) {
-                            $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
-                            $total_earnings += $total;
+                            foreach ($delivered_orders_per_month as $orderd) {
+                                $id = $orderd->id;
+                                $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
+                                foreach ($orderCalcu as $order) {
+                                    $price = $order->price;
+                                    $amount = $order->amount;
+                                    $total = $amount * $price;
+                                    $total_earnings += $total;
+                                }
+                            }
+                            array_push($total_per_months, $total_earnings);
+                            $yValues = $total_per_months;
+                            $xValues = $dates;
                         }
-                        array_push($total_per_months, $total_earnings);
-                        $yValues = $total_per_months;
-                        $xValues = $dates;
+                    } else {
+
+                        $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->pluck('id')->all();
+                        $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                        $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                        $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
+                        $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
+                        $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
+                        $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
+                        $canceled_orders = OrderProduct::whereIn('sales_channele_order', $canceled_orders_shop)->where('product_id', $selected_product)->get();
+                        $dates = [];
+                        $total_per_months = [];
+                        $total_earnings = 0;
+                        $dates = $this->date_range1($dateS, $dateE, "+1 day", "d.m.Y");
+                        foreach ($dates as $date) {
+                            $total_earnings = 0;
+                            $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                ->whereMonth('created_at', '=', date('m', strtotime($date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($date)))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                ->where('status', 10)->pluck('id')->all();
+                            $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                ->where('product_id', $selected_product)->get();
+                            foreach ($delivered_orders_per_month  as $order) {
+                                $price = $order->price;
+                                $amount = $order->amount;
+                                $total = $amount * $price;
+                                $total_earnings += $total;
+                            }
+                            array_push($total_per_months, $total_earnings);
+                            $yValues = $total_per_months;
+                            $xValues = $dates;
+                        }
                     }
+
                     break;
                 }
             default:
@@ -219,16 +459,16 @@ class StatisticsController extends Controller
         // //Percentage
 
 
-        if (count($new_orders) > 0) {
-            $confirmed_percentage = count($confirmed_orders) / count($new_orders) * 100;
+        if (count($all_orders) > 0) {
+            $confirmed_percentage = count($confirmed_orders) / count($all_orders) * 100;
             if ($confirmed_percentage > 100) {
                 $confirmed_percentage = 100;
             }
         } else {
             $confirmed_percentage = 0;
         }
-        if (count($confirmed_orders) > 0) {
-            $delivered_percentage = count($delivered_orders) / count($confirmed_orders) * 100;
+        if (count($all_orders) > 0) {
+            $delivered_percentage = count($delivered_orders) / count($all_orders) * 100;
             if ($delivered_percentage > 100) {
                 $delivered_percentage = 100;
             }
@@ -236,17 +476,26 @@ class StatisticsController extends Controller
             $delivered_percentage = 0;
         }
         $total_earnings = 0;
-        foreach ($delivered_orders as $order) {
-            $id = $order->id;
-            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-            if (empty($amount) || empty($amount)) {
-                $total = 0;
-            } else {
-                $total = $amount[0] * $price[0];
+        if ($selected_product == 'all') {
+            foreach ($delivered_orders as $orderd) {
+                $id = $orderd->id;
+                $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
+                foreach ($orderCalcu as $order) {
+                    $price = $order->price;
+                    $amount = $order->amount;
+                    $total = $amount * $price;
+                    $total_earnings += $total;
+                }
             }
-            $total_earnings += $total;
+        } else {
+            foreach ($delivered_orders as $order) {
+                $price = $order->price;
+                $amount = $order->amount;
+                $total = $amount * $price;
+                $total_earnings += $total;
+            }
         }
+
 
         // //Total Earnings
         // $total_earnings_data = $this->earningGraph($request, 10, $date, $country, $city, $type_users);
@@ -264,9 +513,9 @@ class StatisticsController extends Controller
 
 
         $res = [
-            'new_orders' => count($new_orders),
             'confirmed_orders' => count($confirmed_orders),
             'delivered_orders' => count($delivered_orders),
+            'canceled_orders' => count($canceled_orders),
             'confirmed_percentage' =>  $confirmed_percentage,
             'delivered_percentage' =>  $delivered_percentage,
             'all_orders' => count($all_orders),
@@ -279,7 +528,10 @@ class StatisticsController extends Controller
             'date_to' => $request->to,
             'graph_earnings' => [], //$graph_earnings,
             'countries' => $countries,
-            'cities' => $cities
+            'current_country' => $current_country,
+            'cities' => $cities,
+            'products' => $all_products,
+            'selected_product' => $selected_product,
         ];
 
         return view('admin.home', compact('res'));
