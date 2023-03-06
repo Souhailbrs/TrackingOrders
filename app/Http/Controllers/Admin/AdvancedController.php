@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Country;
 use App\Models\Order;
 use App\Models\OrderTrack;
 use App\Models\SalesChannels;
@@ -42,7 +43,12 @@ class AdvancedController extends Controller
             }
         }
     }
-    public function earnings()
+    public function showEarningsCountries()
+    {
+        $records = Country::get();
+        return view('admin.reports.countries', compact('records'));
+    }
+    public function earnings($country)
     {
         //Seller
 
@@ -52,13 +58,15 @@ class AdvancedController extends Controller
         $result = [];
         $sellers_total = [];
         foreach ($sellers as $seller) {
-            $total_ = $this->getSellerNeeds($seller->id, null, null);
+            $total_ = $this->getSellerNeeds($seller->id, null, null, $country);
             $sellers_total[] = [
                 $seller->id => $total_
             ];
             $shops =  SalesChannels::where('owner_email', $seller->email)->get();
             foreach ($shops  as $shop) {
-                $orders =  Order::where('sales_channel', $shop->id)->where('status', 10)->get();
+                $orders =  Order::where('sales_channel', $shop->id)
+                    ->where('country_id', $country)
+                    ->where('status', 10)->get();
                 $result[] = [
                     'sellers' => $sellers,
                     'shops' => $shops,
@@ -68,9 +76,9 @@ class AdvancedController extends Controller
             }
         }
 
-        return view('admin.reports.earnings', compact('result', 'sellers', 'sellers_total'));
+        return view('admin.reports.earnings', compact('result', 'country', 'sellers', 'sellers_total'));
     }
-    function getSellerNeeds($seller, $dateS, $dateE)
+    function getSellerNeeds($seller, $dateS, $dateE, $country)
     {
         $seller = Seller::find($seller);
         $shops = SalesChannels::where('owner_email', $seller->email)->get();
@@ -80,10 +88,12 @@ class AdvancedController extends Controller
             if (empty($dateS) || empty($dateE)) {
                 $orders[] = Order::where('sales_channel', $shop->id)
                     ->where('status', 10)
+                    ->where('country_id', $country)
                     ->get();
             } else {
                 $orders[] = Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])
                     ->where('sales_channel', $shop->id)
+                    ->where('country_id', $country)
                     ->where('status', 10)
                     ->get();
             }
@@ -104,7 +114,7 @@ class AdvancedController extends Controller
 
         return $total;
     }
-    public function earningsFromTo(Request $request)
+    public function earningsFromTo(Request $request, $country)
     {
         //Seller
         $dateS = new Carbon($request->from);
@@ -114,13 +124,17 @@ class AdvancedController extends Controller
         $result = [];
         $sellers_total = [];
         foreach ($sellers as $seller) {
-            $total_ = $this->getSellerNeeds($seller->id, $dateS, $dateE);
+            $total_ = $this->getSellerNeeds($seller->id, $dateS, $dateE, $country);
             $sellers_total[] = [
                 $seller->id => $total_
             ];
             $shops =  SalesChannels::where('owner_email', $seller->email)->get();
             foreach ($shops  as $shop) {
-                $orders =  Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('sales_channel', $shop->id)->where('status', 10)->get();
+                $orders =  Order::whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])
+                    ->where('sales_channel', $shop->id)
+                    ->where('status', 10)
+                    ->where('country_id', $country)
+                    ->get();
                 $result[] = [
                     'sellers' => $sellers,
                     'shops' => $shops,
@@ -129,9 +143,9 @@ class AdvancedController extends Controller
                 ];
             }
         }
-        return view('admin.reports.earnings', compact('result', 'sellers', 'sellers_total', 'dateS', 'dateE'));
+        return view('admin.reports.earnings', compact('result', 'country', 'sellers', 'sellers_total', 'dateS', 'dateE'));
     }
-    public function reports(Request $request, $seller, $type)
+    public function reports(Request $request, $seller, $type, $country)
     {
         $seller = Seller::find($seller);
         $shops = SalesChannels::where('owner_email', $seller->email)->get();
@@ -145,6 +159,7 @@ class AdvancedController extends Controller
                 //   $orders = Order::where('sales_channel', $shop->id)->where('status', 10)->whereMonth('created_at', Carbon::now()->month)->get();
                 $orders[] = Order::where('sales_channel', $shop->id)
                     ->whereBetween('created_at', [$from, $to])
+                    ->where('country_id', $country)
                     ->where('status', 10)->get();
             }
         } else {
@@ -153,7 +168,7 @@ class AdvancedController extends Controller
             foreach ($shops as $shop) {
                 //   $orders = Order::where('sales_channel', $shop->id)->where('status', 10)->whereMonth('created_at', Carbon::now()->month)->get();
                 $orders[] = Order::where('sales_channel', $shop->id)
-                    ->where('status', 10)->get();
+                    ->where('status', 10)->where('country_id', $country)->get();
             }
         }
         $orders_res = [];
@@ -172,9 +187,9 @@ class AdvancedController extends Controller
                 }
             }
 
-            return view('admin.reports.reports', compact('products', 'seller', 'dateS', 'dateE'));
+            return view('admin.reports.reports', compact('products','country' ,'seller', 'dateS', 'dateE'));
         } else {
-            return view('admin.reports.Invoices', compact('orders', 'seller', 'dateS', 'dateE'));
+            return view('admin.reports.Invoices', compact('orders', 'country', 'seller', 'dateS', 'dateE'));
         }
     }
 }

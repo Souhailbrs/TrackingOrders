@@ -354,7 +354,7 @@
     <ul>
 
         <li>
-            <a href="{{route('earnings')}}">
+            <a href="{{route('earningsCountries')}}">
                 <div class="parent-icon">
                     <ion-icon name="cube-outline"></ion-icon>
                 </div>

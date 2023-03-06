@@ -80,10 +80,11 @@ Route::group(
         Route::post('actionAlternativePost', 'ZonesController@actionAlternativePost')->name('actionAlternativePost');
 
         Route::resource('districts', 'DistrictsController');
-        Route::get('/earnings', 'AdvancedController@earnings')->name('earnings');
-        Route::get('/earnings/filter', 'AdvancedController@earningsFromTo')->name('earningsFromTo');
-        Route::get('/earningsReports/reports/{seller}/{type}', 'AdvancedController@reports')->name('earningsReports.reports');
-        Route::post('/earningsReports/reports/{seller}/{type}', 'AdvancedController@reports')->name('earningsReports.reports.post');
+        Route::get('/earnings', 'AdvancedController@showEarningsCountries')->name('earningsCountries');
+        Route::get('/earnings/{country}', 'AdvancedController@earnings')->name('earnings.ByCountry');
+        Route::get('/earnings/filter/{country}', 'AdvancedController@earningsFromTo')->name('earningsFromTo');
+        Route::get('/earningsReports/reports/{seller}/{type}/{country}', 'AdvancedController@reports')->name('earningsReports.reports');
+        Route::post('/earningsReports/reports/{seller}/{type}/{country}', 'AdvancedController@reports')->name('earningsReports.reports.post');
 
 
         Route::post('/sadstore', 'SalesChannels\SalesChannelsController@store')->name('sad.post');

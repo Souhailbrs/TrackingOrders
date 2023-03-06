@@ -50,7 +50,7 @@ function getSellerNeeds($seller)
 
         <!--start breadcrumb-->
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-            <form class="page-breadcrumb d-none d-sm-flex align-items-center mb-3" action="{{ route('earningsFromTo') }}"
+            <form class="page-breadcrumb d-none d-sm-flex align-items-center mb-3" action="{{ route('earningsFromTo',['country'=>$country]) }}"
                 method="GET">
                 <div class="breadcrumb-title pe-3">Reports</div>
 
@@ -175,10 +175,10 @@ function getSellerNeeds($seller)
                                                                         </td>
 
                                                                         <td>
-                                                                            <a href="{{ route('earningsReports.reports', ['seller' => $record->id, 'type' => 'products']) }}"
+                                                                            <a href="{{ route('earningsReports.reports', ['seller' => $record->id, 'type' => 'products','country'=> $country]) }}"
                                                                                 class="btn btn-primary btn-ecomm"><i
                                                                                     class="bx bxs-add-to-queue"></i>Products</a>
-                                                                            <a href="{{ route('earningsReports.reports', ['seller' => $record->id, 'type' => 'orders']) }}"
+                                                                            <a href="{{ route('earningsReports.reports', ['seller' => $record->id, 'type' => 'orders','country'=> $country]) }}"
                                                                                 class="btn btn-primary btn-ecomm"><i
                                                                                     class="bx bxs-add-to-queue"></i>Orders</a>
                                                                         </td>

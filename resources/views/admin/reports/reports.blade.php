@@ -7,7 +7,7 @@
     <div class="page-content">
         <!--start breadcrumb-->
         <form class="page-breadcrumb d-none d-sm-flex align-items-center mb-3"
-            action="{{ route('earningsReports.reports', ['seller' => $seller, 'type' => 'products']) }}" method="GET">
+            action="{{ route('earningsReports.reports', ['seller' => $seller, 'type' => 'products','country'=> $country]) }}" method="GET">
             <div class="breadcrumb-title pe-3">Reports</div>
 
             <div class="ps-3">

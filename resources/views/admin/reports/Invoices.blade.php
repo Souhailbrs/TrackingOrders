@@ -1,14 +1,14 @@
-@extends("layouts.admin")
-@section("pageTitle", "Users Page")
+@extends('layouts.admin')
+@section('pageTitle', 'Users Page')
 
-@section("content")
+@section('content')
     <div>
         <!-- CSS Files -->
-        <?php $lang = 'en'?>
-        <link href="{{asset('assets/admin/'. $lang . '/css/bootstrap.min.css')}}" rel="stylesheet">
-        <link href="{{asset('assets/admin/'. $lang . '/css/bootstrap-extended.css')}}" rel="stylesheet">
-        <link href="{{asset('assets/admin/'. $lang . '/css/style.css')}}" rel="stylesheet">
-        <link href="{{asset('assets/admin/'. $lang . '/css/icons.css')}}" rel="stylesheet">
+        <?php $lang = 'en'; ?>
+        <link href="{{ asset('assets/admin/' . $lang . '/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/admin/' . $lang . '/css/bootstrap-extended.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/admin/' . $lang . '/css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/admin/' . $lang . '/css/icons.css') }}" rel="stylesheet">
         <style>
             .hr-invoice {
                 border-top: 10px solid green;
@@ -31,18 +31,20 @@
             }
         </style>
         <form class="page-breadcrumb d-none d-sm-flex align-items-center mb-3"
-              action="{{route('earningsReports.reports.post',['seller'=>$seller,'type'=>'orders'])}}" method="post">
+            action="{{ route('earningsReports.reports.post', ['seller' => $seller, 'type' => 'orders', 'country' => $country]) }}"
+            method="post">
             @csrf
             <div class="breadcrumb-title pe-3">Reports</div>
 
             <div class="ps-3">
 
                 <nav aria-label="breadcrumb">
-                   <span class="d-block">
-                       From
-                   </span>
-                    <input type="date" name="from" @if (!empty($dateS)) value="{{ $dateS }}" @endif
-                           class="btn btn-outline-primary breadcrumb mb-0 p-0 align-items-center col-sm-12">
+                    <span class="d-block">
+                        From
+                    </span>
+                    <input type="date" name="from"
+                        @if (!empty($dateS)) value="{{ $dateS }}" @endif
+                        class="btn btn-outline-primary breadcrumb mb-0 p-0 align-items-center col-sm-12">
 
                 </nav>
 
@@ -51,20 +53,21 @@
 
                 <nav aria-label="breadcrumb">
                     <span class="d-block">
-                       To
-                   </span>
-                    <input type="date" name="to" @if (!empty($dateE)) value="{{ $dateE }}" @endif
-                           class="btn btn-outline-primary breadcrumb mb-0 p-0 align-items-center col-sm-12">
+                        To
+                    </span>
+                    <input type="date" name="to"
+                        @if (!empty($dateE)) value="{{ $dateE }}" @endif
+                        class="btn btn-outline-primary breadcrumb mb-0 p-0 align-items-center col-sm-12">
 
                 </nav>
 
             </div>
             <div class="ps-3">
-            <span class="d-block">
-                                   &#160;
-                               </span>
+                <span class="d-block">
+                    &#160;
+                </span>
                 <nav aria-label="breadcrumb">
-                    <input type="submit" class="btn btn-outline-primary ">
+                    <button type="submit" class="btn btn-outline-primary ">Filter</button>
 
                 </nav>
 
@@ -74,7 +77,7 @@
         <div class="row">
             <div class="col-sm-12 text-center">
                 <button style="width:200px" class="btn btn-outline-primary text-center"
-                        onclick="PrintElem('hr-invoice')">Print
+                    onclick="PrintElem('hr-invoice')">Print
                 </button>
             </div>
             <br><br>
@@ -84,34 +87,43 @@
             <h1>CCOD AFRICA NETWORK</h1>
             <br>
             <h6>
-                NOUAKCHOTT, MAURITANIE
+                <input type="text"
+                    style="
+                width: 100px !important;
+                padding:0;
+                margin:0;
+                "
+                    class="btn convert_print" id="city" value="Nouakchott"> ,
+                {{ App\Models\Country::where('id', $country)->pluck('title_en')->first() }}
                 <br>
                 (222) 33 60 66 86
 
             </h6>
             <br><br>
             <h1 style="font-weight:bolder">
-                Facture
+                Invoice
             </h1>
             <h5 style="color:red">
-                Envoyée le <?php echo Date('d/m/y'); ?>
+                Sent on <?php echo empty($dateE) ? date('d/m/Y') : date('d/m/Y', strtotime($dateE)); ?>
 
             </h5>
             <br><br>
             <div class="container h6">
-                <div class="row">
+                <div class="col">
                     <div class="col-sm-4">
-                        Facture pour
+                        Invoice for
                     </div>
+                    <br>
                     <div class="col-sm-4">
-                        {{$seller->name}}
+                        {{ $seller->name }}
 
                     </div>
                     <div class="col-sm-4">
-                        {{$seller->phone}}
-
+                        +{{ $seller->phone }}
                     </div>
-
+                    <div class="col-sm-4">
+                        {{ $seller->email }}
+                    </div>
                 </div>
 
             </div>
@@ -120,42 +132,42 @@
 
             <table class="table  table-striped ">
                 <thead>
-                <tr>
-                    <th class="col-sm-6">
-                        Description
-                    </th>
-                    <th class="col-sm-2">
-                        Cmnd
-                    </th>
-                    <th class="col-sm-2">
-                        Prix unitaire
-                    </th>
-                    <th class="col-sm-2">
-                        Prix total
-                    </th>
+                    <tr>
+                        <th class="col-sm-6">
+                            Description
+                        </th>
+                        <th class="col-sm-2">
+                            Quantity
+                        </th>
+                        <th class="col-sm-2">
+                            Unit price
+                        </th>
+                        <th class="col-sm-2">
+                            Total price
+                        </th>
 
-                </tr>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php $total_orders_price = 0; ?>
-                @foreach($orders as $order)
-                    @foreach($order->product as $pro)
-                        <tr>
-                            <td>{{$pro->one_product->name}}</td>
-                            <td>{{$pro->amount}}</td>
-                            <td>{{$pro->price / $pro->amount}} MRO</td>
-                            <td>{{$pro->price}} MRO</td>
-                            <?php $total_orders_price += $pro->price; ?>
-                        </tr>
+                    <?php $total_orders_price = 0; ?>
+                    @foreach ($orders as $order)
+                        @foreach ($order->product as $pro)
+                            <tr>
+                                <td>{{ $pro->one_product->name }}</td>
+                                <td>{{ $pro->amount }}</td>
+                                <td>{{ $pro->price / $pro->amount }} MRO</td>
+                                <td>{{ $pro->price }} MRO</td>
+                                <?php $total_orders_price += $pro->price; ?>
+                            </tr>
+                        @endforeach
                     @endforeach
-                @endforeach
                 </tbody>
             </table>
             <br>
             <table style="width:100%">
                 <tr>
                     <td colspan="2">
-                        Ccommandes Livrées
+                        Orders Delivered
                     </td>
                     <td>
                         <input type="text" class="btn convert_print" id="CcommandesLivres">
@@ -164,16 +176,16 @@
 
                     </td>
                     <td colspan="2">
-                        Sous-total
+                        Subtotal
                     </td>
                     <td>
                         <input id="orders_total_price" type="text" class="btn convert_print"
-                               value="{{$total_orders_price}}" readonly="1">
+                            value="{{ $total_orders_price }}" readonly="1">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        Articles livrées
+                        Items delivered
                     </td>
                     <td>
                         <input type="text" class="btn  convert_print" id="Articleslivres">
@@ -190,38 +202,38 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-
+                        Sourcing products
                     </td>
                     <td>
-
+                        <input type="text" class="btn  convert_print" id="sourcing_product">
                     </td>
                     <td>
 
                     </td>
                     <td colspan="2">
-                        frais de confirmat
+                        Confirmation fee
                     </td>
                     <td>
                         <input type="text" value="0" class="btn  convert_print" id="frais_confirmat"
-                               onchange="myFun1()">
+                            onchange="myFun1()">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-
+                        Shipping products
                     </td>
                     <td>
-
+                        <input type="text" class="btn  convert_print" id="sourcing_product">
                     </td>
                     <td>
 
                     </td>
                     <td colspan="2">
-                        Frais de livraison
+                        Shipping cost
                     </td>
                     <td>
                         <input type="text" value="0" class="btn  convert_print" id="frais_livraison"
-                               onchange="myFun1()">
+                            onchange="myFun1()">
                     </td>
                 </tr>
                 <tr>
@@ -264,6 +276,10 @@
             var frais_livraison = document.getElementById('frais_livraison');
             frais_livraison.setAttribute("value", frais_livraison.value);
             frais_livraison.style.border = '0';
+
+            var city = document.getElementById('city');
+            city.setAttribute("value", city.value);
+            city.style.border = '0';
 
             var result = document.getElementById('result');
             result.setAttribute("value", result.value);
