@@ -1,22 +1,22 @@
 <?php
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
-$type_users =  Auth::guard('admin')->user()->id;
+$type_users = Auth::guard('admin')->user()->id;
 ?>
-@extends("layouts.admin")
-@if(LaravelLocalization::getCurrentLocale() == 'ar')
-    @section("pageTitle", "الرئيسية")
+@extends('layouts.admin')
+@if (LaravelLocalization::getCurrentLocale() == 'ar')
+    @section('pageTitle', 'الرئيسية')
 @else
-    @section("pageTitle", "Home")
+    @section('pageTitle', 'Home')
 @endif
 
 
-@section("content")
+@section('content')
     <div class="container">
         <div class="row">
             <div class="container">
-                <form class="row text-center d-flex justify-content-center" action="{{ route('admin.filter.statistics', ['type_users' => $type_users]) }}"
-                    method="POST">
+                <form class="row text-center d-flex justify-content-center"
+                    action="{{ route('admin.filter.statistics', ['type_users' => $type_users]) }}" method="POST">
                     @csrf
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2 h6 ">
@@ -35,9 +35,43 @@ $type_users =  Auth::guard('admin')->user()->id;
                         <select class="form-control" id="product" name="product">
                             <option value="all" @if ($res['selected_product'] == 'all') selected @endif>All</option>
                             @foreach ($res['products'] as $product)
-                                <option value="{{ $product->id }}"@if ($res['selected_product'] == $product->id ) selected @endif>{{ $product->name }}</option>
+                                <option value="{{ $product->id }}"@if ($res['selected_product'] == $product->id) selected @endif>
+                                    {{ $product->name }}</option>
                             @endforeach
-                            
+
+                        </select>
+                    </div>
+                    <div class="col-sm-2 h6 ">
+                        <label for="seller">Seller</label> :
+                        <select class="form-control" id="seller" name="seller">
+                            <option value="all" @if ($res['selected_seller'] == 'all') selected @endif>All</option>
+                            @foreach ($res['sellers'] as $seller)
+                                <option value="{{ $seller->id }}"@if ($res['selected_seller'] == $seller->id) selected @endif>
+                                    {{ $seller->name }}</option>
+                            @endforeach
+
+                        </select>
+                    </div>
+                    <div class="col-sm-2 h6 ">
+                        <label for="supporter">Call Center</label> :
+                        <select class="form-control" id="supporter" name="supporter">
+                            <option value="all" @if ($res['selected_supporter'] == 'all') selected @endif>All</option>
+                            @foreach ($res['supporters'] as $supporter)
+                                <option value="{{ $supporter->id }}"@if ($res['selected_supporter'] == $supporter->id) selected @endif>
+                                    {{ $supporter->name }}</option>
+                            @endforeach
+
+                        </select>
+                    </div>
+                    <div class="col-sm-2 h6 ">
+                        <label for="delivery">Delivery</label> :
+                        <select class="form-control" id="delivery" name="delivery">
+                            <option value="all" @if ($res['selected_delivery'] == 'all') selected @endif>All</option>
+                            @foreach ($res['deliverys'] as $delivery)
+                                <option value="{{ $delivery->id }}"@if ($res['selected_delivery'] == $delivery->id) selected @endif>
+                                    {{ $delivery->name }}</option>
+                            @endforeach
+
                         </select>
                     </div>
                     <div class="col-sm-2 h6 ">
@@ -317,4 +351,3 @@ $type_users =  Auth::guard('admin')->user()->id;
 
     </div>
 @endsection
-

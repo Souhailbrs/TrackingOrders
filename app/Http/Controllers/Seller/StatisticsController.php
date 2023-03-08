@@ -378,12 +378,12 @@ class StatisticsController extends Controller
             case 'from': {
                     $dateS = new Carbon($request->from);
                     $dateE = new Carbon($request->to);
-                    if ($selected_product=='all') {
+                    if ($selected_product == 'all') {
                         $all_orders  = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get();
                         $confirmed_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->get();
                         $delivered_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get();
                         $canceled_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
-                        
+
                         $dates = [];
                         $total_per_months = [];
                         $total_earnings = 0;
@@ -429,9 +429,9 @@ class StatisticsController extends Controller
                         foreach ($dates as $date) {
                             $total_earnings = 0;
                             $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                            ->whereMonth('created_at', '=', date('m', strtotime($date)))
-                            ->whereDay('created_at', '=', date('d', strtotime($date)))
-                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                ->whereMonth('created_at', '=', date('m', strtotime($date)))
+                                ->whereDay('created_at', '=', date('d', strtotime($date)))
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
                                 ->where('status', 10)->pluck('id')->all();
                             $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                 ->where('product_id', $selected_product)->get();
@@ -516,15 +516,37 @@ class StatisticsController extends Controller
         // $graph_earnings =  $this->earningGraph($request, 10, $date, $country, $city, $type_users);
         $countries =  Country::get();
         $cities =  City::get();
-
+        $all_orders_final = [];
+        $confirmed_orders_final = [];
+        $delivered_orders_final  = [];
+        $canceled_orders_final  = [];
+        if ($selected_product != 'all') {
+            foreach ($all_orders as $order) {
+                $all_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($confirmed_orders as $order) {
+                $confirmed_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($delivered_orders as $order) {
+                $delivered_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($canceled_orders as $order) {
+                $canceled_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+        } else {
+            $all_orders_final = $all_orders;
+            $confirmed_orders_final = $confirmed_orders;
+            $delivered_orders_final  = $delivered_orders;
+            $canceled_orders_final  = $canceled_orders;
+        }
 
         $res = [
-            'confirmed_orders' => count($confirmed_orders),
-            'delivered_orders' => count($delivered_orders),
-            'canceled_orders' => count($canceled_orders),
+            'confirmed_orders' => count($confirmed_orders_final),
+            'delivered_orders' => count($delivered_orders_final),
+            'canceled_orders' => count($canceled_orders_final),
             'confirmed_percentage' =>  $confirmed_percentage,
             'delivered_percentage' =>  $delivered_percentage,
-            'all_orders' => count($all_orders),
+            'all_orders' => count($all_orders_final),
             'total_earnings' => $total_earnings,
             'date' => $date_input,
             'country' => $country,

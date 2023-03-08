@@ -12,12 +12,12 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    public static ?Order $current_order_supporter = null;
+    // public static ?Order $current_order_supporter = null;
 
-    public static function set($order)
-    {
-        self::$current_order_supporter = $order;
-    }
+    // public static function set($order)
+    // {
+    //     self::$current_order_supporter = $order;
+    // }
     public function ordeLog($seller_id,$order_id,$status){
         $log = OrderLog::create([
             'seller_id'=>$seller_id,

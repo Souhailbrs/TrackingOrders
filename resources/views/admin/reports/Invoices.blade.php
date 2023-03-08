@@ -109,22 +109,41 @@
             </h5>
             <br><br>
             <div class="container h6">
-                <div class="col">
-                    <div class="col-sm-4">
-                        Invoice for
+                <div class="row">
+                    <div class="col">
+                        <div class="col-sm-4">
+                            Invoice for
+                        </div>
+                        <br>
+                        <div class="col-sm-4">
+                            {{ $seller->name }}
+
+                        </div>
+                        <div class="col-sm-4">
+                            +{{ $seller->phone }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ $seller->email }}
+                        </div>
                     </div>
                     <br>
-                    <div class="col-sm-4">
-                        {{ $seller->name }}
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                Is Paid
+                            </div>
+                            <div class="col-sm-4"
+                                style="
+                                width:20px;
+                                height:20px;
+                                border: 1px solid;
+                                ">
+                            </div>
+                        </div>
 
                     </div>
-                    <div class="col-sm-4">
-                        +{{ $seller->phone }}
-                    </div>
-                    <div class="col-sm-4">
-                        {{ $seller->email }}
-                    </div>
                 </div>
+
 
             </div>
             <br>
@@ -170,7 +189,8 @@
                         Orders Delivered
                     </td>
                     <td>
-                        <input type="text" class="btn convert_print" id="CcommandesLivres">
+                        <input type="text" value="0" onchange="myFun1()" class="btn convert_print"
+                            id="CcommandesLivres">
                     </td>
                     <td>
 
@@ -188,7 +208,8 @@
                         Items delivered
                     </td>
                     <td>
-                        <input type="text" class="btn  convert_print" id="Articleslivres">
+                        <input type="text" onchange="myFun1()" value="0" class="btn  convert_print"
+                            id="Articleslivres">
                     </td>
                     <td>
 
@@ -205,7 +226,8 @@
                         Sourcing products
                     </td>
                     <td>
-                        <input type="text" class="btn  convert_print" id="sourcing_product">
+                        <input type="text" value="0" onchange="myFun1()" class="btn  convert_print"
+                            id="sourcing_product">
                     </td>
                     <td>
 
@@ -223,7 +245,8 @@
                         Shipping products
                     </td>
                     <td>
-                        <input type="text" class="btn  convert_print" id="sourcing_product">
+                        <input type="text" value="0" onchange="myFun1()" class="btn  convert_print"
+                            id="shipping_product">
                     </td>
                     <td>
 
@@ -273,6 +296,14 @@
             frais_confirmat.setAttribute("value", frais_confirmat.value);
             frais_confirmat.style.border = '0';
 
+            var sourcing_product = document.getElementById('sourcing_product');
+            sourcing_product.setAttribute("value", sourcing_product.value);
+            sourcing_product.style.border = '0';
+
+            var shipping_product = document.getElementById('shipping_product');
+            shipping_product.setAttribute("value", shipping_product.value);
+            shipping_product.style.border = '0';
+
             var frais_livraison = document.getElementById('frais_livraison');
             frais_livraison.setAttribute("value", frais_livraison.value);
             frais_livraison.style.border = '0';
@@ -314,9 +345,15 @@
             var codfees = parseFloat(document.getElementById('codfees').value);
             var frais_confirmat = parseFloat(document.getElementById('frais_confirmat').value);
             var frais_livraison = parseFloat(document.getElementById('frais_livraison').value);
+            var shipping_product = parseFloat(document.getElementById('shipping_product').value);
+            var sourcing_product = parseFloat(document.getElementById('sourcing_product').value);
+            var Articleslivres = parseFloat(document.getElementById('Articleslivres').value);
             var result = document.getElementById('result');
 
-            var res = orders_total_price - (frais_confirmat + frais_livraison + (codfees / 100 * orders_total_price));
+            var res = orders_total_price -
+                ((Articleslivres * shipping_product) +
+                    (Articleslivres * sourcing_product) +
+                    frais_confirmat + frais_livraison + (codfees / 100 * orders_total_price));
 
             result.value = parseFloat(res).toFixed(3) + ' MRO';
 
