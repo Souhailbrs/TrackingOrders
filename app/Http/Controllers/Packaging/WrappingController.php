@@ -92,6 +92,7 @@ class WrappingController extends Controller
     }
     public function index(Request $request)
     {
+
         $user =  Auth::guard('packaging')->user();
 
         if ($request->entries) {
@@ -116,8 +117,7 @@ class WrappingController extends Controller
             $today_work = 0;
             $work_day_id = 0;
         }
-
-        $records = Order::where('status', 7)->whereDate('delivery_date', Carbon::today())->where('country_id', $user->country_id)->paginate($pagination);
+        $records = Order::whereIn('status', [7, 4])->whereDate('delivery_date', date_format(Carbon::now('GMT+1'), "Y-m-d"))->where('country_id', $user->country_id)->get();
         //state
         //1. today
         //2. all

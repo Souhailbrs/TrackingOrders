@@ -113,7 +113,7 @@
                 <div style="width:30px">
 
                 </div>
-                <div class="dropdown d-inline-block mr-3 h6" style="cursor:pointer;font-size: 20px">
+                {{-- <div class="dropdown d-inline-block mr-3 h6" style="cursor:pointer;font-size: 20px">
                     <form action="{{route('packaging.workState.sad')}}" method="post" style="font-weight: bolder">
                         @csrf
 
@@ -134,7 +134,7 @@
 
                     </form>
 
-                </div>
+                </div> --}}
 
 
 

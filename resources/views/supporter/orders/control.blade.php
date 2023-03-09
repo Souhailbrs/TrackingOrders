@@ -16,7 +16,8 @@
             @csrf
             <div class="row">
                 <a style="display:block;color:white" target="_blank"
-                    href="{{ route('supporter.site.trackOrder', ['id' => $data->id]) }}" class="col-sm-2 btn btn-dark h6 pt-2">
+                    href="{{ route('supporter.site.trackOrder', ['id' => $data->id]) }}"
+                    class="col-sm-2 btn btn-dark h6 pt-2">
                     Track Order
                 </a>
 
@@ -166,8 +167,8 @@
 
                 <div class="col-sm-12 text-center">
 
-                    <input class="form-control btn-dark text-center" type="button" id="example-text-input"
-                        value="Add More" onClick="clone()">
+                    <input class="form-control btn-dark text-center" type="button" id="example-text-input" value="Add More"
+                        onClick="clone()">
 
                 </div>
 
@@ -312,7 +313,8 @@
                 </div>
                 <div class="modal-body">
                     <form method="post"
-                        action="{{ route('supporter.' . $pages . '.' . $action, ['order' => $data->id]) }}" id="myForm">
+                        action="{{ route('supporter.' . $pages . '.' . $action, ['order' => $data->id]) }}"
+                        id="myForm">
                         @method('PUT')
                         @csrf
                         <div class="form-group row">
@@ -433,7 +435,8 @@
                 </div>
                 <div class="modal-body">
                     <form method="post"
-                        action="{{ route('supporter.' . $pages . '.' . $action, ['order' => $data->id]) }}" id="myForm">
+                        action="{{ route('supporter.' . $pages . '.' . $action, ['order' => $data->id]) }}"
+                        id="myForm">
                         @method('PUT')
                         @csrf
 

@@ -80,13 +80,19 @@ class MainController extends Controller
                                 ->pluck('user_sales_channele_orders')
                                 ->all();
 
+
                             foreach ($orders as $order) {
                                 $track = OrderTrack::where('sales_channele_order', $order)->where('last_status', '!=', 1)->whereDate('created_at', '>=', $wo->created_at->format('Y-m-d'))->get();
+                                if (end($orders) == $order && count($orders) != 0 && count($orders) != 1) {
+                                    WorkDayOrder::where('user_sales_channele_orders', $order)->delete();
+                                    break;
+                                }
                                 if (count($track) == 0) {
                                     $is_all_orders_is_done_by_call_center = false;
                                     $number_order_not_handled++;
                                 }
                             }
+
                             if ($is_all_orders_is_done_by_call_center == false) {
                                 return redirect()->back()->with('error', 'Error!! You have ' . $number_order_not_handled . ' orders not handled You Have To Go your working day and be sure that the orders you recieved today has been handled there status');
                             }

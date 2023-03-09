@@ -38,8 +38,8 @@
                                     <div class="col-sm-3">
                                         <form style="display: inline-block" action="{{ route('packaging.wrapping.index') }}"
                                             method="get">
-                                            Show {{ $records->firstItem() }} - {{ $records->lastItem() }}
-                                            From {{ $records->total() }}
+                                            {{-- Show {{ $records->firstItem() }} - {{ $records->lastItem() }}
+                                            From {{ $records->total() }} --}}
                                             <select name="entries" id="" onchange="this.form.submit()">
                                                 @if ($pagination)
                                                     <option value="{{ $pagination }}">{{ $pagination }}</option>
@@ -322,7 +322,7 @@
                     {{--
                                         {{ $data->links() }}
                     --}}
-                    {{ $records->links() }}
+                    {{-- {{ $records->links() }} --}}
 
                 </div>
             </div>
