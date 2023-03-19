@@ -184,9 +184,13 @@ class SupporterStatisticsController extends Controller
                             ->where('country_id', $country)->where('status', 10)->get();
                         foreach ($delivered_orders_per_month as $order) {
                             $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
+                            $prices = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
+                            $amounts = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
+                            foreach ($prices as $price) {
+                                foreach ($amounts as $amount) {
+                                    $total = $amount * $price;
+                                }
+                            }
                             $total_earnings += $total;
                         }
                         array_push($total_per_days, $total_earnings);
@@ -240,9 +244,13 @@ class SupporterStatisticsController extends Controller
                             ->where('country_id', $country)->where('status', 10)->get();
                         foreach ($delivered_orders_per_month as $order) {
                             $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
+                            $prices = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
+                            $amounts = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
+                            foreach ($prices as $price) {
+                                foreach ($amounts as $amount) {
+                                    $total = $amount * $price;
+                                }
+                            }
                             $total_earnings += $total;
                         }
                         array_push($total_per_days, $total_earnings);
@@ -292,9 +300,13 @@ class SupporterStatisticsController extends Controller
                             ->whereMonth('created_at', '=', $i)->where('country_id', $country)->where('status', 10)->get();
                         foreach ($delivered_orders_per_month as $order) {
                             $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
+                            $prices = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
+                            $amounts = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
+                            foreach ($prices as $price) {
+                                foreach ($amounts as $amount) {
+                                    $total = $amount * $price;
+                                }
+                            }
                             $total_earnings += $total;
                         }
                         array_push($total_per_months, $total_earnings);
@@ -349,9 +361,13 @@ class SupporterStatisticsController extends Controller
 
                         foreach ($delivered_orders_per_month as $order) {
                             $id = $order->id;
-                            $price = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
-                            $amount = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
-                            $total = $amount[0] * $price[0];
+                            $prices = OrderProduct::where('sales_channele_order', $id)->pluck('price')->all();
+                            $amounts = OrderProduct::where('sales_channele_order', $id)->pluck('amount')->all();
+                            foreach ($prices as $price) {
+                                foreach ($amounts as $amount) {
+                                    $total = $amount * $price;
+                                }
+                            }
                             $total_earnings += $total;
                         }
                         array_push($total_per_months, $total_earnings);
