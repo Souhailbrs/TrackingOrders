@@ -22,16 +22,16 @@
                 </a>
 
                 <div class="col-sm-8">
-                    <?php $last_status = \App\Models\OrderTrack::where('sales_channele_order', $data->id)->get();
-                    if (count($last_status) - 2 < 0) {
-                        $index = 0;
-                    } else {
-                        $index = count($last_status) - 2;
-                        if ($index < 0) {
-                            $index = 0;
-                        }
-                    }
-                    $last_status = $last_status[$index];
+                    <?php $last_status = \App\Models\OrderTrack::where('sales_channele_order', $data->id)->orderBy('id', 'DESC')->first();
+                    // if (count($last_status) - 2 < 0) {
+                    //     $index = 0;
+                    // } else {
+                    //     $index = count($last_status) - 2;
+                    //     if ($index < 0) {
+                    //         $index = 0;
+                    //     }
+                    // }
+                    // $last_status = $last_status[$index];
                     
                     ?>
 

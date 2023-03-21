@@ -311,8 +311,8 @@ $type_users = Auth::guard('seller')->user()->id;
                                                                      aria-labelledby="btnGroupDrop1">
                                                                     <a class="dropdown-item col-sm-12 d-block"
                                                                        href="{{route('customOrders.show',['customOrder'=>$record->id])}}">View</a>
-                                                                    <a class="dropdown-item  col-sm-12 d-block"
-                                                                       href="{{route('customOrders.edit',['customOrder'=>$record->id])}}">Edit</a>
+                                                                    {{-- <a class="dropdown-item  col-sm-12 d-block"
+                                                                       href="{{route('customOrders.edit',['customOrder'=>$record->id])}}">Edit</a> --}}
                                                                     @if($record->deleted == 1)
                                                                         <a class="dropdown-item col-sm-12 d-block"
                                                                            href="">Restore</a>

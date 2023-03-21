@@ -30,9 +30,9 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
         $this->id = $id;
         $this->country_id = SalesChannels::find($id)->country->id;
         $user_id = Auth::guard('seller')->user()->id;
-        $products = ProductSeller::where('seller_id',$user_id)->get();
-        foreach($products  as $product){
-            $this->products_ids [] = $product->id;
+        $products = ProductSeller::where('seller_id', $user_id)->get();
+        foreach ($products  as $product) {
+            $this->products_ids[] = $product->id;
         }
     }
 
@@ -41,8 +41,8 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
         $order = Order::create([
             'sales_channel' => $this->id,
             'customer_name' => $row['customer_name'],
-            'customer_phone1' => $row['customer_phone'],
-            'customer_phone2' => $row['customer_phone'],
+            'customer_phone1' => strval($row['customer_phone']),
+            'customer_phone2' => strval($row['customer_phone']),
             'seller_notes' => $row['seller_notes'],
             'notes' => '',
             'status' => 0,
@@ -75,7 +75,6 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
         } else {
             return 2;
         }
-
     }
 
     public function rules(): array
@@ -83,8 +82,9 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
         $array = $this->products_ids;
         return [
             'customer_name' => ['required'],
-            'customer_phone' => ['required','min:8'],
-            'product_id' => ['required',
+            'customer_phone' => ['required', 'min:8'],
+            'product_id' => [
+                'required',
                 Rule::in($array),
             ],
             'total_price' => ['required', 'numeric'],
@@ -92,5 +92,4 @@ class OrdersImport implements ToModel, SkipsEmptyRows, WithHeadingRow, WithValid
             'url' => ['required']
         ];
     }
-
 }

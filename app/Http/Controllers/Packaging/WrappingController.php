@@ -279,7 +279,7 @@ class WrappingController extends Controller
     }
     public function change_order_state_all($state)
     {
-        $orders = Order::where('status', 7)->get();
+        $orders = Order::whereIn('status', [4, 7])->get();
         //Check weather our user has work days or not
         foreach ($orders as $order) {
             if (empty($order->zone->id))
@@ -313,8 +313,6 @@ class WrappingController extends Controller
             $this->ordeLog($user_id, $order->id, $state);
 
             if ($delivery) {
-
-
                 WorkDayOrder::create([
                     'user_user_work_day' => $work_day->id,
                     'user_sales_channele_orders' => $order->id,

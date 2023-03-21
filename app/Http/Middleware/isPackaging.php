@@ -16,10 +16,9 @@ class isPackaging
      */
     public function handle($request, Closure $next)
     {
-
         if (Auth::guard('packaging')->check()) {
             return $next($request);
         }
-        return redirect()->route('auth.login')->withErrors(['msg'=>'Make Sure you have entered your email and password']);
+        return redirect()->route('auth.login')->withErrors(['msg' => 'Make Sure you have entered your email and password']);
     }
 }

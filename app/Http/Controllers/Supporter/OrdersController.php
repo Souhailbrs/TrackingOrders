@@ -29,6 +29,7 @@ class OrdersController extends Controller
      */
     public function index(Request $request, $state, $from, $to)
     {
+
         $user_id = Auth::guard('supporter')->user()->id;
         $today_work_days = WorkDay::where('user_id', $user_id)->where('user_type', 'supporter')->where('completed', 0)->get();
         $work_days_order_id = WorkDayOrder::where('userID', $user_id)->where('status', 1)
@@ -51,13 +52,20 @@ class OrdersController extends Controller
         }
         if ($request->search) {
             $search = $request->search;
-            $workDayOrders = Order::where('id', 'like', '%' . $search . '%')->whereIn('id', $work_days_order_id)
-                ->orWhere('customer_phone1', 'like', '%' . $search . '%')->whereIn('id', $work_days_order_id)->get();
-            //product
+            $orders = Order::where('id', 'like', '%' . $search . '%')
+                ->whereIn('id', $work_days_order_id)
+                ->orWhere('customer_phone1', 'like', '%' . $search . '%')
+                ->whereIn('id', $work_days_order_id)->pluck('id')->all();
+            $workDayOrders =
+                WorkDayOrder::where('user_sales_channele_orders', $orders)->where('status', 1)
+                ->where('userType', 'supporter')->get();
         } else {
             $search = '';
-            $workDayOrders = Order::whereIn('id', $work_days_order_id)->get();
+            $workDayOrders =
+                WorkDayOrder::where('userID', $user_id)->where('status', 1)
+                ->where('userType', 'supporter')->get();
         }
+        $work_days_orders_data = $workDayOrders;
         if ($state === 'today') {
             $workDayOrdersFilter = [];
             foreach ($work_days_orders_data as $order) {
@@ -944,6 +952,7 @@ class OrdersController extends Controller
                             'last_status' => 6,
                         ]);
                     } else {
+
                         $order->update([
                             'status' => $new
                         ]);
@@ -980,9 +989,15 @@ class OrdersController extends Controller
                             'last_status' => 6,
                         ]);
                     } else {
-                        $order->update([
-                            'status' => $new
-                        ]);
+                        if ($new == 2) {
+                            $order->update([
+                                'status' => 12
+                            ]);
+                        } else {
+                            $order->update([
+                                'status' => $new
+                            ]);
+                        }
                     }
                     break;
                 }

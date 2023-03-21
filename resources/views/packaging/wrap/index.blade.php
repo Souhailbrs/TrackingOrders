@@ -135,10 +135,10 @@
                                                                 #{{ $record->id }}
                                                             </td>
                                                             <!--                                                <td>
-                                                                                    <a class="btn btn-dark col-sm-12 d-block"  data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{ $record->id }}">
-                                                                                        {{ $record->shop['title_' . App::getlocale()] }}
-                                                                                        </a>
-                                                                                    </td>-->
+                                                                                                        <a class="btn btn-dark col-sm-12 d-block"  data-bs-toggle="modal" data-bs-target="#exampleModalCenter{{ $record->id }}">
+                                                                                                            {{ $record->shop['title_' . App::getlocale()] }}
+                                                                                                            </a>
+                                                                                                        </td>-->
                                                             <td style="width: 900px !important;">
 
                                                                 <?php $price = 0;
@@ -830,8 +830,12 @@
             window.print();
             $('body').html(restorepage);
             printcontent.css('display', 'none');
-            document.location.href = 'https://codafrican.com/en/packaging/change_order_state_all/8';
+            setTimeout("closePrintView()", 100);
 
+        }
+
+        function closePrintView() {
+            document.location.href = 'https://codafrican.com/en/packaging/change_order_state_all/8';
         }
 
         function moka(x) {
