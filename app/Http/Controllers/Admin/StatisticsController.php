@@ -328,25 +328,37 @@ class StatisticsController extends Controller
                             $total_per_days = [];
                             for ($i = 0; $i < 8; $i++) {
                                 $total_earnings = 0;
-                                $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                                    ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
-                                    ->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                    ->where('product_id', $selected_product)->get();
-                                if ($i == 7) {
-                                    $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
-                                        ->where('status', 10)->pluck('id')->all();
-                                    $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                        ->where('product_id', $selected_product)->get();
-                                }
-                                foreach ($delivered_orders_per_month  as $order) {
-                                    $price = $order->price;
-                                    $amount = $order->amount;
-                                    $total = $amount * $price;
-                                    $total_earnings += $total;
+                                if (count($delivered_orders) != 0) {
+                                    for ($i = 0; $i < 8; $i++) {
+                                        $total_earnings = 0;
+                                        $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                            ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                            ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                            ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                            ->where('status', 10)->pluck('id')->all();
+                                        $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                            ->where('product_id', $selected_product)->get();
+                                        if ($i == 7) {
+                                            $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                                ->where('status', 10)->pluck('id')->all();
+                                            $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                                ->where('product_id', $selected_product)->get();
+                                        }
+                                        foreach ($delivered_orders_per_month  as $order) {
+                                            $price = $order->price;
+                                            $amount = $order->amount;
+                                            $total = $amount * $price;
+                                            $total_earnings += $total;
+                                        }
+                                        array_push($total_per_days, $total_earnings);
+                                        $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
+                                        array_push($days, date('l', strtotime($filter_date)));
+                                    }
+                                    $yValues = $total_per_days;
+                                    $xValues = $days;
+                                } else {
+                                    $total_earnings = 0;
                                 }
                                 array_push($total_per_days, $total_earnings);
                                 $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
@@ -371,25 +383,29 @@ class StatisticsController extends Controller
                             $total_per_days = [];
                             for ($i = 0; $i < 8; $i++) {
                                 $total_earnings = 0;
-                                $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                                    ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
-                                    ->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                    ->get();
-                                if ($i == 7) {
-                                    $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                if (count($delivered_orders) != 0) {
+                                    $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                        ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                        ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                        ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                         ->get();
-                                }
-                                foreach ($delivered_orders_per_month  as $order) {
-                                    $price = $order->price;
-                                    $amount = $order->amount;
-                                    $total = $amount * $price;
-                                    $total_earnings += $total;
+                                    if ($i == 7) {
+                                        $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                            ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)
+                                            ->where('status', 10)->pluck('id')->all();
+                                        $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                            ->get();
+                                    }
+                                    foreach ($delivered_orders_per_month  as $order) {
+                                        $price = $order->price;
+                                        $amount = $order->amount;
+                                        $total = $amount * $price;
+                                        $total_earnings += $total;
+                                    }
+                                } else {
+                                    $total_earnings = 0;
                                 }
                                 array_push($total_per_days, $total_earnings);
                                 $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
@@ -414,25 +430,29 @@ class StatisticsController extends Controller
                             $total_per_days = [];
                             for ($i = 0; $i < 8; $i++) {
                                 $total_earnings = 0;
-                                $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                                    ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
-                                    ->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                    ->get();
-                                if ($i == 7) {
-                                    $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                if (count($delivered_orders) != 0) {
+                                    $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                        ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                        ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                        ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                         ->get();
-                                }
-                                foreach ($delivered_orders_per_month  as $order) {
-                                    $price = $order->price;
-                                    $amount = $order->amount;
-                                    $total = $amount * $price;
-                                    $total_earnings += $total;
+                                    if ($i == 7) {
+                                        $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                            ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)
+                                            ->where('status', 10)->pluck('id')->all();
+                                        $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                            ->get();
+                                    }
+                                    foreach ($delivered_orders_per_month  as $order) {
+                                        $price = $order->price;
+                                        $amount = $order->amount;
+                                        $total = $amount * $price;
+                                        $total_earnings += $total;
+                                    }
+                                } else {
+                                    $total_earnings = 0;
                                 }
                                 array_push($total_per_days, $total_earnings);
                                 $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
@@ -457,25 +477,29 @@ class StatisticsController extends Controller
                             $total_per_days = [];
                             for ($i = 0; $i < 8; $i++) {
                                 $total_earnings = 0;
-                                $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
-                                    ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
-                                    ->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                    ->get();
-                                if ($i == 7) {
-                                    $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                if (count($delivered_orders) != 0) {
+                                    $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
+                                        ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
+                                        ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
+                                        ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                         ->get();
-                                }
-                                foreach ($delivered_orders_per_month  as $order) {
-                                    $price = $order->price;
-                                    $amount = $order->amount;
-                                    $total = $amount * $price;
-                                    $total_earnings += $total;
+                                    if ($i == 7) {
+                                        $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
+                                            ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)
+                                            ->where('status', 10)->pluck('id')->all();
+                                        $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
+                                            ->get();
+                                    }
+                                    foreach ($delivered_orders_per_month  as $order) {
+                                        $price = $order->price;
+                                        $amount = $order->amount;
+                                        $total = $amount * $price;
+                                        $total_earnings += $total;
+                                    }
+                                } else {
+                                    $total_earnings = 0;
                                 }
                                 array_push($total_per_days, $total_earnings);
                                 $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
@@ -597,16 +621,16 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                   ->get();
+                                    ->get();
                                 if ($i == 30) {
                                     $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                        ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                       ->get();
+                                        ->get();
                                 }
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
@@ -640,16 +664,16 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                   ->get();
+                                    ->get();
                                 if ($i == 30) {
                                     $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                        ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                       ->get();
+                                        ->get();
                                 }
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
@@ -683,16 +707,16 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                   ->get();
+                                    ->get();
                                 if ($i == 30) {
                                     $delivered_orders_per_month_shop = Order::whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))
-                                        ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                        ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)
                                         ->where('status', 10)->pluck('id')->all();
                                     $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
-                                       ->get();
+                                        ->get();
                                 }
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
@@ -809,8 +833,8 @@ class StatisticsController extends Controller
                                 $total_earnings = 0;
                                 array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', $i)->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->where('product_id', $selected_product)->get();
+                                    ->whereMonth('created_at', '=', $i)->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->get();
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
                                     $amount = $order->amount;
@@ -844,8 +868,8 @@ class StatisticsController extends Controller
                                 $total_earnings = 0;
                                 array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', $i)->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->where('product_id', $selected_product)->get();
+                                    ->whereMonth('created_at', '=', $i)->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->get();
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
                                     $amount = $order->amount;
@@ -879,8 +903,8 @@ class StatisticsController extends Controller
                                 $total_earnings = 0;
                                 array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
-                                    ->whereMonth('created_at', '=', $i)->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
-                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->where('product_id', $selected_product)->get();
+                                    ->whereMonth('created_at', '=', $i)->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                                $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)->get();
                                 foreach ($delivered_orders_per_month  as $order) {
                                     $price = $order->price;
                                     $amount = $order->amount;
@@ -993,7 +1017,7 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                     ->get();
@@ -1028,7 +1052,7 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                     ->get();
@@ -1063,7 +1087,7 @@ class StatisticsController extends Controller
                                 $delivered_orders_per_month_shop = Order::whereYear('created_at', '=', $current_year)
                                     ->whereMonth('created_at', '=', date('m', strtotime($date)))
                                     ->whereDay('created_at', '=', date('d', strtotime($date)))
-                                    ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)
+                                    ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)
                                     ->where('status', 10)->pluck('id')->all();
                                 $delivered_orders_per_month = OrderProduct::whereIn('sales_channele_order', $delivered_orders_per_month_shop)
                                     ->get();
@@ -1103,7 +1127,12 @@ class StatisticsController extends Controller
             $delivered_percentage = 0;
         }
         $total_earnings = 0;
-        if ($selected_product == 'all') {
+        if (
+            $selected_product == 'all'
+            & $selected_seller == 'all'
+            & $selected_supporter == 'all'
+            & $selected_delivery == 'all'
+        ) {
             foreach ($delivered_orders as $orderd) {
                 $id = $orderd->id;
                 $orderCalcu = OrderProduct::where('sales_channele_order', $id)->get();
