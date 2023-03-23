@@ -148,15 +148,15 @@ class StatisticsController extends Controller
                         && $selected_supporter == 'all'
                         && $selected_delivery == 'all'
                     ) {
-                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->get();
-                        $new_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get();
-                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->get();
-                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->get();
-                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $all_orders  = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->get();
+                        $new_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 0)->where('country_id', $country)->get();
+                        $confirmed_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->get();
+                        $delivered_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->get();
+                        $canceled_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
                     } else {
                         if ($selected_product != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -168,7 +168,7 @@ class StatisticsController extends Controller
                         if ($selected_seller != 'all') {
 
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -180,7 +180,7 @@ class StatisticsController extends Controller
                         if ($selected_supporter != 'all') {
 
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -192,7 +192,7 @@ class StatisticsController extends Controller
                         if ($selected_delivery != 'all') {
 
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::now()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -211,14 +211,14 @@ class StatisticsController extends Controller
                         && $selected_supporter == 'all'
                         && $selected_delivery == 'all'
                     ) {
-                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->get();
-                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
-                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
-                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $all_orders  = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->get();
+                        $confirmed_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->get();
+                        $delivered_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
                     } else {
                         if ($selected_product != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -230,7 +230,7 @@ class StatisticsController extends Controller
                         if ($selected_seller != 'all') {
 
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -242,7 +242,7 @@ class StatisticsController extends Controller
                         if ($selected_supporter != 'all') {
 
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -254,7 +254,7 @@ class StatisticsController extends Controller
                         if ($selected_delivery != 'all') {
 
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '=', Carbon::yesterday()->format('Y-m-d'))->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -275,23 +275,23 @@ class StatisticsController extends Controller
                         && $selected_supporter == 'all'
                         && $selected_delivery == 'all'
                     ) {
-                        $all_orders  = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get();
-                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->get();
-                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
-                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $all_orders  = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->get();
+                        $confirmed_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->get();
+                        $delivered_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::whereIn('sales_channel', $sales_all)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
                         $days = array();
                         $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
                         array_push($days, date('l', strtotime($filter_date)));
                         $total_per_days = [];
                         for ($i = 0; $i < 8; $i++) {
                             $total_earnings = 0;
-                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                            $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)
                                 ->whereYear('created_at', '=', $current_year)
                                 ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
                                 ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
                                 ->where('country_id', $country)->where('status', 10)->get();
                             if ($i == 7) {
-                                $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)
                                     ->whereDate('created_at', '=', Carbon::today()->format('Y-m-d'))
                                     ->where('country_id', $country)->where('status', 10)->get();
                             }
@@ -314,7 +314,7 @@ class StatisticsController extends Controller
                     } else {
                         if ($selected_product != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -369,7 +369,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_seller != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -416,7 +416,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_supporter != 'all') {
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -463,7 +463,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_delivery != 'all') {
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -521,24 +521,24 @@ class StatisticsController extends Controller
                         && $selected_supporter == 'all'
                         && $selected_delivery == 'all'
                     ) {
-                        $all_orders  = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->get();
-                        $new_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->get();
-                        $confirmed_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->get();
-                        $delivered_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get();
-                        $canceled_orders = Order::where('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $all_orders  = Order::whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->get();
+                        $new_orders = Order::whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 0)->get();
+                        $confirmed_orders = Order::whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->whereIn('status', [4, 7, 8])->get();
+                        $delivered_orders = Order::whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->get();
+                        $canceled_orders = Order::whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
                         $days = array();
                         $filter_date = date('d.m.Y', strtotime($filter_date . ' + 1 days'));
                         array_push($days, date('d-m-Y', strtotime($filter_date)));
                         $total_per_days = [];
                         for ($i = 0; $i < 31; $i++) {
                             $total_earnings = 0;
-                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                            $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)
                                 ->whereYear('created_at', '=', $current_year)
                                 ->whereMonth('created_at', '=', date('m', strtotime($filter_date)))
                                 ->whereDay('created_at', '=', date('d', strtotime($filter_date)))
                                 ->where('country_id', $country)->where('status', 10)->get();
                             if ($i == 30) {
-                                $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                                $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)
                                     ->whereDate('created_at', '=', Carbon::today()->format('Y-m-d'))
                                     ->where('country_id', $country)->where('status', 10)->get();
                             }
@@ -561,7 +561,7 @@ class StatisticsController extends Controller
                     } else {
                         if ($selected_product != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -604,7 +604,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_seller != 'all') {
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -647,7 +647,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_supporter != 'all') {
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -690,7 +690,7 @@ class StatisticsController extends Controller
                         }
                         if ($selected_delivery != 'all') {
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereDate('created_at', '>=', $filter_date->format('Y-m-d'))->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -744,24 +744,27 @@ class StatisticsController extends Controller
                         && $selected_delivery == 'all'
                     ) {
                         $all_orders  = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->get();
-                        $new_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 0)->get();
+                            ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->get();
+                        // $new_orders = Order::whereYear('created_at', '=', $current_year)
+                        //     ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->where('status', 0)->get();
+                        // $recieved_by_call_canter_orders = Order::whereYear('created_at', '=', $current_year)
+                        //     ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->where('status', 1)->get();
                         $confirmed_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 4)->get();
+                            ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereIn('status', [4, 7, 8])->get();
                         $delivered_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->get();
+                            ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->get();
                         $canceled_orders = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                            ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+
                         $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                            ->where('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
+                            ->whereIn('sales_channel', $sales_all)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                         $monthsname = [];
                         $total_per_months = [];
                         $total_earnings = 0;
                         for ($i = 1; $i < 13; $i++) {
                             $total_earnings = 0;
                             array_push($monthsname, date('F', strtotime('01.' . $i . '.' . $current_year)));
-                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)->whereYear('created_at', '=', $current_year)
+                            $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)->whereYear('created_at', '=', $current_year)
                                 ->whereMonth('created_at', '=', $i)->where('country_id', $country)->where('status', 10)->get();
                             foreach ($delivered_orders_per_month as $orderd) {
                                 $id = $orderd->id;
@@ -781,13 +784,13 @@ class StatisticsController extends Controller
                         if ($selected_product != 'all') {
                             $all_orders_shop  = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->pluck('id')->all();
-
                             $confirmed_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+                                ->whereIn('sales_channel', $shop_ids)->where('country_id', $country)->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+
                             $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->where('product_id', $selected_product)->get();
                             $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->where('product_id', $selected_product)->get();
                             $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->where('product_id', $selected_product)->get();
@@ -817,11 +820,11 @@ class StatisticsController extends Controller
                             $all_orders_shop  = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->pluck('id')->all();
                             $confirmed_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                                ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+                                ->whereIn('sales_channel', $shop_ids_by_seller)->where('country_id', $country)->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
                             $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->get();
                             $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->get();
                             $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->get();
@@ -852,11 +855,11 @@ class StatisticsController extends Controller
                                 ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->pluck('id')->all();
 
                             $confirmed_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                                ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+                                ->whereIn('id', $orders_ids_by_supporter)->where('country_id', $country)->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
                             $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->get();
                             $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->get();
                             $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->get();
@@ -887,11 +890,11 @@ class StatisticsController extends Controller
                                 ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->pluck('id')->all();
 
                             $confirmed_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                                ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereYear('created_at', '=', $current_year)
                                 ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereYear('created_at', '=', $current_year)
-                                ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
+                                ->whereIn('id', $orders_ids_by_delivery)->where('country_id', $country)->whereIn('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
                             $all_orders = OrderProduct::whereIn('sales_channele_order', $all_orders_shop)->get();
                             $confirmed_orders = OrderProduct::whereIn('sales_channele_order', $confirmed_orders_shop)->get();
                             $delivered_orders = OrderProduct::whereIn('sales_channele_order', $delivered_orders_shop)->get();
@@ -929,10 +932,10 @@ class StatisticsController extends Controller
                         && $selected_supporter == 'all'
                         && $selected_delivery == 'all'
                     ) {
-                        $all_orders  = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get();
-                        $confirmed_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->get();
-                        $delivered_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get();
-                        $canceled_orders = Order::where('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
+                        $all_orders  = Order::whereIn('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->get();
+                        $confirmed_orders = Order::whereIn('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->whereIn('status', [4, 7, 8])->get();
+                        $delivered_orders = Order::whereIn('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->get();
+                        $canceled_orders = Order::whereIn('sales_channel', $sales_all)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->get();
 
                         $dates = [];
                         $total_per_months = [];
@@ -941,7 +944,7 @@ class StatisticsController extends Controller
                         foreach ($dates as $date) {
                             $total_earnings = 0;
 
-                            $delivered_orders_per_month = Order::where('sales_channel', $sales_all)
+                            $delivered_orders_per_month = Order::whereIn('sales_channel', $sales_all)
                                 ->whereYear('created_at', '=', date('Y', strtotime($date)))
                                 ->whereMonth('created_at', '=', date('m', strtotime($date)))
                                 ->whereDay('created_at', '=', date('d', strtotime($date)))
@@ -965,7 +968,7 @@ class StatisticsController extends Controller
                         if ($selected_product != 'all') {
 
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -1000,7 +1003,7 @@ class StatisticsController extends Controller
                         if ($selected_seller != 'all') {
 
                             $all_orders_shop  = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('sales_channel', $shop_ids_by_seller)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -1035,7 +1038,7 @@ class StatisticsController extends Controller
                         if ($selected_supporter != 'all') {
 
                             $all_orders_shop  = Order::whereIn('id', $orders_ids_by_supporter)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->pluck('id')->all();
-                            $confirmed_orders_shop = Order::whereIn('id',  $orders_ids_by_supporter)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 4)->pluck('id')->all();
+                            $confirmed_orders_shop = Order::whereIn('id',  $orders_ids_by_supporter)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->whereIn('status', [4, 7, 8])->pluck('id')->all();
                             $delivered_orders_shop = Order::whereIn('id',  $orders_ids_by_supporter)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', 10)->pluck('id')->all();
                             $canceled_orders_shop = Order::whereIn('id',  $orders_ids_by_supporter)->whereBetween('created_at', [$dateS->format('Y-m-d'), $dateE->format('Y-m-d')])->where('country_id', $country)->where('status', [2, 3, 5, 6, 9, 11, 12, 13])->pluck('id')->all();
 
@@ -1110,16 +1113,45 @@ class StatisticsController extends Controller
                 break;
         }
 
-        if (count($all_orders) > 0) {
-            $confirmed_percentage = count($confirmed_orders) / count($all_orders) * 100;
+        $all_orders_final = [];
+        $confirmed_orders_final = [];
+        $delivered_orders_final  = [];
+        $canceled_orders_final  = [];
+        if (
+            $selected_product != 'all'
+            || $selected_seller != 'all'
+            || $selected_supporter != 'all'
+            || $selected_delivery != 'all'
+        ) {
+            foreach ($all_orders as $order) {
+                $all_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($confirmed_orders as $order) {
+                $confirmed_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($delivered_orders as $order) {
+                $delivered_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+            foreach ($canceled_orders as $order) {
+                $canceled_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
+            }
+        } else {
+            $all_orders_final = $all_orders;
+            $confirmed_orders_final = $confirmed_orders;
+            $delivered_orders_final  = $delivered_orders;
+            $canceled_orders_final  = $canceled_orders;
+        }
+        if (count($all_orders_final) > 0) {
+            $confirmed_percentage = count($confirmed_orders_final) / count($all_orders_final) * 100;
             if ($confirmed_percentage > 100) {
                 $confirmed_percentage = 100;
             }
         } else {
             $confirmed_percentage = 0;
         }
-        if (count($all_orders) > 0) {
-            $delivered_percentage = count($delivered_orders) / count($all_orders) * 100;
+
+        if (count($all_orders_final) > 0) {
+            $delivered_percentage = count($delivered_orders_final) / count($all_orders_final) * 100;
             if ($delivered_percentage > 100) {
                 $delivered_percentage = 100;
             }
@@ -1150,35 +1182,6 @@ class StatisticsController extends Controller
                 $total = $amount * $price;
                 $total_earnings += $total;
             }
-        }
-
-        $all_orders_final = [];
-        $confirmed_orders_final = [];
-        $delivered_orders_final  = [];
-        $canceled_orders_final  = [];
-        if (
-            $selected_product != 'all'
-            || $selected_seller != 'all'
-            || $selected_supporter != 'all'
-            || $selected_delivery != 'all'
-        ) {
-            foreach ($all_orders as $order) {
-                $all_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
-            }
-            foreach ($confirmed_orders as $order) {
-                $confirmed_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
-            }
-            foreach ($delivered_orders as $order) {
-                $delivered_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
-            }
-            foreach ($canceled_orders as $order) {
-                $canceled_orders_final[] = Order::where('id', $order->sales_channele_order)->get();
-            }
-        } else {
-            $all_orders_final = $all_orders;
-            $confirmed_orders_final = $confirmed_orders;
-            $delivered_orders_final  = $delivered_orders;
-            $canceled_orders_final  = $canceled_orders;
         }
         $countries =  Country::get();
         $cities =  City::get();

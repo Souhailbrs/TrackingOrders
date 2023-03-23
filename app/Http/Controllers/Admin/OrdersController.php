@@ -37,7 +37,7 @@ class OrdersController extends Controller
             $search = $request->search;
 
             $workDayOrders = Order::where('id', 'like', '%' . $search . '%')->orWhere('customer_phone1', 'like', '%' . $search . '%')->get();
-            
+
             $total_orders = count($workDayOrders);
         } else {
             $search = '';
@@ -60,10 +60,10 @@ class OrdersController extends Controller
                 $order_date = date('Y-m-d', strtotime($order->created_at));
                 $today = date('Y-m-d', strtotime(date('Y-m-d') . '-7 days'));
                 if ($order_date >= $today) {
+
                     $workDayOrdersFilter[] = $order->id;
                 }
             }
-
         } elseif ($state == 'custom') {
             $workDayOrdersFilter = [];
             foreach ($workDayOrders as $order) {
@@ -75,6 +75,7 @@ class OrdersController extends Controller
                 }
             }
         }
+
         if ($request->country_id) {
             if ($request->status) {
                 $records = Order::whereIn('id', $workDayOrdersFilter)->where('status', $request->status)->where('country_id', $request->country_id)->paginate($pagination);
@@ -82,7 +83,7 @@ class OrdersController extends Controller
                 $records = Order::whereIn('id', $workDayOrdersFilter)->where('country_id', $request->country_id)->paginate($pagination);
             }
         } else {
-            if ($request->status!='all') {
+            if ($request->status != 'all' && !empty($request->status)) {
                 if ($pagination <= 1000)
                     $records = Order::whereIn('id', $workDayOrdersFilter)->where('status', $request->status)->paginate($pagination);
                 else
