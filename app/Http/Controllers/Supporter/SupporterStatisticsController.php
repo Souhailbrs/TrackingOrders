@@ -92,8 +92,8 @@ class SupporterStatisticsController extends Controller
                     foreach ($sales as $sales_all) {
                         $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
                         $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereIn('status', [4,7,8])->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [4,7,8])->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
                         $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
                         $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
                         $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
@@ -124,8 +124,8 @@ class SupporterStatisticsController extends Controller
                     foreach ($sales as $sales_all) {
                         $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
                         $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereIn('status', [4, 7, 8])->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [4, 7, 8])->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
                         $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
                         $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
                         $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
@@ -158,8 +158,8 @@ class SupporterStatisticsController extends Controller
                     foreach ($sales as $sales_all) {
                         $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
                         $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereIn('status', [4, 7, 8])->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [4, 7, 8])->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
                         $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
                         $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
                         $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();
@@ -218,8 +218,8 @@ class SupporterStatisticsController extends Controller
                     foreach ($sales as $sales_all) {
                         $result_all_orders  = Order::where('id', $sales_all)->where('country_id', $country)->get()->toArray();
                         $result_new_orders = Order::where('id', $sales_all)->where('status', 0)->where('country_id', $country)->get()->toArray();
-                        $result_confirmed_orders = Order::where('id', $sales_all)->whereIn('status', [4,7,8])->get()->toArray();
-                        $result_delivered_orders = Order::where('id', $sales_all)->where('status', 10)->get()->toArray();
+                        $result_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [4,7,8])->get()->toArray();
+                        $result_delivered_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 10)->get()->toArray();
                         $result_no_answer_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [2, 3, 12])->get()->toArray();
                         $result_not_confirmed_orders = Order::where('id', $sales_all)->where('country_id', $country)->where('status', 5)->get()->toArray();
                         $result_canceled_orders = Order::where('id', $sales_all)->where('country_id', $country)->whereIn('status', [6, 9, 11, 13])->get()->toArray();

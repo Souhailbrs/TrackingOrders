@@ -387,3 +387,43 @@
 
         </ul>
     </li>
+    <li>
+    <a onclick="callApi()" style="cursor: pointer;">
+        <div class="parent-icon">
+            <ion-icon name="stats-chart-outline"></ion-icon>
+        </div>
+        <div class="menu-title">Go to Admin StoreSpace</div>
+    </a>
+    <script>
+        async function callApi() {
+            token = '{!! Illuminate\Support\Facades\Hash::make(Auth::guard('admin')->user()->email) !!}'
+            user = {!! Auth::guard('admin')->user() !!}
+            role_id = 1
+            host = 'http://127.0.0.1:8000'
+            url = host + "/api/user/login", data = {
+                'login_token': token,
+                'user': user,
+                'role_id': role_id
+            }
+            // Default options are marked with *
+            const response = await fetch(url, {
+                    method: "POST", // *GET, POST, PUT, DELETE, etc.
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
+                }).then(response => response.text())
+                .then(data => {
+                    const parsedData = JSON.parse(data);
+                    console.log(data);
+                    window.open(host + parsedData.message, '_blank');
+                    // use the parsed data as needed
+                })
+                .catch(error => {
+                    console.error('Error fetching data', error);
+                });
+        }
+    </script>
+</li>

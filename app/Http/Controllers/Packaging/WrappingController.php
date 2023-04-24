@@ -30,7 +30,6 @@ class WrappingController extends Controller
      */
     public function index_new(Request $request, $state, $from, $to)
     {
-
         $user_id =  Auth::guard('packaging')->user()->id;
         $today_work_days = WorkDay::where('user_id', $user_id)->where('user_type', 'packaging')->where('completed', 0)->get();
         $orders_user = WorkDayOrder::where('userID', $user_id)->where('userType', 'packaging')->pluck('user_sales_channele_orders')->all();
@@ -117,7 +116,7 @@ class WrappingController extends Controller
             $today_work = 0;
             $work_day_id = 0;
         }
-        $records = Order::whereIn('status', [7, 4])->whereDate('delivery_date', date_format(Carbon::now('GMT+1'), "Y-m-d"))->where('country_id', $user->country_id)->get();
+        $records = Order::whereIn('status', [7, 4])->whereDate('delivery_date', date_format(Carbon::now(), "Y-m-d"))->where('country_id', $user->country_id)->get();
         //state
         //1. today
         //2. all

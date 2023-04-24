@@ -15,8 +15,8 @@ $type_users = Auth::guard('seller')->user()->id;
     <div class="container">
         <div class="row">
             <div class="container">
-                <form class="row text-center d-flex justify-content-center" action="{{ route('seller.filter.statistics', ['type_users' => $type_users]) }}"
-                    method="POST">
+                <form class="row text-center d-flex justify-content-center"
+                    action="{{ route('seller.filter.statistics', ['type_users' => $type_users]) }}" method="POST">
                     @csrf
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2 h6 ">
@@ -35,9 +35,10 @@ $type_users = Auth::guard('seller')->user()->id;
                         <select class="form-control" id="product" name="product">
                             <option value="all" @if ($res['selected_product'] == 'all') selected @endif>All</option>
                             @foreach ($res['products'] as $product)
-                                <option value="{{ $product->id }}"@if ($res['selected_product'] == $product->id ) selected @endif>{{ $product->name }}</option>
+                                <option value="{{ $product->id }}"@if ($res['selected_product'] == $product->id) selected @endif>
+                                    {{ $product->name }}</option>
                             @endforeach
-                            
+
                         </select>
                     </div>
                     <div class="col-sm-2 h6 ">
@@ -317,4 +318,3 @@ $type_users = Auth::guard('seller')->user()->id;
 
     </div>
 @endsection
-

@@ -261,27 +261,29 @@ $type_users = Auth::guard('admin')->user()->id;
         </div>
 
         <!--end row-->
-        <div class="row">
-            <div class="col-12 col-lg-12 col-xl-12 d-flex">
-                <div class="card radius-10 w-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <h6 class="mb-0">Statistics</h6>
-                            <div class="ms-auto">
-                                <div class="d-flex align-items-center font-13 gap-2">
-                                    <span class="border px-1 rounded cursor-pointer"><i
-                                            class="bx bxs-circle me-1 text-primary opacity-50"></i>Earnings</span>
+        @if ($res['date'] != 'today' && $res['date'] != 'yesterday')
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12 d-flex">
+                    <div class="card radius-10 w-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <h6 class="mb-0">Statistics</h6>
+                                <div class="ms-auto">
+                                    <div class="d-flex align-items-center font-13 gap-2">
+                                        <span class="border px-1 rounded cursor-pointer"><i
+                                                class="bx bxs-circle me-1 text-primary opacity-50"></i>Earnings</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="chart-container1">
-                            <canvas id="myChart" style="width:100%;max-height:350px"></canvas>
-                        </div>
+                            <div class="chart-container1">
+                                <canvas id="myChart" style="width:100%;max-height:350px"></canvas>
+                            </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <script>
             var xValues = {!! json_encode($res['xValues']) !!};
